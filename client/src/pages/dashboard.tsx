@@ -17,6 +17,7 @@ import { ModernPatternAnalysisCard } from "@/components/modern-pattern-analysis-
 import { ModernLabelEngineHistoryCard } from "@/components/modern-label-engine-history-card";
 import { ModernMoodTimelineCard } from "@/components/modern-mood-timeline-card";
 import { ModernScoreRegressionCard } from "@/components/modern-score-regression-card";
+import { ComingSoonCard } from "@/components/coming-soon-card";
 import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
 import { useWallet } from "@/hooks/use-wallet";
 import { getMockDataForWallet } from "@/lib/mock-data";
@@ -74,6 +75,22 @@ export default function Dashboard() {
             <div className="break-inside-avoid mb-6">
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
+            <div className="break-inside-avoid mb-6">
+              <ComingSoonCard 
+                title="Portfolio Performance" 
+                description="ROI tracking and performance analytics"
+                features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
+                size="medium"
+              />
+            </div>
+            <div className="break-inside-avoid mb-6">
+              <ComingSoonCard 
+                title="Social Sentiment" 
+                description="Community sentiment and social signals"
+                features={["Twitter sentiment", "Discord activity", "Community influence"]}
+                size="small"
+              />
+            </div>
           </div>
         );
       
@@ -88,6 +105,22 @@ export default function Dashboard() {
             </div>
             <div className="break-inside-avoid mb-6">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            <div className="break-inside-avoid mb-6">
+              <ComingSoonCard 
+                title="Transaction Patterns" 
+                description="Advanced transaction flow analysis"
+                features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
+                size="large"
+              />
+            </div>
+            <div className="break-inside-avoid mb-6">
+              <ComingSoonCard 
+                title="Wallet Clustering" 
+                description="Multi-wallet behavior analysis"
+                features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
+                size="medium"
+              />
             </div>
           </div>
         );
