@@ -20,45 +20,45 @@ export function WhispererScoreCard({ score }: WhispererScoreCardProps) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold">Whisperer Score</CardTitle>
-          <div className="w-16 h-16 relative">
+          <CardTitle className="text-lg font-semibold">Whisperer Score</CardTitle>
+          <div className="w-14 h-14 relative">
             {/* Circular progress indicator */}
-            <svg className="w-16 h-16 transform -rotate-90">
+            <svg className="w-14 h-14 transform -rotate-90">
               <circle 
-                cx="32" 
-                cy="32" 
-                r="28" 
+                cx="28" 
+                cy="28" 
+                r="24" 
                 stroke="currentColor" 
-                strokeWidth="4" 
+                strokeWidth="3" 
                 fill="none" 
                 className="text-border"
               />
               <circle 
-                cx="32" 
-                cy="32" 
-                r="28" 
+                cx="28" 
+                cy="28" 
+                r="24" 
                 stroke="currentColor" 
-                strokeWidth="4" 
+                strokeWidth="3" 
                 fill="none" 
-                strokeDasharray="176" 
-                strokeDashoffset={176 - (176 * score.whispererScore) / 100}
+                strokeDasharray="151" 
+                strokeDashoffset={151 - (151 * score.whispererScore) / 100}
                 className="text-foreground"
                 strokeLinecap="round"
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-lg font-bold text-foreground">{score.whispererScore}</span>
+              <span className="text-base font-bold text-foreground">{score.whispererScore}</span>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">
+      <CardContent className="pt-3">
+        <p className="text-xs text-muted-foreground mb-3">
           Last updated: {formatDate(score.updatedAt)}
         </p>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Risk Score:</span>
             <span className="text-foreground">{score.degenScore}</span>

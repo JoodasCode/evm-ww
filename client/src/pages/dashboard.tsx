@@ -53,13 +53,13 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <WhispererScoreCard score={score} />
               <PortfolioSummaryCard score={score} tokenBalances={tokenBalances} />
               <ArchetypeCard score={score} />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <TokenHoldingsCard tokenBalances={tokenBalances} />
               <TradingActivityCard activities={tradingActivity} />
             </div>
@@ -68,20 +68,20 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <RiskAppetiteCard score={score} />
               <TradingPatternsCard score={score} />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <OvertradingCard score={score} />
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Time Bias</h3>
-                <p className="text-muted-foreground">Coming soon - Detailed time-of-day trading analysis</p>
+              <div className="bg-card border border-border rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-foreground mb-3">Time Bias</h3>
+                <p className="text-sm text-muted-foreground">Coming soon - Detailed time-of-day trading analysis</p>
               </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Investment Focus</h3>
-                <p className="text-muted-foreground">Coming soon - Token category breakdown</p>
+              <div className="bg-card border border-border rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-foreground mb-3">Investment Focus</h3>
+                <p className="text-sm text-muted-foreground">Coming soon - Token category breakdown</p>
               </div>
             </div>
           </div>
@@ -185,20 +185,20 @@ export default function Dashboard() {
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-card border-b border-border p-6">
+        <header className="bg-card border-b border-border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-foreground">{tabInfo.title}</h2>
-              <p className="text-muted-foreground mt-1">{tabInfo.subtitle}</p>
+              <h2 className="text-xl font-bold text-foreground">{tabInfo.title}</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">{tabInfo.subtitle}</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               {isSimulated && (
-                <Badge variant="secondary" className="bg-accent text-accent-foreground">
+                <Badge variant="secondary" className="bg-accent text-accent-foreground text-xs">
                   Simulated Wallet
                 </Badge>
               )}
-              <Button onClick={refreshAll} variant="outline" size="sm">
-                <RefreshCw className="w-4 h-4 mr-2" />
+              <Button onClick={refreshAll} variant="outline" size="sm" className="h-8 text-xs">
+                <RefreshCw className="w-3 h-3 mr-1.5" />
                 Refresh Data
               </Button>
             </div>
@@ -206,7 +206,7 @@ export default function Dashboard() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-4">
           {renderTabContent()}
         </main>
       </div>

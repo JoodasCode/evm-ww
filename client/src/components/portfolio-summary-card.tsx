@@ -29,10 +29,10 @@ export function PortfolioSummaryCard({ score, tokenBalances }: PortfolioSummaryC
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold">Portfolio Value</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-semibold">Portfolio Value</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-3">
         <div className="space-y-4">
           <div>
             <div className="flex items-baseline space-x-2">

@@ -24,16 +24,16 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   ];
 
   return (
-    <div className="w-64 bg-card border-r border-border flex flex-col h-full">
+    <div className="w-56 bg-card border-r border-border flex flex-col h-full">
       {/* Logo/Brand */}
-      <div className="p-6 border-b border-border">
-        <h1 className="text-xl font-bold text-foreground">Wallet Whisperer</h1>
-        <p className="text-sm text-muted-foreground">Professional Analytics</p>
+      <div className="p-4 border-b border-border">
+        <h1 className="text-lg font-bold text-foreground">Wallet Whisperer</h1>
+        <p className="text-xs text-muted-foreground">Professional Analytics</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
+      <nav className="flex-1 p-2">
+        <ul className="space-y-1">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -42,14 +42,14 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               <li key={tab.id}>
                 <Button
                   variant={isActive ? "secondary" : "ghost"}
-                  className={`w-full justify-start space-x-3 h-11 ${
+                  className={`w-full justify-start space-x-2 h-9 text-sm ${
                     isActive 
                       ? "bg-accent text-accent-foreground border-l-2 border-l-primary" 
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                   onClick={() => onTabChange(tab.id)}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                   <span className="font-medium">{tab.label}</span>
                 </Button>
               </li>
@@ -59,16 +59,16 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </nav>
 
       {/* Wallet Connection Status */}
-      <div className="p-4 border-t border-border">
-        <div className="bg-background p-4 rounded-lg">
+      <div className="p-3 border-t border-border">
+        <div className="bg-background p-3 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-foreground">Wallet Status</p>
+              <p className="text-xs font-medium text-foreground">Wallet Status</p>
               <p className="text-xs text-muted-foreground truncate">
                 {isConnected && wallet ? formatWalletAddress(wallet) : "Not Connected"}
               </p>
               {isSimulated && (
-                <p className="text-xs text-accent-foreground bg-accent px-2 py-1 rounded mt-1 inline-block">
+                <p className="text-xs text-accent-foreground bg-accent px-1.5 py-0.5 rounded mt-1 inline-block">
                   Simulated
                 </p>
               )}
@@ -77,9 +77,9 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               size="sm"
               variant={isConnected ? "outline" : "default"}
               onClick={isConnected ? disconnect : connect}
-              className="ml-2"
+              className="ml-2 h-7 text-xs"
             >
-              <Wallet className="w-4 h-4 mr-1" />
+              <Wallet className="w-3 h-3 mr-1" />
               {isConnected ? "Disconnect" : "Connect"}
             </Button>
           </div>
