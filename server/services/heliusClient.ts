@@ -8,7 +8,7 @@ import axios from 'axios';
 import config from '../config';
 
 const heliusApi = axios.create({
-  baseURL: config.helius.apiUrl,
+  baseURL: `${config.helius.apiUrl}/?api-key=${config.helius.apiKey}`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -51,10 +51,6 @@ export async function fetchTransactionSignatures(
           commitment: 'confirmed',
         },
       ],
-    }, {
-      params: {
-        'api-key': config.helius.apiKey,
-      },
     });
 
     return response.data.result || [];
@@ -80,10 +76,6 @@ export async function fetchTransactionDetails(signature: string): Promise<any> {
           maxSupportedTransactionVersion: 0,
         },
       ],
-    }, {
-      params: {
-        'api-key': config.helius.apiKey,
-      },
     });
 
     return response.data.result;
@@ -111,10 +103,6 @@ export async function fetchTokenBalances(walletAddress: string): Promise<{ token
           encoding: 'jsonParsed',
         },
       ],
-    }, {
-      params: {
-        'api-key': config.helius.apiKey,
-      },
     });
 
     const tokenAccounts = response.data.result?.value || [];

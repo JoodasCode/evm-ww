@@ -6,7 +6,7 @@ const config = {
   // Helius API configuration
   helius: {
     apiKey: process.env.HELIUS_API_KEY || '',
-    apiUrl: 'https://api.helius.xyz/v0'
+    apiUrl: 'https://mainnet.helius-rpc.com'
   },
   
   // Moralis API configuration
