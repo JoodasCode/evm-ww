@@ -1,0 +1,403 @@
+import { heliusService } from './heliusService';
+import { geckoTerminalService } from './geckoTerminalService';
+import { prismaService } from './prismaService';
+import { psychometricService } from './psychometricService';
+
+// Type definitions
+interface WalletData {
+  walletAddress: string;
+  scores?: WalletScores;
+  holdings?: WalletHolding[];
+  trades?: WalletTrade[];
+  behavior?: WalletBehavior;
+  behaviorTags?: WalletBehaviorTag[];
+  network?: WalletNetwork;
+  psychometrics?: any;
+}
+
+interface WalletScores {
+  id: number;
+  wallet_address: string;
+  whisperer_score: number;
+  degen_score: number;
+  roi_score: number;
+  discipline_score: number;
+  timing_score: number;
+  diversity_score: number;
+  emotional_score: number;
+  cognitive_score?: number;
+  owner_since: Date;
+  trading_frequency: string | null;
+  risk_level: string | null;
+  avg_trade_size: number | null;
+  daily_change: number | null;
+  weekly_change: number | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface WalletHolding {
+  id: number;
+  wallet_address: string;
+  token: string;
+  value: number;
+  allocation: number;
+  entry_price: number | null;
+  current_price: number | null;
+  profit_loss: number | null;
+  holding_period: number | null;
+  tokenName?: string;
+  tokenSymbol?: string;
+  tokenIcon?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface WalletTrade {
+  id: number;
+  wallet_address: string;
+  token: string;
+  type: string;
+  amount: number;
+  price: number;
+  value: number;
+  timestamp: Date;
+  exit_type: string | null;
+  profit_loss: number | null;
+  holding_period: number | null;
+  emotional_state: string | null;
+  tokenName?: string;
+  tokenSymbol?: string;
+  tokenIcon?: string;
+}
+
+interface WalletBehavior {
+  id: number;
+  wallet_address: string;
+  archetype: string | null;
+  secondary_archetype: string | null;
+  emotional_state: string | null;
+  risk_appetite: number | null;
+  fomo_score: number | null;
+  patience_score: number | null;
+  conviction_score: number | null;
+  adaptability_score: number | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface WalletBehaviorTag {
+  id: number;
+  wallet_address: string;
+  tag: string;
+  confidence: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface WalletNetwork {
+  id: number;
+  wallet_address: string;
+  network_size: number;
+  influence_score: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface TokenData {
+  name: string;
+  symbol: string;
+  decimals: number;
+  price_usd: number;
+  icon: string;
+}
+
+interface TokenDataMap {
+  [key: string]: TokenData;
+}
+
+/**
+ * DataService provides a unified API for the frontend to interact with
+ * all the services in the Wallet Whisperer application.
+ */
+class DataService {
+  /**
+   * Get wallet data including psychological metrics
+   */
+  async getWalletData(walletAddress: string): Promise<WalletData> {
+    try {
+      // Get wallet data from various services
+      const [
+        walletScores,
+        walletHoldings,
+        walletTrades,
+        walletBehavior,
+        walletBehaviorTags,
+        walletNetwork,
+      ] = await Promise.all([
+        prismaService.getWalletScores(walletAddress),
+        prismaService.getWalletHoldings(walletAddress),
+        prismaService.getWalletTrades(walletAddress, 50),
+        prismaService.getWalletBehavior(walletAddress),
+        prismaService.getWalletBehaviorTags(walletAddress),
+        prismaService.getWalletNetwork(walletAddress),
+      ]);
+
+      // If wallet doesn't exist in database, calculate psychometrics
+      if (!walletScores) {
+        const psychometrics = await psychometricService.calculateWhispererScore(walletAddress);
+
+        // Fetch wallet data again after calculation
+        return this.getWalletData(walletAddress);
+      }
+
+      // Enrich holdings with token data
+      const enrichedHoldings = await this.enrichHoldings(walletHoldings);
+
+      return {
+        walletAddress,
+        scores: walletScores || undefined,
+        holdings: enrichedHoldings,
+        trades: walletTrades,
+        behavior: walletBehavior || undefined,
+        behaviorTags: walletBehaviorTags,
+        network: walletNetwork || undefined,
+      };
+    } catch (error) {
+      console.error('Error getting wallet data:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Enrich holdings with token data from GeckoTerminal
+   */
+  private async enrichHoldings(holdings: WalletHolding[]): Promise<WalletHolding[]> {
+    if (!holdings || holdings.length === 0) {
+      return [];
+    }
+
+    // Use mock data if feature flag is enabled
+    if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+      const mockTokenData: TokenDataMap = geckoTerminalService.getMockTokenData();
+
+      return holdings.map((holding) => {
+        const tokenData = mockTokenData[holding.token] || {
+          name: `${holding.token.substring(0, 4)}...${holding.token.substring(holding.token.length - 4)}`,
+          symbol: 'UNKNOWN',
+          decimals: 9,
+          price_usd: holding.current_price || 0,
+          icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+        };
+
+        return {
+          ...holding,
+          tokenName: tokenData.name,
+          tokenSymbol: tokenData.symbol,
+          tokenIcon: tokenData.icon,
+        };
+      });
+    }
+
+    // Fetch token data for each holding
+    const enrichedHoldings = await Promise.all(
+      holdings.map(async (holding) => {
+        try {
+          const tokenInfo = await geckoTerminalService.getTokenInfo(holding.token);
+          const tokenIcon = await geckoTerminalService.getTokenIcon(holding.token);
+
+          return {
+            ...holding,
+            tokenName: tokenInfo.attributes.name,
+            tokenSymbol: tokenInfo.attributes.symbol,
+            tokenIcon,
+          };
+        } catch (error) {
+          console.error(`Error enriching token ${holding.token}:`, error);
+
+          // Return holding with placeholder data if token info can't be fetched
+          return {
+            ...holding,
+            tokenName: `${holding.token.substring(0, 4)}...${holding.token.substring(holding.token.length - 4)}`,
+            tokenSymbol: 'UNKNOWN',
+            tokenIcon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+          };
+        }
+      }),
+    );
+
+    return enrichedHoldings;
+  }
+
+  /**
+   * Get wallet psychological metrics
+   */
+  async getWalletPsychometrics(walletAddress: string): Promise<any> {
+    try {
+      // Use mock data if feature flag is enabled
+      if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+        return psychometricService.getMockPsychometricData(walletAddress);
+      }
+
+      // Calculate psychometrics
+      return psychometricService.calculateWhispererScore(walletAddress);
+    } catch (error) {
+      console.error('Error getting wallet psychometrics:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get wallet transactions
+   */
+  async getWalletTransactions(walletAddress: string, limit = 100): Promise<any[]> {
+    try {
+      // Use mock data if feature flag is enabled
+      if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+        return heliusService.getMockTransactions(walletAddress);
+      }
+
+      // Get transactions from Helius
+      return heliusService.getEnrichedTransactions(walletAddress, limit);
+    } catch (error) {
+      console.error('Error getting wallet transactions:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get wallet token balances
+   */
+  async getWalletTokenBalances(walletAddress: string): Promise<any[]> {
+    try {
+      // Use mock data if feature flag is enabled
+      if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+        return heliusService.getMockTokenBalances(walletAddress);
+      }
+
+      // Get token balances from Helius
+      return heliusService.getTokenBalances(walletAddress);
+    } catch (error) {
+      console.error('Error getting wallet token balances:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get top wallets
+   */
+  async getTopWallets(limit = 10): Promise<any[]> {
+    try {
+      return prismaService.getTopWallets(limit);
+    } catch (error) {
+      console.error('Error getting top wallets:', error);
+      throw error;
+    }
+  }
+        id: 3,
+        wallet_address: walletAddress,
+        token: Object.keys(mockTokenData)[2],
+        type: 'buy',
+        amount: 50,
+        price: 1.15,
+        value: 57.5,
+        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        exit_type: null,
+        profit_loss: null,
+        holding_period: 5,
+        emotional_state: 'Greedy',
+        tokenName: (mockTokenData[Object.keys(mockTokenData)[2]] as TokenData).name,
+        tokenSymbol: (mockTokenData[Object.keys(mockTokenData)[2]] as TokenData).symbol,
+        tokenIcon: (mockTokenData[Object.keys(mockTokenData)[2]] as TokenData).icon,
+      },
+      {
+        id: 4,
+        wallet_address: walletAddress,
+        token: Object.keys(mockTokenData)[3],
+        type: 'buy',
+        amount: 1000000,
+        price: 0.00000475,
+        value: 4.75,
+        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        exit_type: null,
+        profit_loss: null,
+        holding_period: 3,
+        emotional_state: 'Greedy',
+        tokenName: (mockTokenData[Object.keys(mockTokenData)[3]] as TokenData).name,
+        tokenSymbol: (mockTokenData[Object.keys(mockTokenData)[3]] as TokenData).symbol,
+        tokenIcon: (mockTokenData[Object.keys(mockTokenData)[3]] as TokenData).icon,
+      },
+    ];
+
+    // Create mock wallet scores
+    const walletScores = {
+      id: 1,
+      wallet_address: walletAddress,
+      whisperer_score: psychometrics.whispererScore,
+      degen_score: psychometrics.riskAppetite,
+      roi_score: 72,
+      discipline_score: psychometrics.disciplineScore,
+      timing_score: psychometrics.timingScore,
+      diversity_score: psychometrics.diversityScore,
+      emotional_score: psychometrics.emotionalScore,
+      cognitive_score: 68,
+      owner_since: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+      trading_frequency: 'medium',
+      risk_level: 'high',
+      avg_trade_size: 75.25,
+      daily_change: 2.5,
+      weekly_change: 8.75,
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      updated_at: new Date(),
+    };
+
+    // Create mock wallet behavior
+    const walletBehavior = {
+      id: 1,
+      wallet_address: walletAddress,
+      archetype: psychometrics.archetype,
+      secondary_archetype: psychometrics.secondaryArchetype,
+      emotional_state: psychometrics.emotionalState,
+      risk_appetite: psychometrics.riskAppetite,
+      fomo_score: 72,
+      patience_score: 65,
+      conviction_score: 78,
+      adaptability_score: 68,
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      updated_at: new Date(),
+    };
+
+    // Create mock behavior tags
+    const behaviorTags = psychometrics.behaviorTags.map((tag: any, index: number) => ({
+      id: index + 1,
+      wallet_address: walletAddress,
+      tag: tag.tag,
+      confidence: tag.confidence,
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      updated_at: new Date(),
+    }));
+
+    // Create mock wallet network
+    const walletNetwork = {
+      id: 1,
+      wallet_address: walletAddress,
+      network_size: 12,
+      influence_score: 65,
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      updated_at: new Date(),
+    };
+
+    return {
+      walletAddress,
+      scores: walletScores,
+      holdings,
+      trades,
+      behavior: walletBehavior,
+      behaviorTags,
+      network: walletNetwork,
+      psychometrics,
+    };
+  }
+}
+
+export const dataService = new DataService();
