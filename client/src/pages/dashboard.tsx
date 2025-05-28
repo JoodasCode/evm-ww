@@ -204,7 +204,7 @@ export default function Dashboard() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto p-4">
+        <main className="flex-1 overflow-auto p-4 transform scale-90 origin-top-left">
           {renderTabContent()}
         </main>
       </div>
