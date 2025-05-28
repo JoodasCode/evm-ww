@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import Masonry from 'react-masonry-css';
 import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-card";
 import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
 import { ModernArchetypeCard } from "@/components/modern-archetype-card";
@@ -60,49 +59,25 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(200px,_auto)] gap-6">
-            {/* Primary Whisperer Score - spans 2 columns for prominence */}
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-12 gap-4 scale-75 origin-top-left transform-gpu">
+            {/* Top Row: Whisperer Score (large), Degen Score (medium), Risk Appetite (small) */}
+            <div className="col-span-5">
               <ModernWhispererScoreCard walletAddress={currentWallet} />
             </div>
-            
-            {/* Degen Score - normal height */}
-            <div>
+            <div className="col-span-4">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
             </div>
-            
-            {/* Risk Appetite - compact */}
-            <div>
+            <div className="col-span-3">
               <ModernRiskAppetiteCard walletAddress={currentWallet} />
             </div>
             
-            {/* Portfolio Performance - tall card */}
-            <div className="row-span-2">
-              <ComingSoonCard 
-                title="Portfolio Performance" 
-                description="ROI tracking and performance analytics"
-                features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
-                size="large"
-              />
-            </div>
-            
-            {/* Archetype - compact */}
-            <div>
+            {/* Second Row: Just Archetype */}
+            <div className="col-span-12">
               <ModernArchetypeCard walletAddress={currentWallet} />
             </div>
             
-            {/* Social Sentiment - small card */}
-            <div>
-              <ComingSoonCard 
-                title="Social Sentiment" 
-                description="Community sentiment and social signals"
-                features={["Twitter sentiment", "Discord activity", "Community influence"]}
-                size="small"
-              />
-            </div>
-            
-            {/* Label Summary - spans full width */}
-            <div className="md:col-span-2 lg:col-span-3">
+            {/* Bottom Row: Label Engine spans full width */}
+            <div className="col-span-12">
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
           </div>
@@ -110,40 +85,20 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(200px,_auto)] gap-6">
-            {/* Trade Frequency - spans 2 columns for detailed data */}
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-12 gap-4 scale-75 origin-top-left transform-gpu">
+            {/* Trade Frequency - larger card */}
+            <div className="col-span-6">
               <ModernTradeFrequencyCard walletAddress={currentWallet} />
             </div>
             
-            {/* Token Categories - normal size */}
-            <div>
+            {/* Token Categories */}
+            <div className="col-span-6">
               <ModernTokenCategoryCard walletAddress={currentWallet} />
             </div>
             
-            {/* Transaction Patterns - tall card */}
-            <div className="row-span-2">
-              <ComingSoonCard 
-                title="Transaction Patterns" 
-                description="Advanced transaction flow analysis"
-                features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
-                size="large"
-              />
-            </div>
-            
-            {/* Degen Score - normal size */}
-            <div>
+            {/* Degen Score - full width */}
+            <div className="col-span-12">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Wallet Clustering - spans full width */}
-            <div className="md:col-span-2 lg:col-span-3">
-              <ComingSoonCard 
-                title="Wallet Clustering" 
-                description="Multi-wallet behavior analysis"
-                features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
-                size="medium"
-              />
             </div>
           </div>
         );
