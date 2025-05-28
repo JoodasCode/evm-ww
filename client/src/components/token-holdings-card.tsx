@@ -29,8 +29,8 @@ export function TokenHoldingsCard({ tokenBalances }: TokenHoldingsCardProps) {
   };
 
   // Sort by USD value and take top holdings
-  const topHoldings = tokenBalances
-    .sort((a, b) => parseFloat(b.usdValue) - parseFloat(a.usdValue))
+  const topHoldings = (tokenBalances || [])
+    .sort((a, b) => (parseFloat(b.usdValue || b.value || '0')) - (parseFloat(a.usdValue || a.value || '0')))
     .slice(0, 5);
 
   if (topHoldings.length === 0) {
