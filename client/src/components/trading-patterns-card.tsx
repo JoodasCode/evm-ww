@@ -7,8 +7,9 @@ interface TradingPatternsCardProps {
 }
 
 export function TradingPatternsCard({ score }: TradingPatternsCardProps) {
-  // Calculate trading metrics
-  const tradesPerWeek = score.dailyTrades * 7;
+  // Calculate trading metrics with safe defaults
+  const dailyTrades = score?.dailyTrades || 0;
+  const tradesPerWeek = dailyTrades * 7;
   const avgHoldDays = tradesPerWeek > 0 ? Math.max(0.5, 7 / tradesPerWeek) : 0;
 
   const peakHours = ['9-11 AM', '2-4 PM', '8-10 PM']; // Mock data - in real app this would come from analysis
@@ -54,7 +55,7 @@ export function TradingPatternsCard({ score }: TradingPatternsCardProps) {
               </div>
               <div>
                 <p className="text-muted-foreground">Daily Trades</p>
-                <p className="text-foreground font-medium">{score.dailyTrades}</p>
+                <p className="text-foreground font-medium">{dailyTrades}</p>
               </div>
             </div>
           </div>
