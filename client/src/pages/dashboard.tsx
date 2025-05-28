@@ -59,45 +59,30 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-max">
-            {/* Primary scores - prominent positioning */}
-            <div className="lg:col-span-1">
-              <ModernWhispererScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="lg:col-span-1">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Portfolio Performance - fills remaining space */}
-            <div className="lg:col-span-2 xl:col-span-1">
-              <ComingSoonCard 
-                title="Portfolio Performance" 
-                description="ROI tracking and performance analytics"
-                features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
-                size="large"
-              />
-            </div>
-            
-            {/* Risk and Archetype side by side */}
-            <div>
-              <ModernRiskAppetiteCard walletAddress={currentWallet} />
-            </div>
-            <div>
-              <ModernArchetypeCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Social Sentiment - compact */}
-            <div>
-              <ComingSoonCard 
-                title="Social Sentiment" 
-                description="Community sentiment and social signals"
-                features={["Twitter sentiment", "Discord activity", "Community influence"]}
-                size="medium"
-              />
-            </div>
-            
-            {/* Label Summary - full width */}
-            <div className="lg:col-span-2 xl:col-span-3">
+          <div 
+            className="grid gap-6 auto-rows-max"
+            style={{
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gridAutoRows: 'max-content'
+            }}
+          >
+            <ModernWhispererScoreCard walletAddress={currentWallet} />
+            <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            <ModernRiskAppetiteCard walletAddress={currentWallet} />
+            <ModernArchetypeCard walletAddress={currentWallet} />
+            <ComingSoonCard 
+              title="Portfolio Performance" 
+              description="ROI tracking and performance analytics"
+              features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
+              size="large"
+            />
+            <ComingSoonCard 
+              title="Social Sentiment" 
+              description="Community sentiment and social signals"
+              features={["Twitter sentiment", "Discord activity", "Community influence"]}
+              size="small"
+            />
+            <div style={{ gridColumn: '1 / -1' }}>
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
           </div>
@@ -105,41 +90,28 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-max">
-            {/* Trade Frequency - spans 2 cols for detailed data */}
-            <div className="lg:col-span-2 xl:col-span-1">
-              <ModernTradeFrequencyCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Token Categories - compact pie chart */}
-            <div>
-              <ModernTokenCategoryCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Transaction Patterns - large analytical card */}
-            <div className="lg:col-span-2 xl:col-span-1">
-              <ComingSoonCard 
-                title="Transaction Patterns" 
-                description="Advanced transaction flow analysis"
-                features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
-                size="large"
-              />
-            </div>
-            
-            {/* Degen Score - fits remaining space */}
-            <div>
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Wallet Clustering - spans remaining width */}
-            <div className="lg:col-span-2 xl:col-span-3">
-              <ComingSoonCard 
-                title="Wallet Clustering" 
-                description="Multi-wallet behavior analysis"
-                features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
-                size="medium"
-              />
-            </div>
+          <div 
+            className="grid gap-6 auto-rows-max"
+            style={{
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gridAutoRows: 'max-content'
+            }}
+          >
+            <ModernTradeFrequencyCard walletAddress={currentWallet} />
+            <ModernTokenCategoryCard walletAddress={currentWallet} />
+            <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            <ComingSoonCard 
+              title="Transaction Patterns" 
+              description="Advanced transaction flow analysis"
+              features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
+              size="large"
+            />
+            <ComingSoonCard 
+              title="Wallet Clustering" 
+              description="Multi-wallet behavior analysis"
+              features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
+              size="medium"
+            />
           </div>
         );
       
