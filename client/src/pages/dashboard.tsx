@@ -34,7 +34,7 @@ export default function Dashboard() {
   const isLoading = scoreLoading || balancesLoading || activityLoading;
   
   // Get current wallet address for components
-  const currentWallet = score?.wallet || "G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W";
+  const currentWallet = "G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W";
 
   const getTabTitle = () => {
     switch (activeTab) {
