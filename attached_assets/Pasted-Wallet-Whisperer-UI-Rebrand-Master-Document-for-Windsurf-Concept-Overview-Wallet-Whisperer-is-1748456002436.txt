@@ -1,0 +1,191 @@
+Wallet Whisperer UI Rebrand – Master Document for Windsurf
+
+🧠 Concept Overview
+
+Wallet Whisperer is evolving from a red/black degen aesthetic into a refined, corporate-grade analytics tool. The goal is to position WW alongside platforms like Nansen, Kaito, and Phantom — tools that convey intelligence, trust, and utility.
+
+This rebrand removes aggressive red tones, meme-style visuals, and chaotic energy. We are now aiming for a dark, neutral, data-first interface focused on clarity, depth, and professionalism.
+
+🎯 Strategic Design Goals
+
+Tone: Calm, analytical, professional
+
+UI Style: Flat, minimalist, data-dominant
+
+Color Palette: Dark charcoal, black, grayscale — no reds or colorful accents
+
+Typography: System fonts or modern sans-serif; large headers, clear hierarchy
+
+Components: Subtle shadows, consistent spacing, sharp borders
+
+Inspiration: Kaito.ai, Nansen.ai, Phantom.app (dark themes)
+
+🎨 Final Color Palette (Tailwind Config Ready)
+
+colors: {
+  whisper: {
+    bg: '#0d0d0d',         // Matte black app background
+    card: '#1a1a1a',       // Cards and surface elements
+    border: '#2e2e2e',     // Card borders and dividers
+    text: '#ffffff',       // Primary text
+    subtext: '#bfbfbf',    // Secondary text and descriptions
+    accent: '#3f3f46',     // Subtle accent (charts, tag outlines)
+  }
+}
+
+📐 Layout & Structure
+
+App Shell: bg-whisper-bg, full width, no gradients
+
+Cards: bg-whisper-card, rounded-xl or rounded-2xl, shadow-md
+
+Text:
+
+Headings: text-whisper-text text-xl font-semibold
+
+Labels/Subtext: text-whisper-subtext text-sm
+
+Spacing: Use p-6 to p-8 inside cards, maintain consistent gutters
+
+Navigation:
+
+Flat sidebar with icons only (Lucide preferred)
+
+Active route highlighted with border-l-2 border-whisper-accent
+
+🚫 Do Not Use
+
+No red color (#f30c13 is deprecated)
+
+No toggle pills or switchers (use tabs or buttons instead)
+
+No emojis in UI
+
+No bright greens, blues, or purples
+
+No heavy animations or glowing effects
+
+🧩 Component Guidelines
+
+🧱 Cards
+
+<div className="bg-whisper-card text-whisper-text p-6 rounded-xl shadow-md border border-whisper-border">
+  <h2 className="text-xl font-semibold">Whisperer Score</h2>
+  <p className="text-sm text-whisper-subtext">Last updated: 1h ago</p>
+</div>
+
+📊 Charts
+
+Background: #0d0d0d or transparent
+
+Lines: #ffffff or #bfbfbf
+
+No area fills
+
+Axes: Thin, muted, no labels unless needed
+
+Tooltips: Minimal — white text on black bg, no animation
+
+🧠 Label Engine UI
+
+Use badges (rounded-full bg-whisper-accent px-3 py-1) for archetypes/moods
+
+Include "Simulated Wallet" indicator in header when viewing a ghost wallet
+
+Archetype cards should include name, icon (optional), and short explanation
+
+🧾 Scorecards
+
+Whisperer Score: Display with ring or numeric value
+
+Degen Score: Breakdown by risk metrics, show volatility
+
+Risk Appetite: Show with horizontal bar (gray tones only)
+
+🔀 WalletContext Behavior
+
+Should support both:
+
+Real wallet connection via Solana wallet adapter
+
+Simulated wallet injected via ?wallet=ADDRESS&simulate=true
+
+WalletContext must detect simulate mode and run full backend pipeline
+
+Supabase should tag simulated wallets with isSimulated: true
+
+🗂 Tabs & UI Sections
+
+Overview Tab
+
+Whisperer Score Card
+
+Risk Appetite Card
+
+Archetype Display
+
+Label Summary (3–5 mood tags)
+
+Behavior Tab
+
+Degen Score Card
+
+Trade frequency / time of day
+
+Token category breakdown
+
+Insight Tab
+
+Missed Opportunities
+
+Timing Accuracy
+
+Conviction Metrics
+
+Pattern Analysis
+
+Psychoanalytics Tab
+
+Label Engine History
+
+Mood Timeline
+
+Score Regression over time
+
+Settings Tab
+
+Refresh data
+
+Toggle simulated mode
+
+Delete cache / session
+
+🔄 Data Flow Requirements
+
+User Connects Wallet (Real or Simulated)
+
+Triggers transaction fetch
+
+Routes to trade parser → scoring → labeling
+
+Stores data in Supabase + Redis
+
+Renders updated dashboard
+
+Data Refresh Triggered (Manual or Auto)
+
+Frontend calls API → re-runs analysis pipeline
+
+Updates Supabase scores, traits, labels
+
+UI pulls new metrics and rerenders
+
+✅ Final Delivery Checklist for Windsurf
+
+
+
+🔚 Summary
+
+Wallet Whisperer is no longer a degen toy — it's a professional-grade tool for introspective analytics. This rebrand sets us apart from meme coin dashboards by blending institutional UI with deep psychological insights.
+
+This doc is your source of truth for implementing the new UI. Stick to the style guide, keep it clean, and let the data do the talking.

@@ -1,0 +1,37 @@
+{
+  "name": "wallet-whisperer-backend",
+  "version": "1.0.0",
+  "description": "Backend services for Wallet Whisperer",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint --ext .ts src/"
+  },
+  "keywords": [
+    "solana",
+    "wallet",
+    "analytics",
+    "backend"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "ioredis": "^5.6.1",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

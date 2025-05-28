@@ -1,0 +1,148 @@
+📖 Wallet Whisperer — Full Technical + Product Spec
+🔥 Project Vision
+Wallet Whisperer (WW) is a psychological wallet intelligence platform for crypto traders.
+
+It combines wallet data (via Helius, Moralis, Redis) with behavioral insights to answer:
+
+"How do I trade?"
+
+"Why do I trade like this?"
+
+"What are my blind spots?"
+
+It’s Google Analytics for degens — part dashboard, part psychoanalysis, all alpha.
+
+💡 Core Product Modes
+Trader Mode (Personal)
+
+For individual wallet holders
+
+Analyzes trading patterns, conviction, ROI, timing, missed plays, etc.
+
+Founder Mode (Project View)
+
+For token creators and DAO operators
+
+Understands wallet flows, loyalty, volatility, top holder behavior
+
+⚙️ Backend Stack (Already Built)
+Express.js server (inside /backend/)
+
+Redis caching for wallet snapshots
+
+Helius API for Solana transaction parsing
+
+Moralis API for price and token metadata
+
+RESTful endpoints (e.g., /api/whisperer-score/:wallet, /api/token-balances/:wallet)
+
+🧠 Frontend Stack (New Direction)
+We're dropping the HTML shell and going full React app:
+
+Stack	Tech
+Framework	Vite (or Next.js for SSR)
+Styling	Tailwind CSS
+UI Components	shadcn/ui
+State	Zustand (or useContext for simple global state)
+Charts	Shadcn charts or Recharts
+Wallet Connect	Solana wallet adapter (phantom, backpack, etc.)
+
+🧭 Folder Structure
+pgsql
+Copy
+Edit
+/frontend
+  ├── index.html (Vite entry point)
+  ├── src/
+  │   ├── main.tsx
+  │   ├── App.tsx
+  │   ├── routes/
+  │   │   ├── dashboard/
+  │   │   │   ├── OverviewTab.tsx
+  │   │   │   ├── BehaviorTab.tsx
+  │   │   │   ├── InfluenceTab.tsx
+  │   ├── components/
+  │   │   ├── WhispererScoreCard.tsx
+  │   │   ├── TokenBalanceCard.tsx
+  │   │   ├── TradingActivityCard.tsx
+  │   │   └── ConvictionMapCard.tsx
+  │   ├── services/
+  │   │   ├── api.ts (fetch functions for backend routes)
+  │   ├── hooks/
+  │   │   ├── useWallet.ts
+  │   │   └── useCachedData.ts
+🧩 Dashboard Tabs (Nansen-style UI)
+1. Overview
+Whisperer Score (0–100)
+
+Portfolio Summary
+
+Token Allocation Pie
+
+Archetype Classification
+
+High Volatility Alert
+
+Disconnect Button
+
+2. Behavior
+Risk Appetite Graph
+
+Overtrading Detector
+
+Trade Frequency Heatmap
+
+Time of Day Bias
+
+3. Insight
+Missed Opportunities
+
+Timing Accuracy
+
+Conviction Map
+
+Repeat Patterns
+
+4. Influence
+Whale Following Index
+
+Alpha Sync Score
+
+Market Impact Trace
+
+Social Correlation
+
+5. Settings
+Connect Wallet
+
+Reset History
+
+Privacy Preferences
+
+🧠 Analytics Style
+Think:
+
+Clean 2-column layout
+
+Persistent sidebar (black/gray)
+
+Red (#f30c13) as the primary highlight color
+
+Light data blurbs with heavy insights
+
+"You trade like a cultist" or "You're a FOMO sniper" psycho-tags
+
+🧰 Sample API Call Structure
+ts
+Copy
+Edit
+// GET /api/whisperer-score/:wallet
+const getWhispererScore = async (wallet: string) => {
+  const res = await fetch(`/api/whisperer-score/${wallet}`);
+  const { score } = await res.json();
+  return score;
+};
+🧪 Deployment Notes
+Will run as a unified Vite or Next app (SPA or SSR)
+
+Use Replit for staging + preview
