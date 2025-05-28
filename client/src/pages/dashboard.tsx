@@ -21,6 +21,7 @@ import { WhaleFollowingCard } from "@/components/whale-following-card";
 import { AlphaSyncCard } from "@/components/alpha-sync-card";
 import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
 import { useWallet } from "@/hooks/use-wallet";
+import { getMockDataForWallet } from "@/lib/mock-data";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -50,36 +51,24 @@ export default function Dashboard() {
   const tabInfo = getTabTitle();
 
   const renderTabContent = () => {
-    // Show content immediately while data loads in background
-    const mockScore = score || {
-      wallet: currentWallet,
-      whispererScore: 75,
-      tier: 'Strategic',
-      dailyChange: 2.3,
-      archetype: 'Strategic Momentum Trader',
-      riskAppetite: { score: 78, category: 'High' },
-      tradingFrequency: { score: 65, category: 'Active' },
-      portfolioComposition: {
-        categories: [
-          { name: 'Meme', percentage: 45 },
-          { name: 'DeFi', percentage: 30 },
-          { name: 'Infrastructure', percentage: 25 }
-        ]
-      }
-    };
+    // Use your comprehensive mock data for immediate display
+    const mockData = getMockDataForWallet(currentWallet);
+    const displayScore = mockData.score;
+    const displayHoldings = mockData.holdings;
+    const displayTrades = mockData.trades;
 
     switch (activeTab) {
       case "overview":
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <WhispererScoreCard score={mockScore} />
-              <PortfolioSummaryCard score={mockScore} tokenBalances={tokenBalances} />
-              <ArchetypeCard score={mockScore} />
+              <WhispererScoreCard score={displayScore as any} />
+              <PortfolioSummaryCard score={displayScore as any} tokenBalances={displayHoldings} />
+              <ArchetypeCard score={displayScore as any} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <TokenHoldingsCard tokenBalances={tokenBalances} />
-              <TradingActivityCard activities={tradingActivity} />
+              <TokenHoldingsCard tokenBalances={displayHoldings} />
+              <TradingActivityCard activities={displayTrades} />
             </div>
           </div>
         );
@@ -88,13 +77,13 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <RiskAppetiteCard score={score} />
+              <RiskAppetiteCard score={displayScore as any} />
               <DegenScoreCard walletAddress={currentWallet} />
               <BehavioralLabelsCard walletAddress={currentWallet} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <TradingPatternsCard score={score} />
-              <OvertradingCard score={score} />
+              <TradingPatternsCard score={displayScore as any} />
+              <OvertradingCard score={displayScore as any} />
             </div>
           </div>
         );
