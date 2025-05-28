@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
+import Masonry from 'react-masonry-css';
 import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-card";
 import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
 import { ModernArchetypeCard } from "@/components/modern-archetype-card";
@@ -59,25 +60,73 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="grid grid-cols-12 gap-6">
-            {/* Top Row: Whisperer Score (large), Degen Score (medium), Risk Appetite (small) */}
-            <div className="col-span-5">
+          <div 
+            className="grid gap-4 w-full h-full"
+            style={{
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              gridTemplateRows: 'repeat(6, minmax(120px, auto))',
+              gridTemplateAreas: `
+                "whisperer whisperer degen risk risk risk"
+                "whisperer whisperer portfolio portfolio archetype archetype"
+                "performance performance portfolio portfolio sentiment sentiment"
+                "performance performance labels labels labels labels"
+                "coming1 coming1 labels labels labels labels"
+                "coming2 coming2 coming3 coming3 coming4 coming4"
+              `
+            }}
+          >
+            {/* Whisperer Score - Large prominent card (2x2) */}
+            <div style={{ gridArea: 'whisperer' }} className="h-full">
               <ModernWhispererScoreCard walletAddress={currentWallet} />
             </div>
-            <div className="col-span-4">
+            
+            {/* Degen Score - Compact card */}
+            <div style={{ gridArea: 'degen' }} className="h-full">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
             </div>
-            <div className="col-span-3">
+            
+            {/* Risk Appetite - Wide card (2x1) */}
+            <div style={{ gridArea: 'risk' }} className="h-full">
               <ModernRiskAppetiteCard walletAddress={currentWallet} />
             </div>
             
-            {/* Second Row: Just Archetype */}
-            <div className="col-span-12">
+            {/* Portfolio Performance - Tall card (2x2) */}
+            <div style={{ gridArea: 'portfolio' }} className="h-full">
+              <ComingSoonCard 
+                title="Portfolio Performance" 
+                description="ROI tracking and performance analytics"
+                features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
+                size="large"
+              />
+            </div>
+            
+            {/* Archetype - Wide card */}
+            <div style={{ gridArea: 'archetype' }} className="h-full">
               <ModernArchetypeCard walletAddress={currentWallet} />
             </div>
             
-            {/* Bottom Row: Label Engine spans full width */}
-            <div className="col-span-12">
+            {/* Performance Analytics - Tall card */}
+            <div style={{ gridArea: 'performance' }} className="h-full">
+              <ComingSoonCard 
+                title="Performance Analytics" 
+                description="Advanced trading metrics"
+                features={["Sharpe ratio", "Max drawdown", "Win streaks"]}
+                size="large"
+              />
+            </div>
+            
+            {/* Social Sentiment */}
+            <div style={{ gridArea: 'sentiment' }} className="h-full">
+              <ComingSoonCard 
+                title="Social Sentiment" 
+                description="Community signals"
+                features={["Twitter buzz", "Discord activity"]}
+                size="small"
+              />
+            </div>
+            
+            {/* Label Summary - Wide card (4x2) */}
+            <div style={{ gridArea: 'labels' }} className="h-full">
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
           </div>
@@ -85,20 +134,83 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="grid grid-cols-12 gap-6">
-            {/* Trade Frequency - larger card */}
-            <div className="col-span-6">
+          <div 
+            className="grid gap-4 w-full h-full"
+            style={{
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              gridTemplateRows: 'repeat(5, minmax(140px, auto))',
+              gridTemplateAreas: `
+                "frequency frequency frequency tokens tokens degen"
+                "frequency frequency frequency patterns patterns clustering"
+                "behavior behavior behavior patterns patterns clustering"
+                "behavior behavior behavior timing timing timing"
+                "social social social timing timing timing"
+              `
+            }}
+          >
+            {/* Trade Frequency - Large card (3x2) */}
+            <div style={{ gridArea: 'frequency' }} className="h-full">
               <ModernTradeFrequencyCard walletAddress={currentWallet} />
             </div>
             
-            {/* Token Categories */}
-            <div className="col-span-6">
+            {/* Token Categories - Compact card */}
+            <div style={{ gridArea: 'tokens' }} className="h-full">
               <ModernTokenCategoryCard walletAddress={currentWallet} />
             </div>
             
-            {/* Degen Score - full width */}
-            <div className="col-span-12">
+            {/* Degen Score - Compact card */}
+            <div style={{ gridArea: 'degen' }} className="h-full">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            
+            {/* Transaction Patterns - Tall card (2x3) */}
+            <div style={{ gridArea: 'patterns' }} className="h-full">
+              <ComingSoonCard 
+                title="Transaction Patterns" 
+                description="Advanced transaction flow analysis"
+                features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
+                size="large"
+              />
+            </div>
+            
+            {/* Wallet Clustering - Tall card */}
+            <div style={{ gridArea: 'clustering' }} className="h-full">
+              <ComingSoonCard 
+                title="Wallet Clustering" 
+                description="Multi-wallet behavior analysis"
+                features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
+                size="medium"
+              />
+            </div>
+            
+            {/* Behavioral Analysis - Wide card */}
+            <div style={{ gridArea: 'behavior' }} className="h-full">
+              <ComingSoonCard 
+                title="Behavioral Analysis" 
+                description="Deep behavioral pattern recognition"
+                features={["Decision patterns", "Risk tolerance shifts", "Market timing"]}
+                size="large"
+              />
+            </div>
+            
+            {/* Timing Analysis - Wide card */}
+            <div style={{ gridArea: 'timing' }} className="h-full">
+              <ComingSoonCard 
+                title="Timing Analysis" 
+                description="Market timing and entry/exit patterns"
+                features={["Entry timing", "Exit strategies", "Market correlation"]}
+                size="medium"
+              />
+            </div>
+            
+            {/* Social Signals */}
+            <div style={{ gridArea: 'social' }} className="h-full">
+              <ComingSoonCard 
+                title="Social Signals" 
+                description="Community influence metrics"
+                features={["Influence score", "Following patterns"]}
+                size="small"
+              />
             </div>
           </div>
         );
@@ -204,7 +316,7 @@ export default function Dashboard() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto p-4 transform scale-90 origin-top-left">
+        <main className="flex-1 overflow-auto p-4">
           {renderTabContent()}
         </main>
       </div>
