@@ -3,6 +3,7 @@
  */
 
 import express from 'express';
+import { createServer } from 'http';
 import { fetchTransactionSignatures, fetchTransactionDetails, fetchTokenBalances } from './services/heliusClient';
 import { fetchTokenMetadata, fetchTokenPrice } from './services/moralisClient';
 import { getTokenBalances } from './services/tokenBalanceService';
@@ -186,5 +187,10 @@ router.get('/api/wallet/:address/analytics', async (req, res) => {
     });
   }
 });
+
+export function registerRoutes(app: express.Application) {
+  app.use(router);
+  return createServer(app);
+}
 
 export default router;

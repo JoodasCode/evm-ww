@@ -2,10 +2,56 @@
  * Helius API Client
  * 
  * Handles all interactions with the Helius API for Solana blockchain data
+ * Rate limited to 10 requests/second
  */
 
 import axios from 'axios';
 import config from '../config';
+
+// Rate limiting: 10 requests per second
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 1000;
+let requestQueue: Array<() => void> = [];
+let requestCount = 0;
+let windowStart = Date.now();
+
+/**
+ * Rate limiter that ensures we don't exceed 10 requests/second
+ */
+const rateLimiter = (): Promise<void> => {
+  return new Promise((resolve) => {
+    const now = Date.now();
+    
+    // Reset window if needed
+    if (now - windowStart >= RATE_WINDOW_MS) {
+      requestCount = 0;
+      windowStart = now;
+    }
+    
+    // If under limit, execute immediately
+    if (requestCount < RATE_LIMIT) {
+      requestCount++;
+      resolve();
+      return;
+    }
+    
+    // Otherwise, queue the request
+    requestQueue.push(() => {
+      requestCount++;
+      resolve();
+    });
+    
+    // Process queue after window resets
+    setTimeout(() => {
+      const nextRequest = requestQueue.shift();
+      if (nextRequest) {
+        requestCount = 1;
+        windowStart = Date.now();
+        nextRequest();
+      }
+    }, RATE_WINDOW_MS - (now - windowStart));
+  });
+};
 
 const heliusApi = axios.create({
   baseURL: `${config.helius.apiUrl}/?api-key=${config.helius.apiKey}`,
@@ -40,6 +86,9 @@ export async function fetchTransactionSignatures(
   limit: number = 100
 ): Promise<HeliusTransaction[]> {
   try {
+    // Apply rate limiting
+    await rateLimiter();
+    
     const response = await heliusApi.post('', {
       jsonrpc: '2.0',
       id: 'helius-signatures',
@@ -65,6 +114,9 @@ export async function fetchTransactionSignatures(
  */
 export async function fetchTransactionDetails(signature: string): Promise<any> {
   try {
+    // Apply rate limiting
+    await rateLimiter();
+    
     const response = await heliusApi.post('', {
       jsonrpc: '2.0',
       id: 'helius-transaction',
@@ -90,6 +142,9 @@ export async function fetchTransactionDetails(signature: string): Promise<any> {
  */
 export async function fetchTokenBalances(walletAddress: string): Promise<{ tokens: TokenBalance[] }> {
   try {
+    // Apply rate limiting
+    await rateLimiter();
+    
     const response = await heliusApi.post('', {
       jsonrpc: '2.0',
       id: 'helius-balances',
