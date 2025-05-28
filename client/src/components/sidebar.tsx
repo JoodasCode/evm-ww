@@ -1,0 +1,90 @@
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { PieChart, Brain, Lightbulb, Users, Settings, Wallet } from "lucide-react";
+import { useWallet } from "@/hooks/use-wallet";
+
+interface SidebarProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
+
+export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+  const { wallet, isConnected, isSimulated, connect, disconnect } = useWallet();
+
+  const formatWalletAddress = (address: string) => {
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  };
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: PieChart },
+    { id: 'behavior', label: 'Behavior', icon: Brain },
+    { id: 'insight', label: 'Insight', icon: Lightbulb },
+    { id: 'influence', label: 'Influence', icon: Users },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ];
+
+  return (
+    <div className="w-64 bg-card border-r border-border flex flex-col h-full">
+      {/* Logo/Brand */}
+      <div className="p-6 border-b border-border">
+        <h1 className="text-xl font-bold text-foreground">Wallet Whisperer</h1>
+        <p className="text-sm text-muted-foreground">Professional Analytics</p>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-4">
+        <ul className="space-y-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            
+            return (
+              <li key={tab.id}>
+                <Button
+                  variant={isActive ? "secondary" : "ghost"}
+                  className={`w-full justify-start space-x-3 h-11 ${
+                    isActive 
+                      ? "bg-accent text-accent-foreground border-l-2 border-l-primary" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  }`}
+                  onClick={() => onTabChange(tab.id)}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{tab.label}</span>
+                </Button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Wallet Connection Status */}
+      <div className="p-4 border-t border-border">
+        <div className="bg-background p-4 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">Wallet Status</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {isConnected && wallet ? formatWalletAddress(wallet) : "Not Connected"}
+              </p>
+              {isSimulated && (
+                <p className="text-xs text-accent-foreground bg-accent px-2 py-1 rounded mt-1 inline-block">
+                  Simulated
+                </p>
+              )}
+            </div>
+            <Button
+              size="sm"
+              variant={isConnected ? "outline" : "default"}
+              onClick={isConnected ? disconnect : connect}
+              className="ml-2"
+            >
+              <Wallet className="w-4 h-4 mr-1" />
+              {isConnected ? "Disconnect" : "Connect"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
