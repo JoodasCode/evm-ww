@@ -3,23 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import { WhispererScoreCard } from "@/components/whisperer-score-card";
-import { PortfolioSummaryCard } from "@/components/portfolio-summary-card";
-import { ArchetypeCard } from "@/components/archetype-card";
-import { TokenHoldingsCard } from "@/components/token-holdings-card";
-import { TradingActivityCard } from "@/components/trading-activity-card";
-import { RiskAppetiteCard } from "@/components/risk-appetite-card";
-import { TradingPatternsCard } from "@/components/trading-patterns-card";
-import { OvertradingCard } from "@/components/overtrading-card";
+import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-card";
+import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
+import { ModernArchetypeCard } from "@/components/modern-archetype-card";
+import { ModernLabelSummaryCard } from "@/components/modern-label-summary-card";
 import { EnhancedDegenScoreCard } from "@/components/enhanced-degen-score-card";
-import { ModernBehavioralLabelsCard } from "@/components/modern-behavioral-labels-card";
-import { ModernTokenHoldingsCard } from "@/components/modern-token-holdings-card";
-import { IntegratedInsightsCard } from "@/components/integrated-insights-card";
+import { ModernTradeFrequencyCard } from "@/components/modern-trade-frequency-card";
+import { ModernTokenCategoryCard } from "@/components/modern-token-category-card";
 import { ModernMissedOpportunitiesCard } from "@/components/modern-missed-opportunities-card";
 import { ModernTimingAnalysisCard } from "@/components/modern-timing-analysis-card";
 import { ModernConvictionMappingCard } from "@/components/modern-conviction-mapping-card";
-import { ModernWhaleFollowingCard } from "@/components/modern-whale-following-card";
-import { ModernAlphaSyncCard } from "@/components/modern-alpha-sync-card";
+import { ModernPatternAnalysisCard } from "@/components/modern-pattern-analysis-card";
+import { ModernLabelEngineHistoryCard } from "@/components/modern-label-engine-history-card";
+import { ModernMoodTimelineCard } from "@/components/modern-mood-timeline-card";
+import { ModernScoreRegressionCard } from "@/components/modern-score-regression-card";
 import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
 import { useWallet } from "@/hooks/use-wallet";
 import { getMockDataForWallet } from "@/lib/mock-data";
@@ -63,13 +60,12 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <WhispererScoreCard score={displayScore as any} />
-              <PortfolioSummaryCard score={displayScore as any} tokenBalances={displayHoldings} />
-              <ArchetypeCard score={displayScore as any} />
+              <ModernWhispererScoreCard walletAddress={currentWallet} />
+              <ModernRiskAppetiteCard walletAddress={currentWallet} />
+              <ModernArchetypeCard walletAddress={currentWallet} />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ModernTokenHoldingsCard tokenBalances={displayHoldings} />
-              <TradingActivityCard activities={displayTrades} />
+            <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
+              <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
           </div>
         );
@@ -78,13 +74,9 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <RiskAppetiteCard score={displayScore as any} />
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
-              <ModernBehavioralLabelsCard walletAddress={currentWallet} />
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <TradingPatternsCard score={displayScore as any} />
-              <OvertradingCard score={displayScore as any} />
+              <ModernTradeFrequencyCard walletAddress={currentWallet} />
+              <ModernTokenCategoryCard walletAddress={currentWallet} />
             </div>
           </div>
         );
