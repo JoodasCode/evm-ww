@@ -11,14 +11,15 @@ import { TradingActivityCard } from "@/components/trading-activity-card";
 import { RiskAppetiteCard } from "@/components/risk-appetite-card";
 import { TradingPatternsCard } from "@/components/trading-patterns-card";
 import { OvertradingCard } from "@/components/overtrading-card";
-import { DegenScoreCard } from "@/components/degen-score-card";
-import { BehavioralLabelsCard } from "@/components/behavioral-labels-card";
+import { EnhancedDegenScoreCard } from "@/components/enhanced-degen-score-card";
+import { ModernBehavioralLabelsCard } from "@/components/modern-behavioral-labels-card";
+import { ModernTokenHoldingsCard } from "@/components/modern-token-holdings-card";
 import { IntegratedInsightsCard } from "@/components/integrated-insights-card";
 import { MissedOpportunitiesCard } from "@/components/missed-opportunities-card";
 import { TimingAnalysisCard } from "@/components/timing-analysis-card";
 import { ConvictionMappingCard } from "@/components/conviction-mapping-card";
-import { WhaleFollowingCard } from "@/components/whale-following-card";
-import { AlphaSyncCard } from "@/components/alpha-sync-card";
+import { ModernWhaleFollowingCard } from "@/components/modern-whale-following-card";
+import { ModernAlphaSyncCard } from "@/components/modern-alpha-sync-card";
 import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
 import { useWallet } from "@/hooks/use-wallet";
 import { getMockDataForWallet } from "@/lib/mock-data";
@@ -67,7 +68,7 @@ export default function Dashboard() {
               <ArchetypeCard score={displayScore as any} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <TokenHoldingsCard tokenBalances={displayHoldings} />
+              <ModernTokenHoldingsCard tokenBalances={displayHoldings} />
               <TradingActivityCard activities={displayTrades} />
             </div>
           </div>
@@ -78,8 +79,8 @@ export default function Dashboard() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <RiskAppetiteCard score={displayScore as any} />
-              <DegenScoreCard walletAddress={currentWallet} />
-              <BehavioralLabelsCard walletAddress={currentWallet} />
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+              <ModernBehavioralLabelsCard walletAddress={currentWallet} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <TradingPatternsCard score={displayScore as any} />
@@ -110,8 +111,8 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <WhaleFollowingCard walletAddress="G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W" />
-              <AlphaSyncCard walletAddress="G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W" />
+              <ModernWhaleFollowingCard walletAddress={currentWallet} />
+              <ModernAlphaSyncCard walletAddress={currentWallet} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="bg-card border border-border rounded-xl p-6">
