@@ -15,9 +15,9 @@ import { EnhancedDegenScoreCard } from "@/components/enhanced-degen-score-card";
 import { ModernBehavioralLabelsCard } from "@/components/modern-behavioral-labels-card";
 import { ModernTokenHoldingsCard } from "@/components/modern-token-holdings-card";
 import { IntegratedInsightsCard } from "@/components/integrated-insights-card";
-import { MissedOpportunitiesCard } from "@/components/missed-opportunities-card";
-import { TimingAnalysisCard } from "@/components/timing-analysis-card";
-import { ConvictionMappingCard } from "@/components/conviction-mapping-card";
+import { ModernMissedOpportunitiesCard } from "@/components/modern-missed-opportunities-card";
+import { ModernTimingAnalysisCard } from "@/components/modern-timing-analysis-card";
+import { ModernConvictionMappingCard } from "@/components/modern-conviction-mapping-card";
 import { ModernWhaleFollowingCard } from "@/components/modern-whale-following-card";
 import { ModernAlphaSyncCard } from "@/components/modern-alpha-sync-card";
 import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
@@ -93,11 +93,11 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <MissedOpportunitiesCard walletAddress={currentWallet} />
-              <TimingAnalysisCard walletAddress={currentWallet} />
+              <ModernMissedOpportunitiesCard walletAddress={currentWallet} />
+              <ModernTimingAnalysisCard walletAddress={currentWallet} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <ConvictionMappingCard walletAddress={currentWallet} />
+              <ModernConvictionMappingCard walletAddress={currentWallet} />
               <IntegratedInsightsCard walletAddress={currentWallet} />
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-4">Performance Metrics</h3>

@@ -100,7 +100,7 @@ export function EnhancedDegenScoreCard({ walletAddress }: DegenScoreCardProps) {
   }
 
   return (
-    <Card className="h-[400px]">
+    <Card className="h-[450px] flex flex-col">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-yellow-500" />
@@ -109,7 +109,7 @@ export function EnhancedDegenScoreCard({ walletAddress }: DegenScoreCardProps) {
         <CardDescription>Psychological risk assessment and trading behavior analysis</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 flex-1 overflow-hidden">
         {/* Main Score Display */}
         <div className="text-center space-y-3">
           <div className="text-5xl font-bold">
