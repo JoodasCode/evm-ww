@@ -1,78 +1,117 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { PieChart } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { PieChart, Coins } from 'lucide-react';
 
 interface ModernTokenCategoryCardProps {
   walletAddress: string;
 }
 
 export function ModernTokenCategoryCard({ walletAddress }: ModernTokenCategoryCardProps) {
-  const categoryData = [
-    { name: 'Meme Tokens', percentage: 45, trades: 23, pnl: 156 },
-    { name: 'DeFi', percentage: 30, trades: 12, pnl: 89 },
-    { name: 'Infrastructure', percentage: 15, trades: 8, pnl: 67 },
-    { name: 'Gaming', percentage: 10, trades: 4, pnl: -23 }
-  ];
-
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      'Meme Tokens': 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950 dark:text-pink-300',
-      'DeFi': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300',
-      'Infrastructure': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300',
-      'Gaming': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300',
-    };
-    return colors[category] || 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-950 dark:text-gray-300';
+  const categoryData = {
+    totalCategories: 6,
+    topCategory: 'DeFi',
+    categories: [
+      { name: 'DeFi', percentage: 45, tokens: 12, color: 'bg-blue-400' },
+      { name: 'Gaming', percentage: 25, tokens: 8, color: 'bg-purple-400' },
+      { name: 'Infrastructure', percentage: 15, tokens: 5, color: 'bg-emerald-400' },
+      { name: 'Meme', percentage: 10, tokens: 6, color: 'bg-amber-400' },
+      { name: 'AI/ML', percentage: 5, tokens: 2, color: 'bg-red-400' }
+    ],
+    diversificationScore: 72
   };
 
-  const getPnlColor = (pnl: number) => {
-    return pnl >= 0 ? 'text-emerald-600' : 'text-red-600';
+  const getPercentageColor = (percentage: number) => {
+    if (percentage >= 30) return 'text-blue-400';
+    if (percentage >= 20) return 'text-emerald-400';
+    if (percentage >= 10) return 'text-amber-400';
+    return 'text-muted-foreground';
   };
 
   return (
-    <Card className="h-[450px] flex flex-col">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-2">
-          <PieChart className="h-5 w-5 text-purple-500" />
-          <CardTitle className="text-xl">Token Categories</CardTitle>
+    <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
+      <CardHeader className="pb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
+              <PieChart className="h-5 w-5 text-purple-400" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-semibold text-foreground">
+                Token Categories
+              </CardTitle>
+              <CardDescription className="text-muted-foreground mt-1">
+                Portfolio diversification and sector allocation
+              </CardDescription>
+            </div>
+          </div>
         </div>
-        <CardDescription>Portfolio breakdown by token category and performance</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-4 flex-1 overflow-hidden">
-        <div className="space-y-3 max-h-80 overflow-y-auto">
-          {categoryData.map((category, index) => (
-            <div key={index} className="border border-border rounded-lg p-3">
-              <div className="flex items-center justify-between mb-2">
-                <Badge variant="outline" className={`text-xs ${getCategoryColor(category.name)}`}>
-                  {category.name}
-                </Badge>
-                <span className="text-sm font-bold">{category.percentage}%</span>
-              </div>
-              
-              <Progress value={category.percentage} className="h-2 mb-3" />
-              
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="text-center">
-                  <div className="text-muted-foreground">Trades</div>
-                  <div className="font-medium">{category.trades}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-muted-foreground">P&L</div>
-                  <div className={`font-medium ${getPnlColor(category.pnl)}`}>
-                    {category.pnl >= 0 ? '+' : ''}{category.pnl}%
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+      <CardContent className="space-y-6">
+        {/* Overview Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center space-y-1">
+            <div className="text-2xl font-bold text-foreground">{categoryData.totalCategories}</div>
+            <div className="text-xs text-muted-foreground">Categories</div>
+          </div>
+          <div className="text-center space-y-1">
+            <div className="text-xl font-bold text-blue-400">{categoryData.topCategory}</div>
+            <div className="text-xs text-muted-foreground">Top Sector</div>
+          </div>
+          <div className="text-center space-y-1">
+            <div className="text-2xl font-bold text-emerald-400">{categoryData.diversificationScore}</div>
+            <div className="text-xs text-muted-foreground">Diversity</div>
+          </div>
         </div>
 
-        <div className="bg-purple-500/5 rounded-lg p-3 border border-purple-500/20">
-          <p className="text-xs font-medium text-purple-600 mb-1">📊 Category Analysis</p>
-          <p className="text-xs text-muted-foreground">
-            Heavy focus on meme tokens with strong performance. Consider diversifying into infrastructure for stability.
-          </p>
+        <Separator className="bg-border/50" />
+
+        {/* Category Breakdown */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Coins className="h-4 w-4 text-muted-foreground" />
+            <h4 className="text-sm font-semibold text-foreground">Sector Allocation</h4>
+          </div>
+          
+          <div className="space-y-4">
+            {categoryData.categories.map((category, index) => (
+              <div key={index} className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-3 h-3 rounded-full ${category.color}`} />
+                    <span className="text-sm font-medium text-foreground">{category.name}</span>
+                    <Badge variant="outline" className="text-xs">
+                      {category.tokens} tokens
+                    </Badge>
+                  </div>
+                  <span className={`text-sm font-semibold ${getPercentageColor(category.percentage)}`}>
+                    {category.percentage}%
+                  </span>
+                </div>
+                <Progress 
+                  value={category.percentage} 
+                  className="h-2 bg-muted rounded-full overflow-hidden"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Diversification Insight */}
+        <div className="relative p-4 rounded-xl bg-purple-500/5 ring-1 ring-purple-500/10">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0 w-2 h-2 rounded-full bg-purple-400 mt-2" />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">
+                Portfolio Analysis
+              </p>
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                Well-diversified portfolio with strong DeFi focus. Good balance across emerging sectors with moderate risk exposure.
+              </p>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
