@@ -58,27 +58,20 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-min">
-            {/* Primary Whisperer Score - Hero positioning */}
-            <div className="md:col-span-2 lg:col-span-2">
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+            <div className="break-inside-avoid mb-6">
               <ModernWhispererScoreCard walletAddress={currentWallet} />
             </div>
-            
-            {/* Degen Score - Prominent secondary */}
-            <div className="md:col-span-2 lg:col-span-2">
+            <div className="break-inside-avoid mb-6">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
             </div>
-            
-            {/* Risk and Archetype - Compact side by side */}
-            <div>
+            <div className="break-inside-avoid mb-6">
               <ModernRiskAppetiteCard walletAddress={currentWallet} />
             </div>
-            <div>
+            <div className="break-inside-avoid mb-6">
               <ModernArchetypeCard walletAddress={currentWallet} />
             </div>
-            
-            {/* Label Summary - Full width for rich content */}
-            <div className="md:col-span-2 lg:col-span-4">
+            <div className="break-inside-avoid mb-6">
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
           </div>
@@ -86,11 +79,15 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+            <div className="break-inside-avoid mb-6">
               <ModernTradeFrequencyCard walletAddress={currentWallet} />
+            </div>
+            <div className="break-inside-avoid mb-6">
               <ModernTokenCategoryCard walletAddress={currentWallet} />
+            </div>
+            <div className="break-inside-avoid mb-6">
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
             </div>
           </div>
         );
