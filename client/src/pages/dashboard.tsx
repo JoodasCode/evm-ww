@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
+import Masonry from 'react-masonry-css';
 import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-card";
 import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
 import { ModernArchetypeCard } from "@/components/modern-archetype-card";
@@ -58,61 +59,85 @@ export default function Dashboard() {
 
     switch (activeTab) {
       case "overview":
+        const breakpointColumnsObj = {
+          default: 3,
+          1100: 2,
+          700: 1
+        };
+        
         return (
-          <div 
-            className="grid gap-6 auto-rows-max"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gridAutoRows: 'max-content'
-            }}
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="flex w-auto -ml-6"
+            columnClassName="pl-6 bg-clip-padding"
           >
-            <ModernWhispererScoreCard walletAddress={currentWallet} />
-            <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            <ModernRiskAppetiteCard walletAddress={currentWallet} />
-            <ModernArchetypeCard walletAddress={currentWallet} />
-            <ComingSoonCard 
-              title="Portfolio Performance" 
-              description="ROI tracking and performance analytics"
-              features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
-              size="large"
-            />
-            <ComingSoonCard 
-              title="Social Sentiment" 
-              description="Community sentiment and social signals"
-              features={["Twitter sentiment", "Discord activity", "Community influence"]}
-              size="small"
-            />
-            <div style={{ gridColumn: '1 / -1' }}>
+            <div className="mb-6">
+              <ModernWhispererScoreCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <ModernRiskAppetiteCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <ModernArchetypeCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <ComingSoonCard 
+                title="Portfolio Performance" 
+                description="ROI tracking and performance analytics"
+                features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
+                size="large"
+              />
+            </div>
+            <div className="mb-6">
+              <ComingSoonCard 
+                title="Social Sentiment" 
+                description="Community sentiment and social signals"
+                features={["Twitter sentiment", "Discord activity", "Community influence"]}
+                size="small"
+              />
+            </div>
+            <div className="mb-6">
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
-          </div>
+          </Masonry>
         );
       
       case "behavior":
         return (
-          <div 
-            className="grid gap-6 auto-rows-max"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gridAutoRows: 'max-content'
-            }}
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="flex w-auto -ml-6"
+            columnClassName="pl-6 bg-clip-padding"
           >
-            <ModernTradeFrequencyCard walletAddress={currentWallet} />
-            <ModernTokenCategoryCard walletAddress={currentWallet} />
-            <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            <ComingSoonCard 
-              title="Transaction Patterns" 
-              description="Advanced transaction flow analysis"
-              features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
-              size="large"
-            />
-            <ComingSoonCard 
-              title="Wallet Clustering" 
-              description="Multi-wallet behavior analysis"
-              features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
-              size="medium"
-            />
-          </div>
+            <div className="mb-6">
+              <ModernTradeFrequencyCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <ModernTokenCategoryCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            <div className="mb-6">
+              <ComingSoonCard 
+                title="Transaction Patterns" 
+                description="Advanced transaction flow analysis"
+                features={["MEV detection", "Sandwich attack patterns", "Front-running analysis"]}
+                size="large"
+              />
+            </div>
+            <div className="mb-6">
+              <ComingSoonCard 
+                title="Wallet Clustering" 
+                description="Multi-wallet behavior analysis"
+                features={["Connected wallets", "Cross-chain activity", "Identity clustering"]}
+                size="medium"
+              />
+            </div>
+          </Masonry>
         );
       
       case "insight":
