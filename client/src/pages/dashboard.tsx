@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
+import { ExpandableDrawer, CompactCard } from "@/components/expandable-drawer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-card";
 import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
 import { ModernArchetypeCard } from "@/components/modern-archetype-card";
@@ -24,8 +26,17 @@ import { getMockDataForWallet } from "@/lib/mock-data";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [activeDrawer, setActiveDrawer] = useState<string | null>(null);
   const { isSimulated } = useWallet();
   const { refreshAll } = useRefreshData();
+
+  const openDrawer = (drawerType: string) => {
+    setActiveDrawer(drawerType);
+  };
+
+  const closeDrawer = () => {
+    setActiveDrawer(null);
+  };
   
   const { data: score, isLoading: scoreLoading } = useWhispererScore();
   const { data: tokenBalances = [], isLoading: balancesLoading } = useTokenBalances();
@@ -59,34 +70,102 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-4 w-full">
-            {/* Top Row - Key Metrics */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-4">
-                <ModernWhispererScoreCard walletAddress={currentWallet} />
-              </div>
-              <div className="col-span-4">
-                <EnhancedDegenScoreCard walletAddress={currentWallet} />
-              </div>
-              <div className="col-span-4">
-                <ModernRiskAppetiteCard walletAddress={currentWallet} />
-              </div>
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
+              <CompactCard
+                title="Whisperer Score"
+                value="847"
+                label="/1000"
+                badge="Elite Trader"
+                badgeVariant="default"
+                description="Psychological trading intelligence"
+                onClick={() => openDrawer('whisperer')}
+              />
+              
+              <CompactCard
+                title="Degen Score"
+                value="73"
+                label="/100"
+                badge="High Risk"
+                badgeVariant="destructive"
+                description="Risk appetite indicator"
+                onClick={() => openDrawer('degen')}
+              />
+              
+              <CompactCard
+                title="Risk Appetite"
+                value="Medium"
+                badge="Balanced"
+                badgeVariant="secondary"
+                description="Conservative with selective risks"
+                onClick={() => openDrawer('risk')}
+              />
+              
+              <CompactCard
+                title="Win Rate"
+                value="68%"
+                badge="Above Average"
+                badgeVariant="default"
+                description="Successful trade percentage"
+                onClick={() => openDrawer('performance')}
+              />
+              
+              <CompactCard
+                title="Portfolio"
+                value="$127K"
+                badge="Diversified"
+                badgeVariant="secondary"
+                description="Total wallet value"
+                onClick={() => openDrawer('portfolio')}
+              />
+              
+              <CompactCard
+                title="Labels"
+                value="12"
+                badge="Active"
+                badgeVariant="default"
+                description="Behavioral classifications"
+                onClick={() => openDrawer('labels')}
+              />
             </div>
-            
-            {/* Second Row - Archetype */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-12">
-                <ModernArchetypeCard walletAddress={currentWallet} />
-              </div>
-            </div>
-            
-            {/* Bottom Row - Labels */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-12">
-                <ModernLabelSummaryCard walletAddress={currentWallet} />
-              </div>
-            </div>
-          </div>
+
+            {/* Expandable Drawers */}
+            <ExpandableDrawer
+              isOpen={activeDrawer === 'whisperer'}
+              onClose={closeDrawer}
+              title="Whisperer Score Analysis"
+              subtitle="Deep psychological trading intelligence breakdown"
+            >
+              <ModernWhispererScoreCard walletAddress={currentWallet} />
+            </ExpandableDrawer>
+
+            <ExpandableDrawer
+              isOpen={activeDrawer === 'degen'}
+              onClose={closeDrawer}
+              title="Degen Score Breakdown"
+              subtitle="Risk appetite and speculation tendencies"
+            >
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </ExpandableDrawer>
+
+            <ExpandableDrawer
+              isOpen={activeDrawer === 'risk'}
+              onClose={closeDrawer}
+              title="Risk Profile Analysis"
+              subtitle="Trading behavior and risk management patterns"
+            >
+              <ModernRiskAppetiteCard walletAddress={currentWallet} />
+            </ExpandableDrawer>
+
+            <ExpandableDrawer
+              isOpen={activeDrawer === 'labels'}
+              onClose={closeDrawer}
+              title="Behavioral Labels"
+              subtitle="AI-powered trading personality insights"
+            >
+              <ModernLabelSummaryCard walletAddress={currentWallet} />
+            </ExpandableDrawer>
+          </>
         );
       
       case "behavior":

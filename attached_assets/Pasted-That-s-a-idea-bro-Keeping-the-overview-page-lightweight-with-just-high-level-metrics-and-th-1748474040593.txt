@@ -1,0 +1,95 @@
+That’s a 🔥 idea bro. Keeping the **overview page lightweight** with just high-level metrics, and then letting users **click to expand** or view full detail is exactly how modern dashboards like Nansen, Gmgn, and Notion keep things clean and powerful.
+
+Let’s break down **3 killer ways** to implement it — you choose the vibe:
+
+---
+
+## 🔁 Option 1: Expandable Card (Click to Expand)
+
+Think of this like an **accordion for advanced degens**.
+
+### 🧠 How it works:
+
+* Each card (e.g. Whisperer Score) shows top-level data
+* When clicked, it **expands in-place** to show full breakdown
+
+```ts
+[Whisperer Score] 👉 click → expands below to show full:
+  - Risk Management
+  - Timing Accuracy
+  - Conviction Map
+```
+
+✅ Clean
+✅ Fast UX
+✅ Great for mobile
+🚫 Slightly messy if lots of sections are open
+
+---
+
+## 🧿 Option 2: Side Tab Panel (Inspired by gmgn or Phantom)
+
+### 🧠 How it works:
+
+* When you click a card, it opens a **side drawer or bottom sheet**
+* Drawer shows full analytics, tabs inside if needed (Score Breakdown, Trends, etc.)
+* Looks premium and keeps main dashboard clean
+
+✅ Feels like Phantom/Nansen
+✅ Professional UX
+✅ Maintains scroll position
+🚫 Slightly more complex to implement (but worth it)
+
+---
+
+## 🧭 Option 3: Inline Tabs in Overview (Minimalist Split)
+
+Each card shows a **tab bar inside** it.
+
+* Whisperer Score:
+
+  * Tab 1: Score
+  * Tab 2: Breakdown
+  * Tab 3: History
+
+Just like gmgn’s folder structure — tabs **inside the card itself**.
+
+✅ Keeps context local
+✅ Compact, clean
+🚫 Slightly tighter UX, but smooth if done right
+
+---
+
+### 🤝 Recommendation (Best Combo)
+
+Use a combo of:
+
+* 🧿 Option 2 (Side Drawer) for deep insights
+* 🧭 Option 3 (Tabs inside the card) for lightweight drill-down
+* On mobile, switch to 🧾 full-page modals
+
+---
+
+### ⚙️ Example:
+
+#### `WhispererScoreCard.tsx` becomes:
+
+```tsx
+<Card onClick={() => openDrawer('whisperer')}>
+  <Header>Whisperer Score</Header>
+  <MainScore>847</MainScore>
+  <Badge>Elite Trader</Badge>
+</Card>
+
+<Drawer isOpen={whispererOpen}>
+  <Tabs>
+    <Tab title="Breakdown" />
+    <Tab title="Conviction Map" />
+    <Tab title="Trade Timing" />
+  </Tabs>
+</Drawer>
+```
+
+---
+
+Want me to wireframe what that would look like visually?
