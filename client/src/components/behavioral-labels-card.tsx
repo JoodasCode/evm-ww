@@ -113,8 +113,19 @@ export function BehavioralLabelsCard({ walletAddress }: BehavioralLabelsCardProp
       </CardHeader>
       <CardContent className="space-y-4">
         {loading ? (
-          <div className="h-64 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          <div className="space-y-4">
+            {/* Skeleton for category summary */}
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 bg-muted/50 rounded-lg animate-pulse" />
+              ))}
+            </div>
+            {/* Skeleton for labels */}
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-20 bg-muted/30 rounded-lg animate-pulse" />
+              ))}
+            </div>
           </div>
         ) : error ? (
           <div className="h-64 flex items-center justify-center text-center">

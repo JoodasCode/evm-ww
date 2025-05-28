@@ -101,8 +101,20 @@ export function AlphaSyncCard({ walletAddress }: AlphaSyncCardProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         {loading ? (
-          <div className="h-64 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          <div className="space-y-6">
+            {/* Alpha Score Skeleton */}
+            <div className="text-center space-y-2">
+              <div className="h-16 w-32 bg-muted/50 rounded-lg mx-auto animate-pulse" />
+              <div className="h-6 w-24 bg-muted/30 rounded mx-auto animate-pulse" />
+              <div className="h-4 w-40 bg-muted/20 rounded mx-auto animate-pulse" />
+            </div>
+            {/* Alpha Moves Skeleton */}
+            <div className="space-y-3">
+              <div className="h-4 bg-muted/30 rounded w-1/3 animate-pulse" />
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 bg-muted/30 rounded-lg animate-pulse" />
+              ))}
+            </div>
           </div>
         ) : error ? (
           <div className="h-64 flex items-center justify-center text-center">

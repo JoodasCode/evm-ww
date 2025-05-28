@@ -32,6 +32,9 @@ export default function Dashboard() {
   const { data: tradingActivity = [], isLoading: activityLoading } = useTradingActivity();
 
   const isLoading = scoreLoading || balancesLoading || activityLoading;
+  
+  // Get current wallet address for components
+  const currentWallet = score?.wallet || "G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W";
 
   const getTabTitle = () => {
     switch (activeTab) {
@@ -79,8 +82,8 @@ export default function Dashboard() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <RiskAppetiteCard score={score} />
-              <DegenScoreCard walletAddress={score?.walletAddress || ''} />
-              <BehavioralLabelsCard walletAddress={score?.walletAddress || ''} />
+              <DegenScoreCard walletAddress={currentWallet} />
+              <BehavioralLabelsCard walletAddress={currentWallet} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <TradingPatternsCard score={score} />
@@ -93,12 +96,12 @@ export default function Dashboard() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <MissedOpportunitiesCard walletAddress={score?.walletAddress || ''} />
-              <TimingAnalysisCard walletAddress={score?.walletAddress || ''} />
+              <MissedOpportunitiesCard walletAddress={currentWallet} />
+              <TimingAnalysisCard walletAddress={currentWallet} />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <ConvictionMappingCard walletAddress={score?.walletAddress || ''} />
-              <IntegratedInsightsCard walletAddress={score?.walletAddress || ''} />
+              <ConvictionMappingCard walletAddress={currentWallet} />
+              <IntegratedInsightsCard walletAddress={currentWallet} />
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-4">Performance Metrics</h3>
                 <p className="text-muted-foreground">Advanced performance analytics coming soon</p>

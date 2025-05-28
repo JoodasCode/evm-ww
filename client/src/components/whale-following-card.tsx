@@ -123,8 +123,19 @@ export function WhaleFollowingCard({ walletAddress }: WhaleFollowingCardProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         {loading ? (
-          <div className="h-64 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          <div className="space-y-6">
+            {/* Summary Stats Skeleton */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="h-20 bg-muted/50 rounded-lg animate-pulse" />
+              <div className="h-20 bg-muted/50 rounded-lg animate-pulse" />
+            </div>
+            {/* Correlations Skeleton */}
+            <div className="space-y-3">
+              <div className="h-4 bg-muted/30 rounded w-1/3 animate-pulse" />
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-24 bg-muted/30 rounded-lg animate-pulse" />
+              ))}
+            </div>
           </div>
         ) : error ? (
           <div className="h-64 flex items-center justify-center text-center">
