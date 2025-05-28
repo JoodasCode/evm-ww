@@ -40,59 +40,87 @@ export function ModernWhispererScoreCard({ walletAddress }: ModernWhispererScore
   };
 
   return (
-    <Card className="h-[400px] flex flex-col">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-2">
-          <Brain className="h-5 w-5 text-purple-500" />
-          <CardTitle className="text-xl">Whisperer Score</CardTitle>
+    <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
+      <CardHeader className="pb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
+              <Brain className="h-5 w-5 text-purple-400" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-semibold text-foreground">
+                Whisperer Score
+              </CardTitle>
+              <CardDescription className="text-muted-foreground mt-1">
+                Overall trading intelligence and psychological assessment
+              </CardDescription>
+            </div>
+          </div>
         </div>
-        <CardDescription>Overall trading intelligence and psychological assessment</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-4 flex-1 overflow-hidden">
+      <CardContent className="space-y-6">
         {/* Main Score */}
-        <div className="text-center space-y-3">
-          <div className="text-5xl font-bold">
-            <span className={getScoreColor(scoreData.score, scoreData.maxScore)}>{scoreData.score}</span>
-            <span className="text-muted-foreground text-lg">/{scoreData.maxScore}</span>
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="text-6xl font-bold tracking-tight">
+              <span className={getScoreColor(scoreData.score, scoreData.maxScore)}>{scoreData.score}</span>
+              <span className="text-muted-foreground/70 text-2xl font-medium">/{scoreData.maxScore}</span>
+            </div>
+            <div className="mt-4 space-y-2">
+              <Badge 
+                variant="outline" 
+                className={`px-4 py-1.5 text-sm font-medium rounded-full ${getRankColor(scoreData.rank)}`}
+              >
+                {scoreData.rank}
+              </Badge>
+              <p className="text-sm text-muted-foreground">
+                Top {scoreData.percentile}% of all traders
+              </p>
+            </div>
           </div>
-          <Badge variant="outline" className={`text-sm px-3 py-1 ${getRankColor(scoreData.rank)}`}>
-            {scoreData.rank}
-          </Badge>
-          <p className="text-sm text-muted-foreground">
-            Top {scoreData.percentile}% of all traders
-          </p>
         </div>
 
-        <Separator />
+        <Separator className="bg-border/50" />
 
         {/* Category Breakdown */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-blue-500" />
-            Score Breakdown
-          </h4>
-          <div className="space-y-3 max-h-32 overflow-y-auto">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <h4 className="text-sm font-semibold text-foreground">Score Breakdown</h4>
+          </div>
+          
+          <div className="space-y-4">
             {scoreData.categories.map((category, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">{category.name}</span>
-                  <span className={getScoreColor(category.score, category.max)}>
+              <div key={index} className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">{category.name}</span>
+                  <span className={`text-sm font-semibold ${getScoreColor(category.score, category.max)}`}>
                     {category.score}/{category.max}
                   </span>
                 </div>
-                <Progress value={category.score} className="h-2" />
+                <Progress 
+                  value={category.score} 
+                  className="h-2 bg-muted rounded-full overflow-hidden"
+                />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Insight */}
-        <div className="bg-purple-500/5 rounded-lg p-3 border border-purple-500/20">
-          <p className="text-xs font-medium text-purple-600 mb-1">🧠 Intelligence Summary</p>
-          <p className="text-xs text-muted-foreground">
-            Exceptional trading psychology with strong risk management. Focus on improving timing precision for elite performance.
-          </p>
+        {/* Intelligence Summary */}
+        <div className="relative p-4 rounded-xl bg-purple-500/5 ring-1 ring-purple-500/10">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0 w-2 h-2 rounded-full bg-purple-400 mt-2" />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">
+                Intelligence Summary
+              </p>
+              <p className="text-sm text-foreground/80 leading-relaxed">
+                Exceptional trading psychology with strong risk management. Focus on improving timing precision for elite performance.
+              </p>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
