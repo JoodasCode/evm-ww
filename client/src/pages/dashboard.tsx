@@ -59,7 +59,7 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="grid grid-cols-12 gap-4 scale-75 origin-top-left transform-gpu">
+          <div className="grid grid-cols-12 gap-6">
             {/* Top Row: Whisperer Score (large), Degen Score (medium), Risk Appetite (small) */}
             <div className="col-span-5">
               <ModernWhispererScoreCard walletAddress={currentWallet} />
@@ -85,7 +85,7 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="grid grid-cols-12 gap-4 scale-75 origin-top-left transform-gpu">
+          <div className="grid grid-cols-12 gap-6">
             {/* Trade Frequency - larger card */}
             <div className="col-span-6">
               <ModernTradeFrequencyCard walletAddress={currentWallet} />
