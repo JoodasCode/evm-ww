@@ -11,6 +11,14 @@ import { TradingActivityCard } from "@/components/trading-activity-card";
 import { RiskAppetiteCard } from "@/components/risk-appetite-card";
 import { TradingPatternsCard } from "@/components/trading-patterns-card";
 import { OvertradingCard } from "@/components/overtrading-card";
+import { DegenScoreCard } from "@/components/degen-score-card";
+import { BehavioralLabelsCard } from "@/components/behavioral-labels-card";
+import { IntegratedInsightsCard } from "@/components/integrated-insights-card";
+import { MissedOpportunitiesCard } from "@/components/missed-opportunities-card";
+import { TimingAnalysisCard } from "@/components/timing-analysis-card";
+import { ConvictionMappingCard } from "@/components/conviction-mapping-card";
+import { WhaleFollowingCard } from "@/components/whale-following-card";
+import { AlphaSyncCard } from "@/components/alpha-sync-card";
 import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
 import { useWallet } from "@/hooks/use-wallet";
 
@@ -69,49 +77,31 @@ export default function Dashboard() {
       case "behavior":
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <RiskAppetiteCard score={score} />
-              <TradingPatternsCard score={score} />
-            </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <RiskAppetiteCard score={score} />
+              <DegenScoreCard walletAddress={score?.walletAddress || ''} />
+              <BehavioralLabelsCard walletAddress={score?.walletAddress || ''} />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <TradingPatternsCard score={score} />
               <OvertradingCard score={score} />
-              <div className="bg-card border border-border rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-foreground mb-3">Time Bias</h3>
-                <p className="text-sm text-muted-foreground">Coming soon - Detailed time-of-day trading analysis</p>
-              </div>
-              <div className="bg-card border border-border rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-foreground mb-3">Investment Focus</h3>
-                <p className="text-sm text-muted-foreground">Coming soon - Token category breakdown</p>
-              </div>
             </div>
           </div>
         );
       
       case "insight":
         return (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Missed Opportunities</h3>
-                <p className="text-muted-foreground">Coming soon - Analysis of potential gains from missed trades</p>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Timing Analysis</h3>
-                <p className="text-muted-foreground">Coming soon - Entry and exit timing accuracy</p>
-              </div>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <MissedOpportunitiesCard walletAddress={score?.walletAddress || ''} />
+              <TimingAnalysisCard walletAddress={score?.walletAddress || ''} />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Conviction Mapping</h3>
-                <p className="text-muted-foreground">Coming soon - Position size vs conviction analysis</p>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Repeat Patterns</h3>
-                <p className="text-muted-foreground">Coming soon - Behavioral pattern detection</p>
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <ConvictionMappingCard walletAddress={score?.walletAddress || ''} />
+              <IntegratedInsightsCard walletAddress={score?.walletAddress || ''} />
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-4">Performance Metrics</h3>
-                <p className="text-muted-foreground">Coming soon - Advanced performance analytics</p>
+                <p className="text-muted-foreground">Advanced performance analytics coming soon</p>
               </div>
             </div>
           </div>
@@ -119,29 +109,23 @@ export default function Dashboard() {
       
       case "influence":
         return (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Whale Following Index</h3>
-                <p className="text-muted-foreground">Coming soon - Smart money correlation analysis</p>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Alpha Sync Score</h3>
-                <p className="text-muted-foreground">Coming soon - Early opportunity detection</p>
-              </div>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <WhaleFollowingCard walletAddress="G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W" />
+              <AlphaSyncCard walletAddress="G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W" />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-4">Market Impact</h3>
-                <p className="text-muted-foreground">Coming soon - Transaction impact analysis</p>
+                <p className="text-muted-foreground">Transaction impact analysis coming soon</p>
               </div>
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-4">Social Signals</h3>
-                <p className="text-muted-foreground">Coming soon - Social media influence tracking</p>
+                <p className="text-muted-foreground">Social media influence tracking coming soon</p>
               </div>
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-4">Network Position</h3>
-                <p className="text-muted-foreground">Coming soon - Wallet network analysis</p>
+                <p className="text-muted-foreground">Wallet network analysis coming soon</p>
               </div>
             </div>
           </div>

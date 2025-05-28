@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Whale, Users, TrendingUp, Clock, Loader2 } from 'lucide-react';
+import { Fish, Users, TrendingUp, Clock, Loader2 } from 'lucide-react';
 
 interface WhaleCorrelation {
   whaleName: string;
@@ -114,7 +114,7 @@ export function WhaleFollowingCard({ walletAddress }: WhaleFollowingCardProps) {
     <Card className="h-[500px]">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl flex items-center gap-2">
-          <Whale className="h-5 w-5 text-blue-500" />
+          <Fish className="h-5 w-5 text-blue-500" />
           Whale Following Index
         </CardTitle>
         <CardDescription>
@@ -214,7 +214,7 @@ export function WhaleFollowingCard({ walletAddress }: WhaleFollowingCardProps) {
 
             {/* Action Button */}
             <Button className="w-full" variant="outline">
-              <Whale className="h-4 w-4 mr-2" />
+              <Fish className="h-4 w-4 mr-2" />
               View Detailed Whale Analysis
             </Button>
 
