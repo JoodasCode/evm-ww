@@ -176,7 +176,7 @@ export function ModernWhaleFollowingCard({ walletAddress }: WhaleFollowingCardPr
   }
 
   return (
-    <Card className="h-[550px]">
+    <Card className="h-[550px] flex flex-col">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <Fish className="h-5 w-5 text-blue-500" />
@@ -185,7 +185,7 @@ export function ModernWhaleFollowingCard({ walletAddress }: WhaleFollowingCardPr
         <CardDescription>Smart money correlation analysis and whale movement tracking</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 flex-1 overflow-hidden">
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="text-center p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors">
@@ -218,7 +218,7 @@ export function ModernWhaleFollowingCard({ walletAddress }: WhaleFollowingCardPr
             <Users className="h-4 w-4 text-blue-500" />
             Top Whale Correlations
           </h4>
-          <div className="space-y-3 max-h-64 overflow-auto">
+          <div className="space-y-3 max-h-48 overflow-y-auto">
             {whaleData.correlations.map((whale, index) => (
               <div 
                 key={index}

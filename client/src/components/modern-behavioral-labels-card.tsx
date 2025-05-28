@@ -154,7 +154,7 @@ export function ModernBehavioralLabelsCard({ walletAddress }: BehavioralLabelsCa
   }));
 
   return (
-    <Card className="h-[450px]">
+    <Card className="h-[450px] flex flex-col">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <Tags className="h-5 w-5 text-primary" />
@@ -163,7 +163,7 @@ export function ModernBehavioralLabelsCard({ walletAddress }: BehavioralLabelsCa
         <CardDescription>AI-powered behavioral classification and trading psychology labels</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 flex-1 overflow-hidden">
         {/* Category Summary */}
         <div className="grid grid-cols-3 gap-3">
           {categoryStats.map(({ category, count }) => (
@@ -180,7 +180,7 @@ export function ModernBehavioralLabelsCard({ walletAddress }: BehavioralLabelsCa
         <Separator />
 
         {/* Labels List */}
-        <div className="space-y-3 max-h-52 overflow-auto">
+        <div className="space-y-3 max-h-40 overflow-y-auto">
           {labels.map((label, index) => (
             <div 
               key={index}
