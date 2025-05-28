@@ -7,183 +7,237 @@ import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-ca
 import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
 import { ModernArchetypeCard } from "@/components/modern-archetype-card";
 import { ModernLabelSummaryCard } from "@/components/modern-label-summary-card";
-import { EnhancedDegenScoreCard } from "@/components/enhanced-degen-score-card";
 import { ModernTradeFrequencyCard } from "@/components/modern-trade-frequency-card";
 import { ModernTokenCategoryCard } from "@/components/modern-token-category-card";
-import { ModernMissedOpportunitiesCard } from "@/components/modern-missed-opportunities-card";
-import { ModernTimingAnalysisCard } from "@/components/modern-timing-analysis-card";
-import { ModernConvictionMappingCard } from "@/components/modern-conviction-mapping-card";
-import { ModernPatternAnalysisCard } from "@/components/modern-pattern-analysis-card";
-import { ModernLabelEngineHistoryCard } from "@/components/modern-label-engine-history-card";
-import { ModernMoodTimelineCard } from "@/components/modern-mood-timeline-card";
-import { ModernScoreRegressionCard } from "@/components/modern-score-regression-card";
-import { ComingSoonCard } from "@/components/coming-soon-card";
-import { useWhispererScore, useTokenBalances, useTradingActivity, useRefreshData } from "@/hooks/use-wallet-data";
+import { EnhancedDegenScoreCard } from "@/components/enhanced-degen-score-card";
 import { useWallet } from "@/hooks/use-wallet";
-import { getMockDataForWallet } from "@/lib/mock-data";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [activeSubTab, setActiveSubTab] = useState("trade-frequency");
   const { isSimulated } = useWallet();
-  const { refreshAll } = useRefreshData();
   
-  const { data: score, isLoading: scoreLoading } = useWhispererScore();
-  const { data: tokenBalances = [], isLoading: balancesLoading } = useTokenBalances();
-  const { data: tradingActivity = [], isLoading: activityLoading } = useTradingActivity();
-
-  const isLoading = scoreLoading || balancesLoading || activityLoading;
+  const refreshAll = () => {
+    // Refresh functionality placeholder
+    console.log('Refreshing data...');
+  };
   
-  // Get current wallet address for components
   const currentWallet = "G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W";
 
   const getTabTitle = () => {
     switch (activeTab) {
-      case "overview": return { title: "Portfolio Overview", subtitle: "Comprehensive wallet analysis and psychological insights" };
-      case "behavior": return { title: "Trading Behavior", subtitle: "Deep dive into your trading patterns and risk appetite" };
-      case "insight": return { title: "Performance Insights", subtitle: "Discover missed opportunities and optimize your strategy" };
-      case "influence": return { title: "Market Influence", subtitle: "Understand your position in the trading ecosystem" };
-      case "settings": return { title: "Settings & Preferences", subtitle: "Manage your account and privacy settings" };
-      default: return { title: "Portfolio Overview", subtitle: "Comprehensive wallet analysis and psychological insights" };
+      case "overview":
+        return { title: "Portfolio Overview", subtitle: "Complete wallet analysis and key metrics" };
+      case "behavior":
+        return { title: "Trading Behavior", subtitle: "Analyze trading patterns and behaviors" };
+      case "insight":
+        return { title: "Market Insights", subtitle: "Advanced market intelligence and timing" };
+      case "influence":
+        return { title: "Market Influence", subtitle: "Social signals and market positioning" };
+      case "settings":
+        return { title: "Settings", subtitle: "Configure your analysis preferences" };
+      default:
+        return { title: "Dashboard", subtitle: "Wallet intelligence platform" };
     }
+  };
+
+  const getSubTabs = (tab: string) => {
+    switch (tab) {
+      case "behavior":
+        return [
+          { id: "trade-frequency", label: "Trade Frequency" },
+          { id: "token-categories", label: "Token Categories" },
+          { id: "degen-score", label: "Degen Score" },
+          { id: "risk-profile", label: "Risk Profile" }
+        ];
+      case "insight":
+        return [
+          { id: "whisperer-score", label: "Whisperer Score" },
+          { id: "timing-accuracy", label: "Timing Accuracy" },
+          { id: "conviction-map", label: "Conviction Map" }
+        ];
+      case "influence":
+        return [
+          { id: "whale-following", label: "Whale Following" },
+          { id: "alpha-signals", label: "Alpha Signals" },
+          { id: "market-sentiment", label: "Market Sentiment" }
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const renderSubTabContent = () => {
+    if (activeTab === "overview") {
+      return (
+        <div className="space-y-4 w-full">
+          {/* Top Row - Key Metrics */}
+          <div className="grid grid-cols-12 gap-4 w-full">
+            <div className="col-span-4">
+              <ModernWhispererScoreCard walletAddress={currentWallet} />
+            </div>
+            <div className="col-span-4">
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            <div className="col-span-4">
+              <ModernRiskAppetiteCard walletAddress={currentWallet} />
+            </div>
+          </div>
+          
+          {/* Second Row - Archetype */}
+          <div className="grid grid-cols-12 gap-4 w-full">
+            <div className="col-span-12">
+              <ModernArchetypeCard walletAddress={currentWallet} />
+            </div>
+          </div>
+          
+          {/* Bottom Row - Labels */}
+          <div className="grid grid-cols-12 gap-4 w-full">
+            <div className="col-span-12">
+              <ModernLabelSummaryCard walletAddress={currentWallet} />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Behavior subtabs
+    if (activeTab === "behavior") {
+      switch (activeSubTab) {
+        case "trade-frequency":
+          return <ModernTradeFrequencyCard walletAddress={currentWallet} />;
+        case "token-categories":
+          return <ModernTokenCategoryCard walletAddress={currentWallet} />;
+        case "degen-score":
+          return <EnhancedDegenScoreCard walletAddress={currentWallet} />;
+        case "risk-profile":
+          return <ModernRiskAppetiteCard walletAddress={currentWallet} />;
+        default:
+          return <ModernTradeFrequencyCard walletAddress={currentWallet} />;
+      }
+    }
+
+    // Insight subtabs
+    if (activeTab === "insight") {
+      switch (activeSubTab) {
+        case "whisperer-score":
+          return <ModernWhispererScoreCard walletAddress={currentWallet} />;
+        case "timing-accuracy":
+          return (
+            <div className="bg-card border border-border rounded-xl p-8 text-center">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Timing Accuracy</h3>
+              <p className="text-muted-foreground">Advanced timing analysis coming soon</p>
+            </div>
+          );
+        case "conviction-map":
+          return (
+            <div className="bg-card border border-border rounded-xl p-8 text-center">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Conviction Map</h3>
+              <p className="text-muted-foreground">Conviction mapping analysis coming soon</p>
+            </div>
+          );
+        default:
+          return <ModernWhispererScoreCard walletAddress={currentWallet} />;
+      }
+    }
+
+    // Influence subtabs
+    if (activeTab === "influence") {
+      switch (activeSubTab) {
+        case "whale-following":
+          return (
+            <div className="bg-card border border-border rounded-xl p-8 text-center">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Whale Following</h3>
+              <p className="text-muted-foreground">Whale tracking analysis coming soon</p>
+            </div>
+          );
+        case "alpha-signals":
+          return (
+            <div className="bg-card border border-border rounded-xl p-8 text-center">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Alpha Signals</h3>
+              <p className="text-muted-foreground">Alpha signal detection coming soon</p>
+            </div>
+          );
+        case "market-sentiment":
+          return (
+            <div className="bg-card border border-border rounded-xl p-8 text-center">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Market Sentiment</h3>
+              <p className="text-muted-foreground">Sentiment analysis coming soon</p>
+            </div>
+          );
+        default:
+          return (
+            <div className="bg-card border border-border rounded-xl p-8 text-center">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Whale Following</h3>
+              <p className="text-muted-foreground">Whale tracking analysis coming soon</p>
+            </div>
+          );
+      }
+    }
+
+    // Settings tab
+    if (activeTab === "settings") {
+      return (
+        <div className="max-w-4xl space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Data Management</h3>
+              <div className="space-y-3">
+                <Button onClick={refreshAll} className="w-full justify-start" variant="outline">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh Analysis
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  Clear Cache
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  Export Data
+                </Button>
+              </div>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Privacy Settings</h3>
+              <p className="text-muted-foreground">Privacy and data sharing preferences coming soon</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return <div className="text-foreground">Select a tab</div>;
+  };
+
+  const renderTabContent = () => {
+    const subTabs = getSubTabs(activeTab);
+    
+    return (
+      <div className="w-full">
+        {/* Sub Navigation */}
+        {subTabs.length > 0 && (
+          <div className="flex space-x-1 mb-6 bg-slate-800/30 rounded-lg p-1">
+            {subTabs.map((subTab) => (
+              <button
+                key={subTab.id}
+                onClick={() => setActiveSubTab(subTab.id)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeSubTab === subTab.id
+                    ? "bg-slate-700 text-white shadow-lg"
+                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                }`}
+              >
+                {subTab.label}
+              </button>
+            ))}
+          </div>
+        )}
+        
+        {/* Content */}
+        {renderSubTabContent()}
+      </div>
+    );
   };
 
   const tabInfo = getTabTitle();
-
-  const renderTabContent = () => {
-    // Use your comprehensive mock data for immediate display
-    const mockData = getMockDataForWallet(currentWallet);
-    const displayScore = mockData.score;
-    const displayHoldings = mockData.holdings;
-    const displayTrades = mockData.trades;
-
-    switch (activeTab) {
-      case "overview":
-        return (
-          <div className="space-y-4 w-full">
-            {/* Top Row - Key Metrics */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-4">
-                <ModernWhispererScoreCard walletAddress={currentWallet} />
-              </div>
-              <div className="col-span-4">
-                <EnhancedDegenScoreCard walletAddress={currentWallet} />
-              </div>
-              <div className="col-span-4">
-                <ModernRiskAppetiteCard walletAddress={currentWallet} />
-              </div>
-            </div>
-            
-            {/* Second Row - Archetype */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-12">
-                <ModernArchetypeCard walletAddress={currentWallet} />
-              </div>
-            </div>
-            
-            {/* Bottom Row - Labels */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-12">
-                <ModernLabelSummaryCard walletAddress={currentWallet} />
-              </div>
-            </div>
-          </div>
-        );
-      
-      case "behavior":
-        return (
-          <div className="space-y-4 w-full">
-            {/* Top Row - Trading Metrics */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-6">
-                <ModernTradeFrequencyCard walletAddress={currentWallet} />
-              </div>
-              <div className="col-span-6">
-                <ModernTokenCategoryCard walletAddress={currentWallet} />
-              </div>
-            </div>
-            
-            {/* Bottom Row - Degen Score */}
-            <div className="grid grid-cols-12 gap-4 w-full">
-              <div className="col-span-12">
-                <EnhancedDegenScoreCard walletAddress={currentWallet} />
-              </div>
-            </div>
-          </div>
-        );
-      
-      case "insight":
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ModernMissedOpportunitiesCard walletAddress={currentWallet} />
-              <ModernTimingAnalysisCard walletAddress={currentWallet} />
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <ModernConvictionMappingCard walletAddress={currentWallet} />
-              <IntegratedInsightsCard walletAddress={currentWallet} />
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Performance Metrics</h3>
-                <p className="text-muted-foreground">Advanced performance analytics coming soon</p>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case "influence":
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ModernWhaleFollowingCard walletAddress={currentWallet} />
-              <ModernAlphaSyncCard walletAddress={currentWallet} />
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Market Impact</h3>
-                <p className="text-muted-foreground">Transaction impact analysis coming soon</p>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Social Signals</h3>
-                <p className="text-muted-foreground">Social media influence tracking coming soon</p>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Network Position</h3>
-                <p className="text-muted-foreground">Wallet network analysis coming soon</p>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case "settings":
-        return (
-          <div className="max-w-4xl space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Data Management</h3>
-                <div className="space-y-3">
-                  <Button onClick={refreshAll} className="w-full justify-start" variant="outline">
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Refresh Analysis
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline">
-                    Clear Cache
-                  </Button>
-                  <Button className="w-full justify-start" variant="outline">
-                    Export Data
-                  </Button>
-                </div>
-              </div>
-              <div className="bg-card border border-border rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-foreground mb-4">Privacy Settings</h3>
-                <p className="text-muted-foreground">Coming soon - Privacy and data sharing preferences</p>
-              </div>
-            </div>
-          </div>
-        );
-      
-      default:
-        return null;
-    }
-  };
 
   return (
     <div className="flex h-screen bg-background">
