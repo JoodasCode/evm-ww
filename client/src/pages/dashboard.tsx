@@ -59,9 +59,9 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-3 scale-[0.85] origin-top-left transform-gpu w-full">
+          <div className="space-y-4 w-full">
             {/* Top Row - Key Metrics */}
-            <div className="grid grid-cols-12 gap-3 w-full">
+            <div className="grid grid-cols-12 gap-4 w-full">
               <div className="col-span-4">
                 <ModernWhispererScoreCard walletAddress={currentWallet} />
               </div>
@@ -74,14 +74,14 @@ export default function Dashboard() {
             </div>
             
             {/* Second Row - Archetype */}
-            <div className="grid grid-cols-12 gap-3 w-full">
+            <div className="grid grid-cols-12 gap-4 w-full">
               <div className="col-span-12">
                 <ModernArchetypeCard walletAddress={currentWallet} />
               </div>
             </div>
             
             {/* Bottom Row - Labels */}
-            <div className="grid grid-cols-12 gap-3 w-full">
+            <div className="grid grid-cols-12 gap-4 w-full">
               <div className="col-span-12">
                 <ModernLabelSummaryCard walletAddress={currentWallet} />
               </div>
@@ -91,9 +91,9 @@ export default function Dashboard() {
       
       case "behavior":
         return (
-          <div className="space-y-3 scale-[0.85] origin-top-left transform-gpu w-full">
+          <div className="space-y-4 w-full">
             {/* Top Row - Trading Metrics */}
-            <div className="grid grid-cols-12 gap-3 w-full">
+            <div className="grid grid-cols-12 gap-4 w-full">
               <div className="col-span-6">
                 <ModernTradeFrequencyCard walletAddress={currentWallet} />
               </div>
@@ -103,7 +103,7 @@ export default function Dashboard() {
             </div>
             
             {/* Bottom Row - Degen Score */}
-            <div className="grid grid-cols-12 gap-3 w-full">
+            <div className="grid grid-cols-12 gap-4 w-full">
               <div className="col-span-12">
                 <EnhancedDegenScoreCard walletAddress={currentWallet} />
               </div>
