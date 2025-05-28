@@ -59,31 +59,25 @@ export default function Dashboard() {
 
     switch (activeTab) {
       case "overview":
-        const breakpointColumnsObj = {
-          default: 3,
-          1100: 2,
-          700: 1
-        };
-        
         return (
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="flex w-auto -ml-6"
-            columnClassName="pl-6 bg-clip-padding"
-          >
-            <div className="mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(200px,_auto)] gap-6">
+            {/* Primary Whisperer Score - spans 2 columns for prominence */}
+            <div className="lg:col-span-2">
               <ModernWhispererScoreCard walletAddress={currentWallet} />
             </div>
-            <div className="mb-6">
+            
+            {/* Degen Score - normal height */}
+            <div>
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
             </div>
-            <div className="mb-6">
+            
+            {/* Risk Appetite - compact */}
+            <div>
               <ModernRiskAppetiteCard walletAddress={currentWallet} />
             </div>
-            <div className="mb-6">
-              <ModernArchetypeCard walletAddress={currentWallet} />
-            </div>
-            <div className="mb-6">
+            
+            {/* Portfolio Performance - tall card */}
+            <div className="row-span-2">
               <ComingSoonCard 
                 title="Portfolio Performance" 
                 description="ROI tracking and performance analytics"
@@ -91,7 +85,14 @@ export default function Dashboard() {
                 size="large"
               />
             </div>
-            <div className="mb-6">
+            
+            {/* Archetype - compact */}
+            <div>
+              <ModernArchetypeCard walletAddress={currentWallet} />
+            </div>
+            
+            {/* Social Sentiment - small card */}
+            <div>
               <ComingSoonCard 
                 title="Social Sentiment" 
                 description="Community sentiment and social signals"
@@ -99,29 +100,29 @@ export default function Dashboard() {
                 size="small"
               />
             </div>
-            <div className="mb-6">
+            
+            {/* Label Summary - spans full width */}
+            <div className="md:col-span-2 lg:col-span-3">
               <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
-          </Masonry>
+          </div>
         );
       
       case "behavior":
         return (
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="flex w-auto -ml-6"
-            columnClassName="pl-6 bg-clip-padding"
-          >
-            <div className="mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(200px,_auto)] gap-6">
+            {/* Trade Frequency - spans 2 columns for detailed data */}
+            <div className="lg:col-span-2">
               <ModernTradeFrequencyCard walletAddress={currentWallet} />
             </div>
-            <div className="mb-6">
+            
+            {/* Token Categories - normal size */}
+            <div>
               <ModernTokenCategoryCard walletAddress={currentWallet} />
             </div>
-            <div className="mb-6">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="mb-6">
+            
+            {/* Transaction Patterns - tall card */}
+            <div className="row-span-2">
               <ComingSoonCard 
                 title="Transaction Patterns" 
                 description="Advanced transaction flow analysis"
@@ -129,7 +130,14 @@ export default function Dashboard() {
                 size="large"
               />
             </div>
-            <div className="mb-6">
+            
+            {/* Degen Score - normal size */}
+            <div>
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            
+            {/* Wallet Clustering - spans full width */}
+            <div className="md:col-span-2 lg:col-span-3">
               <ComingSoonCard 
                 title="Wallet Clustering" 
                 description="Multi-wallet behavior analysis"
@@ -137,7 +145,7 @@ export default function Dashboard() {
                 size="medium"
               />
             </div>
-          </Masonry>
+          </div>
         );
       
       case "insight":
