@@ -59,46 +59,54 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="grid grid-cols-12 gap-4 scale-75 origin-top-left transform-gpu">
-            {/* Top Row: Whisperer Score (large), Degen Score (medium), Risk Appetite (small) */}
-            <div className="col-span-5">
-              <ModernWhispererScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="col-span-4">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="col-span-3">
-              <ModernRiskAppetiteCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Second Row: Just Archetype */}
-            <div className="col-span-12">
-              <ModernArchetypeCard walletAddress={currentWallet} />
+          <div className="space-y-3 scale-[0.85] origin-top-left transform-gpu">
+            {/* Top Row - Key Metrics */}
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-4">
+                <ModernWhispererScoreCard walletAddress={currentWallet} />
+              </div>
+              <div className="col-span-4">
+                <EnhancedDegenScoreCard walletAddress={currentWallet} />
+              </div>
+              <div className="col-span-4">
+                <ModernRiskAppetiteCard walletAddress={currentWallet} />
+              </div>
             </div>
             
-            {/* Bottom Row: Label Engine spans full width */}
-            <div className="col-span-12">
-              <ModernLabelSummaryCard walletAddress={currentWallet} />
+            {/* Second Row - Archetype */}
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-12">
+                <ModernArchetypeCard walletAddress={currentWallet} />
+              </div>
+            </div>
+            
+            {/* Bottom Row - Labels */}
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-12">
+                <ModernLabelSummaryCard walletAddress={currentWallet} />
+              </div>
             </div>
           </div>
         );
       
       case "behavior":
         return (
-          <div className="grid grid-cols-12 gap-4 scale-75 origin-top-left transform-gpu">
-            {/* Trade Frequency - larger card */}
-            <div className="col-span-6">
-              <ModernTradeFrequencyCard walletAddress={currentWallet} />
+          <div className="space-y-3 scale-[0.85] origin-top-left transform-gpu">
+            {/* Top Row - Trading Metrics */}
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-6">
+                <ModernTradeFrequencyCard walletAddress={currentWallet} />
+              </div>
+              <div className="col-span-6">
+                <ModernTokenCategoryCard walletAddress={currentWallet} />
+              </div>
             </div>
             
-            {/* Token Categories */}
-            <div className="col-span-6">
-              <ModernTokenCategoryCard walletAddress={currentWallet} />
-            </div>
-            
-            {/* Degen Score - full width */}
-            <div className="col-span-12">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            {/* Bottom Row - Degen Score */}
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-12">
+                <EnhancedDegenScoreCard walletAddress={currentWallet} />
+              </div>
             </div>
           </div>
         );
