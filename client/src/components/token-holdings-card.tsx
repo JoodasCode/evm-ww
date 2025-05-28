@@ -67,20 +67,20 @@ export function TokenHoldingsCard({ tokenBalances }: TokenHoldingsCardProps) {
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={token.logo || undefined} alt={token.symbol} />
                   <AvatarFallback className="bg-accent text-accent-foreground">
-                    {token.symbol.slice(0, 2)}
+                    {(token.tokenSymbol || token.symbol || 'N/A').slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-foreground">{token.symbol}</p>
-                  <p className="text-sm text-muted-foreground">{token.name}</p>
+                  <p className="font-medium text-foreground">{token.tokenSymbol || token.symbol || 'Unknown'}</p>
+                  <p className="text-sm text-muted-foreground">{token.tokenName || token.name || 'Unknown Token'}</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="font-medium text-foreground">
-                  {formatTokenAmount(token.amount, token.decimals, token.symbol)}
+                  {token.tokenSymbol || token.symbol}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {formatCurrency(token.usdValue)}
+                  ${(token.value || 0).toLocaleString()}
                 </p>
               </div>
             </div>
