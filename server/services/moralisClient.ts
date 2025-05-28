@@ -1,67 +1,54 @@
 /**
  * Moralis API Client
  * 
- * This client handles all interactions with the Moralis API for token data.
+ * Handles all interactions with the Moralis API for token metadata and prices
  */
 
+import axios from 'axios';
 import config from '../config';
 
-// API key and URL from config
-const MORALIS_API_KEY = process.env.MORALIS_API_KEY || config.moralis.apiKey;
-const MORALIS_API_URL = config.moralis.apiUrl;
+const moralisApi = axios.create({
+  baseURL: config.moralis.apiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': config.moralis.apiKey,
+  },
+});
 
-/**
- * Fetches token price data
- * @param tokenAddress - The token mint address
- * @returns Token price data from Moralis
- */
-export async function fetchTokenPrice(tokenAddress: string): Promise<any> {
-  try {
-    const response = await fetch(`${MORALIS_API_URL}/token/mainnet/${tokenAddress}/price`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'X-API-Key': MORALIS_API_KEY
-      }
-    });
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null; // Token not found
-      }
-      throw new Error(`Moralis API error: ${response.status}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching token price from Moralis:', error);
-    return null;
-  }
+export interface TokenMetadata {
+  name: string;
+  symbol: string;
+  decimals: number;
+  logo?: string;
+  category?: string;
+}
+
+export interface TokenPrice {
+  usdPrice: number;
+  '24hrPercentChange'?: number;
+  timestamp: number;
 }
 
 /**
- * Fetches token metadata
- * @param tokenAddress - The token mint address
- * @returns Token metadata from Moralis
+ * Fetch token metadata from Moralis
  */
-export async function fetchTokenMetadata(tokenAddress: string): Promise<any> {
+export async function fetchTokenMetadata(tokenAddress: string): Promise<TokenMetadata | null> {
   try {
-    const response = await fetch(`${MORALIS_API_URL}/token/mainnet/${tokenAddress}/metadata`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'X-API-Key': MORALIS_API_KEY
-      }
+    const response = await moralisApi.get(`/token/${tokenAddress}/metadata`, {
+      params: {
+        network: 'mainnet',
+      },
     });
+
+    const data = response.data;
     
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null; // Token not found
-      }
-      throw new Error(`Moralis API error: ${response.status}`);
-    }
-    
-    return await response.json();
+    return {
+      name: data.name || 'Unknown Token',
+      symbol: data.symbol || 'UNKNOWN',
+      decimals: data.decimals || 9,
+      logo: data.logo,
+      category: data.category,
+    };
   } catch (error) {
     console.error('Error fetching token metadata from Moralis:', error);
     return null;
@@ -69,25 +56,55 @@ export async function fetchTokenMetadata(tokenAddress: string): Promise<any> {
 }
 
 /**
- * Fetches multiple token prices in a single request
- * @param tokenAddresses - Array of token mint addresses
- * @returns Object with token prices keyed by address
+ * Fetch token price from Moralis
  */
-export async function fetchMultipleTokenPrices(tokenAddresses: string[]): Promise<Record<string, any>> {
+export async function fetchTokenPrice(tokenAddress: string): Promise<TokenPrice | null> {
   try {
-    // Moralis doesn't have a bulk endpoint, so we need to make multiple requests
-    const promises = tokenAddresses.map(address => fetchTokenPrice(address));
-    const results = await Promise.all(promises);
+    const response = await moralisApi.get(`/token/${tokenAddress}/price`, {
+      params: {
+        network: 'mainnet',
+      },
+    });
+
+    const data = response.data;
     
-    // Create a map of address to price data
-    const priceMap: Record<string, any> = {};
-    tokenAddresses.forEach((address, index) => {
-      priceMap[address] = results[index];
+    return {
+      usdPrice: data.usdPrice || 0,
+      '24hrPercentChange': data['24hrPercentChange'],
+      timestamp: Date.now(),
+    };
+  } catch (error) {
+    console.error('Error fetching token price from Moralis:', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch multiple token prices in batch
+ */
+export async function fetchTokenPricesBatch(tokenAddresses: string[]): Promise<Record<string, TokenPrice>> {
+  const prices: Record<string, TokenPrice> = {};
+  
+  // Process in smaller batches to avoid rate limits
+  const batchSize = 5;
+  
+  for (let i = 0; i < tokenAddresses.length; i += batchSize) {
+    const batch = tokenAddresses.slice(i, i + batchSize);
+    
+    const batchPromises = batch.map(async (address) => {
+      const price = await fetchTokenPrice(address);
+      if (price) {
+        prices[address] = price;
+      }
     });
     
-    return priceMap;
-  } catch (error) {
-    console.error('Error fetching multiple token prices:', error);
-    return {};
+    await Promise.all(batchPromises);
+    
+    // Small delay between batches to respect rate limits
+    if (i + batchSize < tokenAddresses.length) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
   }
+  
+  return prices;
 }

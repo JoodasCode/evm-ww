@@ -1,123 +1,133 @@
 /**
- * Redis caching service for Wallet Whisperer
- *
- * This service handles caching using Redis for production and
- * falls back to in-memory caching for development.
+ * Redis Service
+ * 
+ * Handles caching with Redis and in-memory fallback
  */
-import { Redis } from 'ioredis';
+
 import NodeCache from 'node-cache';
+import config from '../config';
 
-// Redis client instance
-let redisClient: Redis | null = null;
+// In-memory cache as fallback when Redis is not available
+const memoryCache = new NodeCache({
+  stdTTL: config.cache.defaultTtl,
+  checkperiod: 120,
+  useClones: false
+});
 
-// Simple in-memory cache fallback for development
-const memoryCache = new NodeCache({ stdTTL: 600 }); // 10 minutes default
-
-// Redis connection URL from environment variables
-const REDIS_URL = process.env.REDIS_URL || '';
+// Redis client placeholder - will be null if Redis is not available
+let redisClient: any = null;
 
 /**
- * Initialize Redis client
- * @returns Promise that resolves when Redis is connected
+ * Initialize Redis connection if available
  */
-async function initRedis(): Promise<void> {
-  // Skip if already initialized or in development with no Redis URL
-  if (redisClient || (!REDIS_URL && process.env.NODE_ENV === 'development')) {
-    return;
-  }
-
+async function initializeRedis(): Promise<boolean> {
   try {
-    // Create Redis client
-    redisClient = new Redis(REDIS_URL);
+    if (!config.redis.url) {
+      console.log('No Redis URL provided, using in-memory cache');
+      return false;
+    }
 
-    // Set up error handler
-    redisClient.on('error', (err) => {
-      console.error('Redis connection error:', err);
-      redisClient = null;
-    });
-
-    console.log('Connected to Redis');
+    // For now, we'll just use memory cache
+    // In production, you would initialize actual Redis client here
+    console.log('Redis configuration detected, but using in-memory cache for development');
+    return false;
   } catch (error) {
-    console.error('Failed to initialize Redis:', error);
-    redisClient = null;
+    console.warn('Redis initialization failed, using in-memory cache:', error);
+    return false;
   }
 }
 
 /**
- * Gets a value from the cache
- * @param key - Cache key
- * @returns Promise containing the cached value or null if not found/expired
+ * Get data from cache
  */
 export async function getCachedData(key: string): Promise<string | null> {
   try {
-    // Try to use Redis if available
+    // Try Redis first if available
     if (redisClient) {
-      const value = await redisClient.get(key);
-      console.log(value ? `Redis cache hit for key: ${key}` : `Redis cache miss for key: ${key}`);
-      return value;
+      return await redisClient.get(key);
     }
-
+    
     // Fallback to memory cache
     const value = memoryCache.get<string>(key);
-    console.log(value ? `Memory cache hit for key: ${key}` : `Memory cache miss for key: ${key}`);
     return value || null;
   } catch (error) {
-    console.error('Error getting from cache:', error);
+    console.error('Error getting cached data:', error);
     return null;
   }
 }
 
 /**
- * Sets a value in the cache with optional TTL
- * @param key - Cache key
- * @param value - Value to cache
- * @param ttlSeconds - Time to live in seconds (default: 3600 = 1 hour)
- * @returns Promise that resolves when the value is cached
+ * Set data in cache
  */
-export async function setCachedData(key: string, value: string, ttlSeconds: number = 3600): Promise<void> {
+export async function setCachedData(key: string, value: string, ttl?: number): Promise<boolean> {
   try {
-    // Try to use Redis if available
+    // Try Redis first if available
     if (redisClient) {
-      await redisClient.set(key, value, 'EX', ttlSeconds);
-      console.log(`Redis cached key: ${key} with TTL: ${ttlSeconds}s`);
-      return;
+      if (ttl) {
+        await redisClient.setex(key, ttl, value);
+      } else {
+        await redisClient.set(key, value);
+      }
+      return true;
     }
-
+    
     // Fallback to memory cache
-    memoryCache.set(key, value, ttlSeconds);
-    console.log(`Memory cached key: ${key} with TTL: ${ttlSeconds}s`);
+    memoryCache.set(key, value, ttl || config.cache.defaultTtl);
+    return true;
   } catch (error) {
-    console.error('Error setting cache:', error);
+    console.error('Error setting cached data:', error);
+    return false;
   }
 }
 
 /**
- * Removes a value from the cache
- * @param key - Cache key
- * @returns Promise that resolves when the value is removed
+ * Delete data from cache
  */
-export async function del(key: string): Promise<void> {
+export async function deleteCachedData(key: string): Promise<boolean> {
   try {
-    // Try to use Redis if available
     if (redisClient) {
       await redisClient.del(key);
-      console.log(`Deleted key from Redis: ${key}`);
-      return;
+      return true;
     }
-
-    // Fallback to memory cache
+    
     memoryCache.del(key);
-    console.log(`Deleted key from memory cache: ${key}`);
+    return true;
   } catch (error) {
-    console.error('Error deleting from cache:', error);
+    console.error('Error deleting cached data:', error);
+    return false;
   }
 }
 
 /**
- * Initialize Redis on module load
+ * Clear all cache data
  */
-initRedis().catch(err => {
-  console.error('Error initializing Redis:', err);
-});
+export async function clearAllCache(): Promise<boolean> {
+  try {
+    if (redisClient) {
+      await redisClient.flushall();
+    }
+    
+    memoryCache.flushAll();
+    return true;
+  } catch (error) {
+    console.error('Error clearing cache:', error);
+    return false;
+  }
+}
 
-export { redisClient };
+/**
+ * Get cache statistics
+ */
+export function getCacheStats(): any {
+  return {
+    memoryCache: {
+      keys: memoryCache.keys().length,
+      hits: memoryCache.getStats().hits,
+      misses: memoryCache.getStats().misses,
+    },
+    redisAvailable: !!redisClient
+  };
+}
+
+// Initialize on module load
+initializeRedis();

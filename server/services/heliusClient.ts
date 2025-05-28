@@ -1,109 +1,136 @@
 /**
  * Helius API Client
  * 
- * This client handles all interactions with the Helius API for Solana data.
+ * Handles all interactions with the Helius API for Solana blockchain data
  */
 
+import axios from 'axios';
 import config from '../config';
 
-// API key and URL from config
-const HELIUS_API_KEY = process.env.HELIUS_API_KEY || config.helius.apiKey;
-const HELIUS_API_URL = config.helius.apiUrl;
+const heliusApi = axios.create({
+  baseURL: config.helius.apiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export interface HeliusTransaction {
+  signature: string;
+  slot: number;
+  err: any;
+  memo: string | null;
+  blockTime: number;
+  confirmationStatus: string;
+}
+
+export interface TokenBalance {
+  mint: string;
+  owner: string;
+  amount: string;
+  decimals: number;
+  uiAmount: number;
+  uiAmountString: string;
+}
 
 /**
- * Fetches token balances for a wallet
- * @param walletAddress - The wallet address
- * @returns Token balance data from Helius
+ * Fetch transaction signatures for a wallet address
  */
-export async function fetchTokenBalances(walletAddress: string): Promise<any> {
+export async function fetchTransactionSignatures(
+  walletAddress: string,
+  limit: number = 100
+): Promise<HeliusTransaction[]> {
   try {
-    const response = await fetch(`${HELIUS_API_URL}/addresses/${walletAddress}/balances`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': HELIUS_API_KEY,
+    const response = await heliusApi.post('', {
+      jsonrpc: '2.0',
+      id: 'helius-signatures',
+      method: 'getSignaturesForAddress',
+      params: [
+        walletAddress,
+        {
+          limit,
+          commitment: 'confirmed',
+        },
+      ],
+    }, {
+      params: {
+        'api-key': config.helius.apiKey,
       },
     });
-    
-    if (!response.ok) {
-      throw new Error(`Helius API error: ${response.status}`);
-    }
-    
-    return await response.json();
+
+    return response.data.result || [];
   } catch (error) {
-    console.error('Error fetching token balances from Helius:', error);
-    throw error;
+    console.error('Error fetching transaction signatures:', error);
+    throw new Error('Failed to fetch transaction signatures from Helius');
   }
 }
 
 /**
- * Fetches transaction history for a wallet
- * @param walletAddress - The wallet address
- * @param options - Query options (limit, before, etc.)
- * @returns Transaction history data from Helius
+ * Fetch detailed transaction data
  */
-export async function fetchTransactionHistory(
-  walletAddress: string, 
-  options: { limit?: number; before?: string; } = {}
-): Promise<any> {
+export async function fetchTransactionDetails(signature: string): Promise<any> {
   try {
-    const limit = options.limit || 100;
-    const before = options.before ? `&before=${options.before}` : '';
-    
-    const response = await fetch(
-      `${HELIUS_API_URL}/addresses/${walletAddress}/transactions?limit=${limit}${before}`, 
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': HELIUS_API_KEY,
+    const response = await heliusApi.post('', {
+      jsonrpc: '2.0',
+      id: 'helius-transaction',
+      method: 'getParsedTransaction',
+      params: [
+        signature,
+        {
+          encoding: 'jsonParsed',
+          maxSupportedTransactionVersion: 0,
         },
-      }
-    );
-    
-    if (!response.ok) {
-      throw new Error(`Helius API error: ${response.status}`);
-    }
-    
-    return await response.json();
+      ],
+    }, {
+      params: {
+        'api-key': config.helius.apiKey,
+      },
+    });
+
+    return response.data.result;
   } catch (error) {
-    console.error('Error fetching transaction history from Helius:', error);
-    throw error;
+    console.error('Error fetching transaction details:', error);
+    throw new Error('Failed to fetch transaction details from Helius');
   }
 }
 
 /**
- * Fetches parsed transactions for a wallet (with type information)
- * @param walletAddress - The wallet address
- * @param options - Query options
- * @returns Parsed transaction data from Helius
+ * Fetch token balances for a wallet
  */
-export async function fetchParsedTransactions(
-  walletAddress: string,
-  options: { limit?: number; type?: string; } = {}
-): Promise<any> {
+export async function fetchTokenBalances(walletAddress: string): Promise<{ tokens: TokenBalance[] }> {
   try {
-    const limit = options.limit || 100;
-    const type = options.type ? `&type=${options.type}` : '';
-    
-    const response = await fetch(
-      `${HELIUS_API_URL}/addresses/${walletAddress}/parsed-transactions?limit=${limit}${type}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': HELIUS_API_KEY,
+    const response = await heliusApi.post('', {
+      jsonrpc: '2.0',
+      id: 'helius-balances',
+      method: 'getTokenAccountsByOwner',
+      params: [
+        walletAddress,
+        {
+          programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         },
-      }
-    );
+        {
+          encoding: 'jsonParsed',
+        },
+      ],
+    }, {
+      params: {
+        'api-key': config.helius.apiKey,
+      },
+    });
+
+    const tokenAccounts = response.data.result?.value || [];
     
-    if (!response.ok) {
-      throw new Error(`Helius API error: ${response.status}`);
-    }
-    
-    return await response.json();
+    const tokens: TokenBalance[] = tokenAccounts.map((account: any) => ({
+      mint: account.account.data.parsed.info.mint,
+      owner: account.account.data.parsed.info.owner,
+      amount: account.account.data.parsed.info.tokenAmount.amount,
+      decimals: account.account.data.parsed.info.tokenAmount.decimals,
+      uiAmount: account.account.data.parsed.info.tokenAmount.uiAmount,
+      uiAmountString: account.account.data.parsed.info.tokenAmount.uiAmountString,
+    }));
+
+    return { tokens };
   } catch (error) {
-    console.error('Error fetching parsed transactions from Helius:', error);
-    throw error;
+    console.error('Error fetching token balances:', error);
+    throw new Error('Failed to fetch token balances from Helius');
   }
 }
