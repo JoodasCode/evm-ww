@@ -60,7 +60,7 @@ export function ModernTokenHoldingsCard({ tokenBalances = [] }: ModernTokenHoldi
   }
 
   return (
-    <Card className="h-[400px]">
+    <Card className="h-[400px] flex flex-col">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <Wallet className="h-5 w-5 text-primary" />
@@ -69,7 +69,7 @@ export function ModernTokenHoldingsCard({ tokenBalances = [] }: ModernTokenHoldi
         <CardDescription>Portfolio composition and token allocation analysis</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-1 overflow-hidden">
         {/* Portfolio Summary */}
         <div className="bg-muted/50 rounded-lg p-3">
           <div className="flex justify-between items-center">
@@ -81,7 +81,7 @@ export function ModernTokenHoldingsCard({ tokenBalances = [] }: ModernTokenHoldi
         <Separator />
 
         {/* Token Holdings List */}
-        <div className="space-y-3 max-h-56 overflow-auto">
+        <div className="space-y-3 max-h-48 overflow-y-auto">
           {topHoldings.map((token, index) => (
             <div 
               key={token.id || index}

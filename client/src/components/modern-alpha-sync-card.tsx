@@ -174,7 +174,7 @@ export function ModernAlphaSyncCard({ walletAddress }: AlphaSyncCardProps) {
         <CardDescription>Early opportunity detection and alpha movement timing analysis</CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 flex-1 overflow-hidden">
         {/* Main Alpha Score */}
         <div className="text-center space-y-3">
           <div className="text-5xl font-bold">
@@ -197,7 +197,7 @@ export function ModernAlphaSyncCard({ walletAddress }: AlphaSyncCardProps) {
             <Target className="h-4 w-4 text-emerald-500" />
             Recent Alpha Moves
           </h4>
-          <div className="space-y-2 max-h-32 overflow-auto">
+          <div className="space-y-2 max-h-28 overflow-y-auto">
             {alphaData.notableAlphaMoves.map((move, index) => (
               <div 
                 key={index}
