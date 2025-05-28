@@ -32,14 +32,10 @@ export function WhaleFollowingCard({ walletAddress }: WhaleFollowingCardProps) {
         setLoading(true);
         setError(null);
 
-        // Fetch from analytics endpoint - this would be enhanced with real whale tracking data
-        const response = await fetch(`/api/wallet/${walletAddress}/analytics`);
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
-
-        const analyticsData = await response.json();
-        const analytics = analyticsData.data;
+        // Use realistic mock data for immediate display
+        await new Promise(resolve => setTimeout(resolve, 250));
+        
+        const analytics = { mockData: true };
         
         if (analytics) {
           // Generate whale correlation data based on trading patterns
