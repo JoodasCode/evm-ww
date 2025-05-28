@@ -1,0 +1,154 @@
+1. User Authentication & Onboarding
+* User connects Solana wallet → Authentication via Solana wallet adapter
+* System checks if wallet exists in database
+    * If new: Creates new user profile in Supabase
+    * If existing: Loads existing profile data
+2. Initial Data Collection & Processing
+
+
+CopyInsert
+User Wallet Address
+        ↓
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Helius API     │     │  CoinGecko API  │     │  Supabase DB    │
+│  Transactions   │ ←→  │  Token Prices   │ ←→  │  Existing Data  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+        ↓                       ↓                       ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                     Redis Caching Layer                         │
+│  (With in-memory fallback and persistent disk storage)          │
+└─────────────────────────────────────────────────────────────────┘
+        ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                   Data Integration Service                       │
+│  (Standardizes data formats and ensures consistency)             │
+└─────────────────────────────────────────────────────────────────┘
+3. Core Analytics Processing
+
+
+CopyInsert
+┌─────────────────────────┐     ┌─────────────────────────┐
+│ Trading Activity Service │     │ Enhanced Trading Service│
+│ - Transaction history    │ →   │ - Advanced metrics      │
+│ - Token holdings         │     │ - Pattern detection     │
+└─────────────────────────┘     └─────────────────────────┘
+           ↓                               ↓
+┌─────────────────────────────────────────────────────────┐
+│                 Metrics Repository                       │
+│ - Stores scores, metrics, and historical data           │
+│ - Handles database operations with Supabase             │
+└─────────────────────────────────────────────────────────┘
+           ↓                               ↓
+┌─────────────────────────┐     ┌─────────────────────────┐
+│ Whisperer Score Service │     │ Degen Score Service     │
+│ - Psychological profile │     │ - Risk appetite metrics │
+│ - Trading discipline    │     │ - Volatility analysis   │
+└─────────────────────────┘     └─────────────────────────┘
+4. Label Engine & Psychometrics Processing
+
+
+CopyInsert
+┌─────────────────────────────────────────────────────────┐
+│                 Label Engine Service                     │
+│ - Analyzes trading patterns                             │
+│ - Determines archetypes, emotional states, traits       │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│              Label Engine Sync Service                   │
+│ - Database-first check for existing profiles             │
+│ - Multi-level caching (Redis, memory, disk)             │
+│ - Tracks historical changes in labels                    │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│               Psychometrics Service                      │
+│ - Integrates label data with trading metrics            │
+│ - Generates psychological insights                       │
+└─────────────────────────────────────────────────────────┘
+5. Unified Trading Context & Data Integration
+
+
+CopyInsert
+┌─────────────────────────────────────────────────────────┐
+│                Trading Context Service                   │
+│ - Combines analytics and psychometrics                   │
+│ - Generates integrated insights                          │
+│ - Correlates trading behavior with psychological factors │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│                 Data Validation Layer                    │
+│ - Ensures data consistency across services               │
+│ - Validates data before returning to client              │
+└─────────────────────────────────────────────────────────┘
+6. UI Rendering & User Experience
+
+
+CopyInsert
+┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
+│  Overview Tab       │     │  Behavior Tab       │     │  Insight Tab        │
+│  - Whisperer Score  │     │  - Degen Score      │     │  - Trading patterns │
+│  - Portfolio Perf.  │     │  - Current Mood     │     │  - Detailed metrics │
+│  - Volatility Alerts│     │  - Impulse Tracker  │     │  - Advanced charts  │
+└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
+        ↓                           ↓                           ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          HomeDashboard                                      │
+│  - Psychological Trading Profile                                            │
+│  - Archetype Box                                                            │
+│  - Risk Appetite                                                            │
+│  - Actionable Insights                                                      │
+│  - Performance Correlation                                                  │
+│  - Optimal Trading Hours                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+7. Background Processes & Data Maintenance
+
+
+CopyInsert
+┌─────────────────────────────────────────────────────────┐
+│               Scheduled Synchronization                  │
+│ - Regular refresh of data for top wallets                │
+│ - Maintains data consistency across services             │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│                 Cache Management                         │
+│ - Periodic persistence of in-memory cache                │
+│ - Cleanup of stale cache entries                         │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│                 Webhook Handlers                         │
+│ - Trigger data refreshes on external events              │
+│ - Update relevant data when blockchain events occur      │
+└─────────────────────────────────────────────────────────┘
+Data Flow for Key User Actions
+1. User Connects Wallet for First Time
+1. Wallet address → Authentication service
+2. System fetches transaction history from Helius API
+3. Trading Activity Service processes transactions
+4. Label Engine analyzes patterns and assigns archetype/traits
+5. Label Engine Sync Service stores profile in Supabase
+6. Metrics Repository calculates and stores scores
+7. UI components render with fresh data
+2. Returning User Views Dashboard
+1. Wallet address → Authentication service
+2. System checks Redis cache for recent data
+3. If cache hit: Returns cached data immediately
+4. In background: Checks Supabase for newer data
+5. If Supabase has fresh data: Updates Redis cache
+6. If data is stale: Triggers refresh from external APIs
+7. UI renders with cached data first, then updates if fresh data arrives
+3. User Views Label History
+1. LabelHistoryCard component checks localStorage cache
+2. If recent cache exists: Renders immediately with cached data
+3. In background: Fetches fresh data from API endpoints
+4. API endpoints check database for latest label history
+5. If rate limits hit: Falls back to cached data
+6. UI updates with fresh data when available
+7. New data is cached in localStorage with timestamp
+This comprehensive flow shows how all components interconnect and how data flows through the system from initial collection to final rendering, with multiple caching layers and fallback mechanisms to ensure reliability and performance.
+
+
+
