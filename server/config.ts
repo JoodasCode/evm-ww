@@ -35,7 +35,8 @@ const config = {
     prefix: {
       tokenBalance: 'token_balance:',
       whispererScore: 'whisperer_score:',
-      tradingActivity: 'trading_activity:'
+      tradingActivity: 'trading_activity:',
+      psychometric: 'psychometric:'
     }
   }
 };

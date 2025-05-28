@@ -6,6 +6,7 @@ import express from 'express';
 import { fetchTransactionSignatures, fetchTransactionDetails, fetchTokenBalances } from './services/heliusClient';
 import { fetchTokenMetadata, fetchTokenPrice } from './services/moralisClient';
 import { getTokenBalances } from './services/tokenBalanceService';
+import { calculateWhispererScore } from './services/whispererScoreService';
 import { getCachedData, setCachedData } from './services/redisService';
 import config from './config';
 
@@ -101,46 +102,31 @@ router.get('/api/wallet/:address/transactions', async (req, res) => {
   }
 });
 
-// Get psychometric analysis (placeholder for your analytics)
+// Get psychometric analysis using real Whisperer Score calculation
 router.get('/api/wallet/:address/psychometrics', async (req, res) => {
   try {
     const { address } = req.params;
     
-    // Check cache first
-    const cacheKey = `${config.cache.prefix.psychometric}${address}`;
-    const cachedData = await getCachedData(cacheKey);
+    // Calculate real Whisperer Score using authentic wallet data
+    const whispererScore = await calculateWhispererScore(address);
     
-    if (cachedData) {
-      return res.json({
-        success: true,
-        data: JSON.parse(cachedData),
-        cached: true
-      });
-    }
-    
-    // This is where your sophisticated psychological analysis would run
-    // For now, return a basic structure that your frontend expects
     const psychometrics = {
-      whispererScore: {
-        total: 75,
-        discipline: 80,
-        timing: 70,
-        riskManagement: 75
-      },
-      behavioralAvatar: 'Strategic Trader',
-      currentMood: 'Optimistic',
-      riskProfile: 'Moderate',
-      tradingFrequency: 'Active',
-      lastAnalyzed: new Date().toISOString()
+      whispererScore,
+      behavioralAvatar: whispererScore.total > 80 ? 'Expert Trader' : 
+                       whispererScore.total > 60 ? 'Strategic Trader' : 
+                       whispererScore.total > 40 ? 'Developing Trader' : 'Novice Trader',
+      currentMood: whispererScore.timing > 70 ? 'Optimistic' : 
+                   whispererScore.timing > 50 ? 'Neutral' : 'Cautious',
+      riskProfile: whispererScore.riskManagement > 70 ? 'Conservative' : 
+                   whispererScore.riskManagement > 50 ? 'Moderate' : 'Aggressive',
+      tradingFrequency: whispererScore.discipline > 70 ? 'Disciplined' : 
+                       whispererScore.discipline > 50 ? 'Active' : 'Impulsive',
+      lastAnalyzed: whispererScore.lastCalculated
     };
-    
-    // Cache the result
-    await setCachedData(cacheKey, JSON.stringify(psychometrics), 3600);
     
     res.json({
       success: true,
-      data: psychometrics,
-      cached: false
+      data: psychometrics
     });
   } catch (error) {
     console.error('Error fetching psychometrics:', error);
