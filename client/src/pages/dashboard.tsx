@@ -59,54 +59,65 @@ export default function Dashboard() {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            <div className="break-inside-avoid mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-max">
+            {/* Primary scores - prominent positioning */}
+            <div className="lg:col-span-1">
               <ModernWhispererScoreCard walletAddress={currentWallet} />
             </div>
-            <div className="break-inside-avoid mb-6">
+            <div className="lg:col-span-1">
               <EnhancedDegenScoreCard walletAddress={currentWallet} />
             </div>
-            <div className="break-inside-avoid mb-6">
-              <ModernRiskAppetiteCard walletAddress={currentWallet} />
-            </div>
-            <div className="break-inside-avoid mb-6">
-              <ModernArchetypeCard walletAddress={currentWallet} />
-            </div>
-            <div className="break-inside-avoid mb-6">
-              <ModernLabelSummaryCard walletAddress={currentWallet} />
-            </div>
-            <div className="break-inside-avoid mb-6">
+            
+            {/* Portfolio Performance - fills remaining space */}
+            <div className="lg:col-span-2 xl:col-span-1">
               <ComingSoonCard 
                 title="Portfolio Performance" 
                 description="ROI tracking and performance analytics"
                 features={["PnL tracking", "Win/loss ratios", "Performance benchmarks"]}
-                size="medium"
+                size="large"
               />
             </div>
-            <div className="break-inside-avoid mb-6">
+            
+            {/* Risk and Archetype side by side */}
+            <div>
+              <ModernRiskAppetiteCard walletAddress={currentWallet} />
+            </div>
+            <div>
+              <ModernArchetypeCard walletAddress={currentWallet} />
+            </div>
+            
+            {/* Social Sentiment - compact */}
+            <div>
               <ComingSoonCard 
                 title="Social Sentiment" 
                 description="Community sentiment and social signals"
                 features={["Twitter sentiment", "Discord activity", "Community influence"]}
-                size="small"
+                size="medium"
               />
+            </div>
+            
+            {/* Label Summary - full width */}
+            <div className="lg:col-span-2 xl:col-span-3">
+              <ModernLabelSummaryCard walletAddress={currentWallet} />
             </div>
           </div>
         );
       
       case "behavior":
         return (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            <div className="break-inside-avoid mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-max">
+            {/* Trade Frequency - spans 2 cols for detailed data */}
+            <div className="lg:col-span-2 xl:col-span-1">
               <ModernTradeFrequencyCard walletAddress={currentWallet} />
             </div>
-            <div className="break-inside-avoid mb-6">
+            
+            {/* Token Categories - compact pie chart */}
+            <div>
               <ModernTokenCategoryCard walletAddress={currentWallet} />
             </div>
-            <div className="break-inside-avoid mb-6">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="break-inside-avoid mb-6">
+            
+            {/* Transaction Patterns - large analytical card */}
+            <div className="lg:col-span-2 xl:col-span-1">
               <ComingSoonCard 
                 title="Transaction Patterns" 
                 description="Advanced transaction flow analysis"
@@ -114,7 +125,14 @@ export default function Dashboard() {
                 size="large"
               />
             </div>
-            <div className="break-inside-avoid mb-6">
+            
+            {/* Degen Score - fits remaining space */}
+            <div>
+              <EnhancedDegenScoreCard walletAddress={currentWallet} />
+            </div>
+            
+            {/* Wallet Clustering - spans remaining width */}
+            <div className="lg:col-span-2 xl:col-span-3">
               <ComingSoonCard 
                 title="Wallet Clustering" 
                 description="Multi-wallet behavior analysis"
