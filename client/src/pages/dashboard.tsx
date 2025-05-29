@@ -1,13 +1,4 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { RefreshCw } from "lucide-react";
-import { Sidebar } from "@/components/sidebar";
-import { CognitiveSnapshotTab } from "@/components/dashboard/tabs/CognitiveSnapshotTab";
-import { CognitivePatternsTab } from "@/components/dashboard/tabs/CognitivePatternsTab";
-import { InsightsTab } from "@/components/dashboard/tabs/InsightsTab";
-import { PsychoanalyticsTab } from "@/components/dashboard/tabs/PsychoanalyticsTab";
-import { useWallet } from "@/hooks/use-wallet";
+import { WalletAnalysisDashboard } from "@/components/WalletAnalysisDashboard";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("cognitive-snapshot");
