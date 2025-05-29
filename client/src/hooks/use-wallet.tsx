@@ -88,11 +88,16 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       console.log(`🚀 Starting automated analysis for ${walletAddress}`);
       
       // Call the automated analysis endpoint
-      const response = await apiRequest(`/api/wallet/${walletAddress}/analyze`, {
-        method: 'POST'
+      const response = await fetch(`/api/wallet/${walletAddress}/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
-      console.log('✅ Automated analysis completed:', response);
+      const result = await response.json();
+      
+      console.log('✅ Automated analysis completed:', result);
     } catch (error) {
       console.error('❌ Automated analysis failed:', error);
       // Don't throw error - analysis failure shouldn't prevent wallet connection

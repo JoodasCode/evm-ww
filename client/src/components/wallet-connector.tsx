@@ -7,7 +7,7 @@ import { useWallet } from "@/hooks/use-wallet";
 
 export function WalletConnector() {
   const [simulationAddress, setSimulationAddress] = useState("");
-  const { connect, simulateWallet } = useWallet();
+  const { connect, simulateWallet, isAnalyzing } = useWallet();
 
   const handleSimulate = () => {
     if (simulationAddress.trim()) {
@@ -36,9 +36,10 @@ export function WalletConnector() {
               onClick={connect} 
               className="w-full"
               size="lg"
+              disabled={isAnalyzing}
             >
               <Wallet className="w-5 h-5 mr-2" />
-              Connect Solana Wallet
+              {isAnalyzing ? "Analyzing Wallet..." : "Connect Solana Wallet"}
             </Button>
             
             <div className="relative">
@@ -65,9 +66,9 @@ export function WalletConnector() {
                 onClick={handleSimulate}
                 variant="outline"
                 className="w-full"
-                disabled={!simulationAddress.trim()}
+                disabled={!simulationAddress.trim() || isAnalyzing}
               >
-                Simulate Wallet
+                {isAnalyzing ? "Analyzing..." : "Simulate Wallet"}
               </Button>
             </div>
           </CardContent>
