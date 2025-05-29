@@ -663,10 +663,10 @@ export class WalletDataConsumer {
       ssl: { rejectUnauthorized: false }
     });
     
-    // Configure Upstash Redis
+    // Configure Upstash Redis from environment
     this.redis = new Redis({
-      url: 'https://tender-cougar-30690.upstash.io',
-      token: 'AXfiAAIjcDEzN2NmM2Y0YTk3MmI1MjhmOTkxZjYzYXAxMA',
+      url: process.env.REDIS_URL || 'https://tender-cougar-30690.upstash.io',
+      token: process.env.REDIS_TOKEN || 'AXfiAAIjcDEzN2NmM2Y0YTk3MmI1MjhmOTkxZjYzYXAxMA'
     });
   }
 
