@@ -18,7 +18,14 @@ export class CentralDataPipeline {
   private coingeckoApiKey: string;
 
   constructor() {
-    this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    // Use PostgreSQL environment variables instead of DATABASE_URL
+    this.pool = new Pool({
+      host: process.env.PGHOST,
+      port: parseInt(process.env.PGPORT || '5432'),
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+    });
     
     // Configure Upstash Redis
     this.redis = new Redis({
@@ -629,7 +636,14 @@ export class WalletDataConsumer {
   private redis: Redis;
 
   constructor() {
-    this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    // Use PostgreSQL environment variables instead of DATABASE_URL
+    this.pool = new Pool({
+      host: process.env.PGHOST,
+      port: parseInt(process.env.PGPORT || '5432'),
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+    });
     
     // Configure Upstash Redis
     this.redis = new Redis({
