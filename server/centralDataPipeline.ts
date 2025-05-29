@@ -671,63 +671,124 @@ export class WalletDataConsumer {
   }
 
   /**
-   * Get clean transaction data for a wallet (Redis first, then Postgres)
+   * Get clean transaction data for a wallet (demand-driven with auto-ingestion)
    */
   async getCleanTransactions(walletAddress: string) {
-    // Check Redis cache first
     const cacheKey = `wallet:transactions:${walletAddress}`;
-    const cached = await this.redis.get(cacheKey);
+    const statusKey = `wallet:status:${walletAddress}`;
+    const timestampKey = `wallet:timestamp:${walletAddress}`;
     
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    // Fallback to Postgres
-    const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        'SELECT * FROM clean_transactions WHERE wallet_address = $1 ORDER BY timestamp',
-        [walletAddress]
-      );
+      // Check Redis cache first
+      const cached = await this.redis.get(cacheKey);
+      const lastProcessed = await this.redis.get(timestampKey);
       
-      // Cache in Redis for 15 minutes
-      await this.redis.set(cacheKey, JSON.stringify(result.rows), { ex: 900 });
+      if (cached && lastProcessed) {
+        const dataAge = Date.now() - parseInt(lastProcessed);
+        // Data is fresh if less than 1 hour old
+        if (dataAge < 3600000) {
+          return JSON.parse(cached);
+        }
+      }
       
-      return result.rows;
-    } finally {
-      client.release();
+      // Check if ingestion is already in progress
+      const status = await this.redis.get(statusKey);
+      if (status === 'processing') {
+        // Wait and retry once
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const retryData = await this.redis.get(cacheKey);
+        return retryData ? JSON.parse(retryData) : null;
+      }
+      
+      // No fresh data - trigger on-demand ingestion
+      console.log('⛏️ Triggering on-demand ingestion for', walletAddress);
+      await this.redis.set(statusKey, 'processing', { ex: 300 });
+      
+      try {
+        // Trigger fresh ingestion
+        const pipeline = new CentralDataPipeline();
+        const result = await pipeline.ingestWallet(walletAddress);
+        
+        // Mark as ready and set timestamp
+        await this.redis.set(statusKey, 'ready', { ex: 3600 });
+        await this.redis.set(timestampKey, Date.now().toString(), { ex: 86400 });
+        
+        return result.cleanData?.transactions || [];
+        
+      } catch (ingestionError) {
+        await this.redis.set(statusKey, 'error', { ex: 300 });
+        
+        // Fallback to Postgres if ingestion fails
+        const client = await this.pool.connect();
+        try {
+          const result = await client.query(
+            'SELECT * FROM clean_transactions WHERE wallet_address = $1 ORDER BY timestamp',
+            [walletAddress]
+          );
+          return result.rows;
+        } finally {
+          client.release();
+        }
+      }
+      
+    } catch (error) {
+      console.error('Failed to get clean transactions:', error);
+      return [];
     }
   }
 
   /**
-   * Get psychological analysis for a wallet (Redis first, then Postgres)
+   * Get psychological analysis for a wallet (demand-driven with auto-generation)
    */
   async getPsychologicalAnalysis(walletAddress: string) {
-    // Check Redis cache first
     const cacheKey = `wallet:analysis:${walletAddress}`;
-    const cached = await this.redis.get(cacheKey);
+    const statusKey = `wallet:status:${walletAddress}`;
     
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    // Fallback to Postgres
-    const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        'SELECT * FROM psy_cards WHERE wallet_address = $1',
-        [walletAddress]
-      );
-      
-      if (result.rows.length > 0) {
-        // Cache analysis for 24 hours with auto-expiry
-        await this.redis.set(cacheKey, JSON.stringify(result.rows[0]), { ex: 86400 });
-        return result.rows[0];
+      // Check Redis cache first
+      const cached = await this.redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+
+      // Check if analysis is being generated
+      const status = await this.redis.get(statusKey);
+      if (status === 'processing') {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const retryData = await this.redis.get(cacheKey);
+        return retryData ? JSON.parse(retryData) : null;
+      }
+
+      // Try Postgres first
+      const client = await this.pool.connect();
+      try {
+        const result = await client.query(
+          'SELECT * FROM psy_cards WHERE wallet_address = $1',
+          [walletAddress]
+        );
+        
+        if (result.rows.length > 0) {
+          // Cache analysis for 24 hours
+          await this.redis.set(cacheKey, JSON.stringify(result.rows[0]), { ex: 86400 });
+          return result.rows[0];
+        }
+      } finally {
+        client.release();
+      }
+
+      // No analysis found - trigger generation if we have clean data
+      const transactions = await this.getCleanTransactions(walletAddress);
+      if (transactions && transactions.length > 0) {
+        console.log('🧠 Generating psychological analysis on-demand for', walletAddress);
+        const pipeline = new CentralDataPipeline();
+        const result = await pipeline.ingestWallet(walletAddress);
+        return result.analysis;
       }
       
       return null;
-    } finally {
-      client.release();
+    } catch (error) {
+      console.error('Failed to get psychological analysis:', error);
+      return null;
     }
   }
 
