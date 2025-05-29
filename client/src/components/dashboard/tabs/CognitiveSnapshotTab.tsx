@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, Brain, Zap, Target, Shield, User, TrendingUp } from "lucide-react";
+import { InfoIcon, Brain, Zap, Target, Shield, User, TrendingUp, Star } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -363,48 +363,47 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           </CardContent>
         </Card>
 
-        {/* Decision Burnout Meter */}
+        {/* Protocol Alpha Score */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                  <Zap className="h-5 w-5 text-orange-400" />
+                <div className="p-2.5 rounded-xl bg-violet-500/10 ring-1 ring-violet-500/20">
+                  <Star className="h-5 w-5 text-violet-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Decision Burnout Meter</CardTitle>
-                  <CardDescription>Mental fatigue from overtrading and FOMO loops</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Protocol Alpha Score</CardTitle>
+                  <CardDescription>Using DEXs before they become mainstream</CardDescription>
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Burnout risk</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
-                Low risk
-              </Badge>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-violet-400 mb-1">Early Adopter</div>
+              <div className="text-sm text-muted-foreground">
+                Jupiter power user since month 2
+              </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span>Trade frequency variance</span>
-                <span className="text-orange-400">23%</span>
+                <span>Jupiter early adoption</span>
+                <span className="text-violet-400">+89% volume boost</span>
               </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '23%' }} />
+              <div className="flex items-center justify-between text-sm">
+                <span>Raydium usage timing</span>
+                <span className="text-green-400">Before hype</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Protocol diversity</span>
+                <span className="text-violet-400">7 platforms</span>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">1.2</div>
-                <div className="text-xs text-muted-foreground">Trades/day</div>
-              </div>
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">Stable</div>
-                <div className="text-xs text-muted-foreground">Pattern</div>
-              </div>
+            <div className="text-center p-3 bg-violet-500/10 rounded-lg">
+              <div className="text-sm font-medium text-violet-400">Alpha Score</div>
+              <div className="text-2xl font-bold text-violet-400 mt-1">85/100</div>
             </div>
           </CardContent>
         </Card>

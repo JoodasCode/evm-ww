@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, Activity, DollarSign, Shuffle, Timer, Clock, Zap, Heart, Dice6 } from "lucide-react";
+import { InfoIcon, Activity, DollarSign, Shuffle, Timer, Clock, Zap, Heart, Dice6, Search, TrendingUp, Copy } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -248,71 +248,47 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           </CardContent>
         </Card>
 
-        {/* Mental Fragmentation */}
-        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-4">
+        {/* Token Discovery Engine */}
+        <Card>
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
-                  <Shuffle className="h-5 w-5 text-blue-400" />
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/20">
+                  <Search className="h-5 w-5 text-emerald-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Mental Fragmentation</CardTitle>
-                  <CardDescription>Portfolio complexity and cognitive load</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Token Discovery Engine</CardTitle>
+                  <CardDescription>Finding alpha before the crowd arrives</CardDescription>
                 </div>
               </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <InfoIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Is your conviction focused or scattered across many positions?</p>
-                </TooltipContent>
-              </Tooltip>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xl font-bold text-foreground">{patternsData.mentalFragmentation.level}</div>
-                <div className="text-sm text-muted-foreground">
-                  {patternsData.mentalFragmentation.meaningfulPositions} meaningful positions
-                </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-400 mb-1">Early Adopter</div>
+              <div className="text-sm text-muted-foreground">
+                Found 3 tokens before 10x pumps
               </div>
-              <Badge variant="outline" className="text-sm">
-                {patternsData.mentalFragmentation.concentrationIndex}% focused
-              </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={patternsData.mentalFragmentation.fragmentationTrend}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" />
-                  <YAxis domain={[75, 95]} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="complexity" 
-                    stroke="var(--color-complexity)" 
-                    fill="var(--color-complexity)" 
-                    fillOpacity={0.2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Early BONK discovery</span>
+                <span className="text-emerald-400">+340% timing</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>WIF entry timing</span>
+                <span className="text-yellow-400">Crowd follower</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>SOL ecosystem tokens</span>
+                <span className="text-emerald-400">65% early</span>
+              </div>
+            </div>
             
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">Low</div>
-                <div className="text-muted-foreground">Complexity</div>
-              </div>
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">Trending ↗</div>
-                <div className="text-muted-foreground">Focus direction</div>
-              </div>
+            <div className="text-center p-3 bg-emerald-500/10 rounded-lg">
+              <div className="text-sm font-medium text-emerald-400">Discovery Score</div>
+              <div className="text-2xl font-bold text-emerald-400 mt-1">78/100</div>
             </div>
           </CardContent>
         </Card>
@@ -380,46 +356,51 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           </CardContent>
         </Card>
 
-        {/* Trading Ritual Clock */}
+        {/* Whale Mimicry Detector */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-indigo-500/10 ring-1 ring-indigo-500/20">
-                  <Clock className="h-5 w-5 text-indigo-400" />
+                <div className="p-2.5 rounded-xl bg-cyan-500/10 ring-1 ring-cyan-500/20">
+                  <Copy className="h-5 w-5 text-cyan-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Trading Ritual Clock</CardTitle>
-                  <CardDescription>Your unconscious time-based trading routines</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Whale Mimicry Detector</CardTitle>
+                  <CardDescription>Following whale wallets and timing lag analysis</CardDescription>
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-indigo-400 mb-1">Night Owl</div>
+              <div className="text-2xl font-bold text-cyan-400 mb-1">Independent</div>
               <div className="text-sm text-muted-foreground">
-                68% of trades happen after 10 PM
+                Low correlation with known whale wallets
               </div>
             </div>
             
-            <div className="grid grid-cols-4 gap-1 text-xs">
-              <div className="text-center p-2 bg-indigo-500/5 rounded">
-                <div className="font-medium text-indigo-400">Dawn</div>
-                <div className="text-muted-foreground">5%</div>
+            <div className="space-y-3">
+              <div className="p-3 bg-cyan-500/5 rounded-lg border border-cyan-500/20">
+                <div className="text-sm font-medium text-cyan-400">Whale Overlap</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  CyaE1VxvB... token overlap: 34% (3 days avg delay)
+                </div>
               </div>
-              <div className="text-center p-2 bg-indigo-500/10 rounded">
-                <div className="font-medium text-indigo-400">Day</div>
-                <div className="text-muted-foreground">27%</div>
+              
+              <div className="flex items-center justify-between text-sm">
+                <span>Original strategy score</span>
+                <span className="text-cyan-400">78%</span>
               </div>
-              <div className="text-center p-2 bg-indigo-500/20 rounded">
-                <div className="font-medium text-indigo-400">Evening</div>
-                <div className="text-muted-foreground">42%</div>
+              
+              <div className="flex items-center justify-between text-sm">
+                <span>Copy-paste risk</span>
+                <span className="text-green-400">Low</span>
               </div>
-              <div className="text-center p-2 bg-indigo-500/30 rounded">
-                <div className="font-medium text-indigo-400">Night</div>
-                <div className="text-muted-foreground">68%</div>
-              </div>
+            </div>
+            
+            <div className="text-center p-3 bg-green-500/10 rounded-lg">
+              <div className="text-sm font-medium text-green-400">Independence Score</div>
+              <div className="text-2xl font-bold text-green-400 mt-1">78/100</div>
             </div>
           </CardContent>
         </Card>
@@ -510,48 +491,51 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           </CardContent>
         </Card>
 
-        {/* Micro-Gambling Pattern */}
+        {/* Position Sizing Psychology */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                  <Dice6 className="h-5 w-5 text-orange-400" />
+                <div className="p-2.5 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/20">
+                  <Scale className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Micro-Gambling Pattern</CardTitle>
-                  <CardDescription>Addiction to dopamine loops via tiny trades</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Position Sizing Psychology</CardTitle>
+                  <CardDescription>Bet sizing patterns tied to conviction levels</CardDescription>
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Dopamine seeking</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
-                Healthy levels
-              </Badge>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-amber-400 mb-1">Strategic Sizer</div>
+              <div className="text-sm text-muted-foreground">
+                Big bets on utility tokens, small bets on memes
+              </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-3">
+              <div className="p-3 bg-amber-500/5 rounded-lg border border-amber-500/20">
+                <div className="text-sm font-medium text-amber-400">Largest Position</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  SOL: 15.2M lamports (67% of portfolio)
+                </div>
+              </div>
+              
               <div className="flex items-center justify-between text-sm">
-                <span>Micro trades (&lt;0.1 SOL)</span>
-                <span className="text-orange-400">12%</span>
+                <span>Utility token sizing</span>
+                <span className="text-amber-400">8.7M avg</span>
               </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '12%' }} />
+              
+              <div className="flex items-center justify-between text-sm">
+                <span>Meme token sizing</span>
+                <span className="text-yellow-400">2.1M avg</span>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">8.7M</div>
-                <div className="text-xs text-muted-foreground">Avg size (lamports)</div>
-              </div>
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">Strategic</div>
-                <div className="text-xs text-muted-foreground">Trade type</div>
-              </div>
+            <div className="text-center p-3 bg-amber-500/10 rounded-lg">
+              <div className="text-sm font-medium text-amber-400">Sizing Discipline</div>
+              <div className="text-2xl font-bold text-amber-400 mt-1">92/100</div>
             </div>
           </CardContent>
         </Card>
