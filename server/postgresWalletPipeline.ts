@@ -6,6 +6,7 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 import { categorizeToken, analyzeTradingNarratives, TokenMetadata } from '../shared/tokenCategorization';
+import { whispererEngine } from './whispererEngine';
 
 interface AnalysisResult {
   walletAddress: string;
