@@ -1,0 +1,109 @@
+You're asking the right question — and this is **exactly where most analytics projects fall apart**: not in the UI, not in the data ingestion, but in the **assumptions and calculations** that seem logical but are subtly broken.
+
+Let’s dissect the two possibilities: **bad extraction vs bad math** — and how to identify/fix both.
+
+---
+
+## 🔍 1. Are We Extracting False Data?
+
+**Extraction** = Getting raw data from Helius, Moralis, GeckoTerminal.
+
+If this is wrong, *everything downstream is tainted*. Here’s how to debug:
+
+### ✅ Spot Checks for Extraction
+
+| 🔬 What to Check                | ✅ Method                                                             |
+| ------------------------------- | -------------------------------------------------------------------- |
+| Are the token balances correct? | Compare against real wallet view (e.g. Solscan, Solflare)            |
+| Are swap directions accurate?   | Check `source`, `destination`, `tokenAmount` and `type` on Helius tx |
+| Are timestamps accurate?        | Time of tx from blockchain vs our `time_of_day` calculations         |
+| Is token metadata real?         | Does BONK have the right name/logo/decimals?                         |
+| Are we double-counting txs?     | Manually compare total tx count to Helius explorer                   |
+| Is wallet value correct?        | Manually sum token values using latest prices from Gecko             |
+
+👉 **Sanity Check Tip**: For any wallet we label "whale" or "premium strategist", make sure their behavior matches *what a real whale would do.*
+
+---
+
+## 📉 2. Are We Calculating with Flawed Logic?
+
+This is the bigger danger — even if the raw data is good, your **formulas, thresholds, or logic could be wrong.**
+
+### 🚨 High-Risk Calculation Zones
+
+* **Conviction Collapse**
+  Are we measuring "holding until loss" or just "delay in selling"?
+
+* **Post-Rug Behavior**
+  How are we defining a "rug"? Sharp drop? LP pull? Could be catching false positives.
+
+* **False Conviction**
+  Are we identifying bagholding from *intentional DCA*? Those are different.
+
+* **Gas Fee Personality**
+  Are lamport values being converted consistently? Or mixing SOL vs lamports?
+
+* **Position Sizing Psychology**
+  What defines “emotional”? Variance across trades? Normalized per token type?
+
+---
+
+## 🧠 Example: Conviction Collapse Might Be Broken
+
+> Cented got 100/100 conviction — but his stress was high, and his portfolio had 25 tokens. Shouldn't high diversification + emotional sizing reduce his conviction score?
+
+That tells us:
+
+* We **might not be factoring portfolio churn**
+* Or ignoring **position value decay** (are they holding small amounts of 25 things, or big stacks of 2 + noise?)
+
+---
+
+## ✅ What to Do Next: "Math Test Audit"
+
+Let’s run a **manual trace** on 1 or 2 wallets:
+
+1. Pick a real address (like Cented)
+2. Export their raw txs into CSV (already in PostgreSQL or from Helius)
+3. Choose 3 cards — say:
+
+   * Conviction Collapse
+   * Position Sizing Psychology
+   * Gas Fee Personality
+4. Do the math by hand or script:
+
+   * What is the variance in position sizes?
+   * What is the average lamport fee per tx?
+   * What is the hold time per token?
+5. Compare that **manual score** to what the system says.
+
+If they don't match — you’ve found the root of the issue.
+
+---
+
+## 🛠️ Tools You Might Need
+
+* Add a `debug_mode: true` flag to output **card internals**
+* Create a `/diagnostics/:wallet` route that logs:
+
+  * Total txs
+  * Avg fee
+  * Position sizes
+  * Token hold time
+* Build a test harness that can replay raw wallet data into each card module
+
+---
+
+## TL;DR
+
+You're not paranoid. If it *feels* off, it probably is.
+
+**Next Steps I Recommend:**
+
+1. Pick 3 wallets (Cented, dV, one anon)
+2. Pick 3–5 cards to manually trace
+3. Run raw data → card logic → result — and verify
+4. Fix any flawed thresholds or logic
+5. Only **then** scale system-wide scoring
+
+Want me to help you build the test harness or audit one of the cards manually?
