@@ -1,0 +1,142 @@
+# 🐋 2Whale Test — Cented vs dV
+
+## 📊 Overview
+
+This document compares two real wallets — **Cented Whale** and **dV Whale** — using real data processed through the complete **Helius → Moralis → Supabase pipeline**. The aim is to evaluate how accurate our behavioral scoring engine is and identify potential blind spots.
+
+---
+
+## 🧠 Wallet Profiles
+
+### 🐋 Cented Whale
+
+* **Portfolio Value:** \$84,192 (350.8 SOL)
+* **Token Diversity:** 5 unique tokens
+* **Trading Style:** Steady Accumulator *(“Patient” mood)*
+* **Whisperer Score:** 75
+* **Degen Score:** 93
+
+**Token Breakdown:**
+
+| Token     | Source  | Value   | Notes         |
+| --------- | ------- | ------- | ------------- |
+| YERBAMATE | Moralis | \~\$22k | Meme/High Vol |
+| JOEY      | Moralis | \~\$18k |               |
+| TBI       | Moralis | \~\$16k |               |
+| George    | Moralis | \~\$15k |               |
+| Farter    | Moralis | \~\$13k |               |
+
+**TXNs:** Pulled from **Helius**, showing:
+
+* <20 swaps in the last 30 days
+* High-value swaps (avg. > \$4,000)
+* 10–16x higher fee expenditure than average wallet
+
+---
+
+### 🐋 dV Whale
+
+* **Portfolio Value:** \$28,075 (114.9 SOL)
+* **Token Diversity:** 6 named tokens + **856 total tokens** (from Moralis)
+* **Trading Style:** Steady Accumulator *(“Patient” mood)*
+* **Whisperer Score:** 75 *(same as Cented)*
+* **Degen Score:** 93 *(same as Cented)*
+
+**Token Breakdown:**
+
+| Token      | Source  | Value      | Notes                   |
+| ---------- | ------- | ---------- | ----------------------- |
+| ClaudeBoys | Moralis | \~\$6.2k   | Meme/Community          |
+| TBI        | Moralis | \~\$5.1k   |                         |
+| YERBAMATE  | Moralis | \~\$4.7k   | Also present in Cented  |
+| Joey       | Moralis | \~\$4.5k   |                         |
+| George     | Moralis | \~\$3.6k   |                         |
+| Farter     | Moralis | \~\$2.8k   |                         |
+| +850 more  | Moralis | \~\$1,000+ | Unnamed micro positions |
+
+**TXNs:** From **Helius**:
+
+* 80+ swaps in the last 30 days
+* Lower swap amounts (avg. <\$400)
+* Spread across multiple DEXs (unspecified)
+* Low transaction fee expenditure
+
+---
+
+## 🧮 Scoring System Logic (Current Implementation)
+
+**Whisperer Score Inputs:**
+
+* Trade frequency (inverse relationship)
+* Profit-taking accuracy
+* Win ratio (positive ROI trades vs total)
+* Risk appetite (volatility of entries)
+* Token hold durations
+
+**Degen Score Inputs:**
+
+* Token category (meme = higher)
+* Early entry timestamp
+* Rotational behavior
+* Gas usage (higher gas = degen)
+* Number of unique trades
+
+**Issue:** Despite differences in:
+
+* Token count (5 vs 856)
+* Fee behavior (10–16x higher in Cented)
+* Volume per trade
+* Diversification
+
+...both wallets got **identical scores.**
+
+---
+
+## 🚨 Identified Problems
+
+### 1. Scoring Overlap Bug
+
+* **Likely cause:** score caching or global state not being reset
+* **Fix:** refactor scoring engine to use wallet-specific contexts with isolated state
+
+### 2. Behavioral Blending
+
+* Both profiles are defaulting to “Steady Accumulator”
+* We are **not differentiating fee strategy, rotation behavior, or diversification**
+* Need: fine-grained thresholds + a tagging engine
+
+### 3. Protocol Detection Failure
+
+* Despite clear swap activity (Helius shows swap instructions), system shows **“0 protocols detected”**
+* Likely issue in decoding instruction metadata or missing parser for Jupiter/Orca
+
+### 4. Moralis Data Handling
+
+* We’re not factoring in **token count saturation**
+* 856 tokens should be a unique signal: “hoarder,” “rotator,” or “portfolio spray”
+* Fix: add logic to evaluate portfolio noise and long-tail concentration
+
+---
+
+## 🧠 Recommendations
+
+1. **Refactor scoring state per wallet**
+2. **Create behavior fingerprinting engine**
+
+   * “Premium strategist” vs “wallet sprayer” vs “snipe & dipper”
+3. **Weight gas fees and DEX activity in scoring**
+4. **Fix Moralis data prioritization**
+5. **Add token-count-based behavioral flags**
+
+---
+
+## 🔭 Next Steps
+
+Would you like to:
+
+* Fix the scoring bug first (state bleed)?
+* Rebuild the behavioral detection logic with richer tags?
+* Add more whales and run comparisons to further stress-test?
+
+The system is powerful — but we’re missing the edge by blending sharp differences.
+Let’s fix that.
