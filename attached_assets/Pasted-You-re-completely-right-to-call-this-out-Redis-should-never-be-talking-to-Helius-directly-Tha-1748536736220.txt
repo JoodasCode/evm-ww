@@ -1,0 +1,108 @@
+You're completely right to call this out — **Redis should never be talking to Helius directly.** That’s not how the pipeline was designed, and if it's happening, something's broken in the flow control.
+
+### ⚠️ Let’s clarify how it **should** work:
+
+---
+
+## ✅ Intended Centralized Architecture
+
+```text
+[Helius + Moralis] → [CentralDataPipeline] → [Redis (cache) + Postgres (storage)] → [All consumers: UI, LLM, Cards]
+```
+
+### 🔒 Rules:
+
+* Only **CentralDataPipeline** should ever access Helius or Moralis.
+* Redis should **never fetch or enrich** — it only **serves cached data**.
+* Consumers (UI, LLM, etc.) only talk to Redis/Postgres, never upstream APIs.
+
+---
+
+## 🧠 Why Redis Shouldn't Contact Helius
+
+Redis is a **key-value store**, not a function caller.
+
+If Redis is triggering API fetches to Helius, then one of the following is happening:
+
+### ❌ Mistake #1:
+
+You accidentally made a **"lazy" data fetcher** inside the consumer layer like:
+
+```ts
+if (!redis.get(key)) {
+  const data = fetchFromHelius(); // ❌ This violates the separation
+}
+```
+
+### ❌ Mistake #2:
+
+Some logic inside `getCleanTransactions()` or `getWalletInsights()` is leaking pipeline behavior:
+
+```ts
+// this should NEVER happen inside WalletDataConsumer
+const txs = await fetchFromHelius(address);
+```
+
+### ❌ Mistake #3:
+
+You're calling the full pipeline from inside Redis cache-miss logic. That breaks the one-directional flow.
+
+---
+
+## ✅ Fix This with Strong Boundaries
+
+Here's what you need to do:
+
+### 🧱 Step 1: Lock All API Access to the Pipeline
+
+Inside `centralDataPipeline.ts`, enforce this rule:
+
+```ts
+// ✅ Only here are upstream APIs allowed
+const heliusTxs = await fetchFromHelius(address);
+const moralisMeta = await enrichWithMoralis(heliusTxs);
+```
+
+Then cache the result:
+
+```ts
+await redis.set(`wallet:raw:${address}`, JSON.stringify({ helius: heliusTxs, moralis: moralisMeta }));
+```
+
+---
+
+### 🧼 Step 2: Make Redis Dumb (on purpose)
+
+In `WalletDataConsumer.ts`, **only retrieve cached data**. Never trigger fetches:
+
+```ts
+const cached = await redis.get(`wallet:clean:${address}`);
+if (!cached) throw new Error('Clean data not found in cache');
+```
+
+---
+
+### 🧪 Step 3: Add Audit Logging
+
+For debugging, add a logger in `WalletDataConsumer`:
+
+```ts
+if (!cleanTxs) {
+  console.warn(`[DATA FLOW ERROR] Clean cache missing for ${address} — should've been set by pipeline`);
+}
+```
+
+---
+
+### 💡 TL;DR
+
+Your centralized pipeline should function like a **factory**:
+
+* **Helius/Moralis** → \[Central pipeline] → 🔐 Cached in Redis
+* Everyone else (LLMs, UI, cards) → 🔑 Pulls pre-approved data only
+
+If **Redis talks to Helius**, you’ve built a leaky faucet. Let’s seal it.
+
+---
+
+If you send me a snippet of the `WalletDataConsumer` or pipeline code that might be triggering this, I’ll help you spot the leak instantly.

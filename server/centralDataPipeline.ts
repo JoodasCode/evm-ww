@@ -121,7 +121,7 @@ export class CentralDataPipeline {
     
     if (cached) {
       console.log(`✅ Found cached clean data`);
-      return JSON.parse(cached);
+      return typeof cached === 'string' ? JSON.parse(cached) : cached;
     }
     
     const cleanTransactions = [];
