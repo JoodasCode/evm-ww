@@ -6,9 +6,13 @@
 import { Pool } from 'pg';
 
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  host: process.env.PGHOST,
+  port: parseInt(process.env.PGPORT || '5432'),
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
   ssl: {
-    rejectUnauthorized: false, // required for hosted databases like Supabase/Render
+    rejectUnauthorized: false, // required for hosted databases
   },
 });
 
