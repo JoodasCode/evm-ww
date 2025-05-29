@@ -31,9 +31,18 @@ router.post('/api/cards/:address', async (req, res) => {
     // Get authentic transaction data from your existing pipeline
     const result = await walletPipeline.analyzeWallet(address);
     
-    if (!result || !result.transactions) {
-      return res.status(404).json({ error: 'No transaction data found for this wallet' });
+    if (!result) {
+      return res.status(404).json({ error: 'No analysis data found for this wallet' });
     }
+
+    console.log('📊 Cards API - Real wallet data received:', {
+      whispererScore: result.whispererScore,
+      degenScore: result.degenScore,
+      archetype: result.archetype,
+      transactionCount: result.transactionCount,
+      tradingFrequency: result.tradingFrequency,
+      riskScore: result.riskScore
+    });
 
     // Transform pipeline data into enhanced card format
     const cardData = cardTypes.map(cardType => {
