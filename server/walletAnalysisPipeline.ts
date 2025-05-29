@@ -10,6 +10,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { categorizeToken, analyzeTradingNarratives, TokenMetadata } from '../shared/tokenCategorization';
 
 interface AnalysisResult {
   walletAddress: string;
@@ -113,9 +114,18 @@ class WalletAnalysisPipeline {
             updated_at: new Date().toISOString()
           });
 
-        // Store token metadata from Moralis
+        // Store token metadata from Moralis with categorization
         if (tx.tokenMetadata) {
           for (const [mint, metadata] of Object.entries(tx.tokenMetadata)) {
+            // Categorize the token based on its metadata
+            const tokenCategory = categorizeToken({
+              mint,
+              name: (metadata as any).name,
+              symbol: (metadata as any).symbol,
+              description: (metadata as any).description,
+              source: 'moralis'
+            });
+
             await this.supabase
               .from('token_metadata')
               .upsert({
@@ -126,6 +136,11 @@ class WalletAnalysisPipeline {
                 logo_uri: (metadata as any).logoURI,
                 source: 'moralis',
                 metadata: metadata,
+                // Add categorization data
+                primary_category: tokenCategory.primary,
+                secondary_categories: tokenCategory.secondary,
+                category_confidence: tokenCategory.confidence,
+                category_source: tokenCategory.source,
                 updated_at: new Date().toISOString()
               });
           }
@@ -187,8 +202,57 @@ class WalletAnalysisPipeline {
       }
 
       console.log('💾 Stored comprehensive transaction data for future card development');
+      
+      // Analyze token narratives based on actual transaction data
+      await this.analyzeAndStoreNarratives(walletAddress, transactions);
+      
     } catch (error) {
       console.error('❌ Error storing transaction data:', error);
+    }
+  }
+
+  /**
+   * Analyze and store token narrative insights based on real transaction data
+   */
+  private async analyzeAndStoreNarratives(walletAddress: string, transactions: any[]) {
+    try {
+      // Extract token transaction data with categories
+      const tokenTransactions = transactions.flatMap(tx => {
+        if (!tx.tokenTransfers) return [];
+        
+        return tx.tokenTransfers.map(transfer => ({
+          tokenMint: transfer.mint,
+          tokenName: tx.tokenMetadata?.[transfer.mint]?.name || 'Unknown',
+          tokenSymbol: tx.tokenMetadata?.[transfer.mint]?.symbol || '',
+          amount: transfer.tokenAmount,
+          timestamp: tx.blockTime,
+          type: this.classifyTransferType(transfer),
+          source: 'helius'
+        }));
+      });
+
+      // Analyze narratives using the categorization engine
+      const narrativeAnalysis = analyzeTradingNarratives(tokenTransactions);
+
+      // Store narrative insights
+      await this.supabase
+        .from('wallet_narratives')
+        .upsert({
+          wallet_address: walletAddress,
+          dominant_narrative: narrativeAnalysis.dominantNarrative,
+          narrative_diversity: narrativeAnalysis.narrativeDiversity,
+          narrative_loyalty: narrativeAnalysis.narrativeLoyalty,
+          category_stats: narrativeAnalysis.categoryStats,
+          analyzed_transactions: tokenTransactions.length,
+          updated_at: new Date().toISOString()
+        });
+
+      console.log(`📊 Analyzed ${tokenTransactions.length} token transactions for narrative insights`);
+      console.log(`🎯 Dominant narrative: ${narrativeAnalysis.dominantNarrative}`);
+      console.log(`📈 Narrative diversity: ${narrativeAnalysis.narrativeDiversity} categories`);
+      
+    } catch (error) {
+      console.error('❌ Error analyzing trading narratives:', error);
     }
   }
 
