@@ -174,9 +174,9 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
               </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={psychoData.moodTimeline.timeline}>
+                <LineChart data={psychoData.moodTimeline.timeline} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="week" />
                   <YAxis domain={[0, 100]} />
@@ -241,9 +241,9 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
               </div>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={psychoData.feeIdentity.feePersonality}>
+                <RadarChart data={psychoData.feeIdentity.feePersonality} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
                   <PolarGrid />
                   <PolarAngleAxis dataKey="aspect" tick={{ fontSize: 10 }} />
                   <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} />

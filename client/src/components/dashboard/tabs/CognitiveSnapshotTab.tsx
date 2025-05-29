@@ -111,7 +111,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               </div>
             </div>
             
-            <div className="h-[220px] w-full">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={cognitiveData.impulseControl.dailyTrades} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -121,7 +121,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                   <Bar dataKey="trades" fill="var(--color-trades)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
+            </ChartContainer>
             
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="text-center">
@@ -169,9 +169,9 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               </div>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <Pie
                     data={cognitiveData.cognitiveLoad.portfolioComplexity}
                     cx="50%"

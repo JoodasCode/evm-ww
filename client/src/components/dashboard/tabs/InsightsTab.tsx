@@ -124,9 +124,9 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={insightsData.regretIndex.missedGains}>
+                <AreaChart data={insightsData.regretIndex.missedGains} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="period" />
                   <YAxis />
@@ -202,9 +202,9 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={insightsData.gutInstinct.entryAccuracy}>
+                <BarChart data={insightsData.gutInstinct.entryAccuracy} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="timeframe" />
                   <YAxis />
@@ -333,9 +333,9 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={insightsData.attentionSpan.stickiness}>
+                <LineChart data={insightsData.attentionSpan.stickiness} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />

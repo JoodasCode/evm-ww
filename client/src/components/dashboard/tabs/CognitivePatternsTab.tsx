@@ -134,9 +134,9 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={patternsData.dopamineLoop.weeklyPattern}>
+                <AreaChart data={patternsData.dopamineLoop.weeklyPattern} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
@@ -207,9 +207,9 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               </Badge>
             </div>
             
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={patternsData.costSensitivity.feePattern}>
+                <LineChart data={patternsData.costSensitivity.feePattern} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="time" />
                   <YAxis />
