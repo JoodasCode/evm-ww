@@ -267,6 +267,179 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
           </CardContent>
         </Card>
 
+        {/* Fear Index */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                  <Shield className="h-5 w-5 text-red-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Fear Index</CardTitle>
+                  <CardDescription>Risk aversion and security-seeking behaviors</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-400 mb-1">Low Fear</div>
+              <div className="text-sm text-muted-foreground">
+                High swap-to-transfer ratio indicates confidence
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Swap activity</span>
+                <span className="text-green-400">78%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Transfer activity</span>
+                <span className="text-yellow-400">22%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Risk comfort level</span>
+                <span className="text-green-400">High</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pain Repetition Cycle */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                  <RotateCcw className="h-5 w-5 text-orange-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Pain Repetition Cycle</CardTitle>
+                  <CardDescription>Repeating traumatic trading patterns</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Trauma repetition risk</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Low repetition
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Rebuying previous losers</span>
+                <span className="text-orange-400">15%</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '15%' }} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Learning</div>
+                <div className="text-xs text-muted-foreground">From mistakes</div>
+              </div>
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Forward</div>
+                <div className="text-xs text-muted-foreground">Looking</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Mood Oscillation Graph */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
+                  <Activity className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Mood Oscillation Graph</CardTitle>
+                  <CardDescription>Emotional instability in market responses</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-400 mb-1">Stable Mood</div>
+              <div className="text-sm text-muted-foreground">
+                Low volatility in weekly trade frequency
+              </div>
+            </div>
+            
+            <ChartContainer config={chartConfig} className="h-[180px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={[
+                  { week: 'W1', volatility: 12 },
+                  { week: 'W2', volatility: 15 },
+                  { week: 'W3', volatility: 8 },
+                  { week: 'W4', volatility: 18 }
+                ]} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="week" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line type="monotone" dataKey="volatility" stroke="var(--color-volatility)" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        {/* Projection Bias Detector */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
+                  <Eye className="h-5 w-5 text-blue-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Projection Bias Detector</CardTitle>
+                  <CardDescription>Imitating without insight patterns</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Independent thinking</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Original strategy
+              </Badge>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Whale token overlap</span>
+                <span className="text-blue-400">34%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Timing correlation</span>
+                <span className="text-yellow-400">Low</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Strategy independence</span>
+                <span className="text-green-400">High</span>
+              </div>
+            </div>
+            
+            <div className="text-center p-3 bg-green-500/10 rounded-lg">
+              <div className="text-sm font-medium text-green-400">Independence Score</div>
+              <div className="text-2xl font-bold text-green-400 mt-1">78/100</div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Behavioral Tags */}
         <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">

@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, TrendingDown, Eye, Clock, RotateCcw } from "lucide-react";
+import { InfoIcon, TrendingDown, Eye, Clock, RotateCcw, Target, Heart } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, AreaChart, Area, BarChart, Bar } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -359,6 +359,183 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               <div className="text-center p-2 bg-muted/50 rounded">
                 <div className="font-medium text-foreground">85%</div>
                 <div className="text-muted-foreground">Focus consistency</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Regret Pattern Analysis */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                  <TrendingDown className="h-5 w-5 text-red-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Regret Pattern Analysis</CardTitle>
+                  <CardDescription>Chronic premature exit behavior patterns</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-400 mb-1">Low Regret</div>
+              <div className="text-sm text-muted-foreground">
+                Only 23% of exits happened before next price peak
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Perfect timing exits</span>
+                <span className="text-green-400">31%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Good timing exits</span>
+                <span className="text-yellow-400">46%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Premature exits</span>
+                <span className="text-red-400">23%</span>
+              </div>
+            </div>
+            
+            <div className="text-center p-3 bg-green-500/10 rounded-lg">
+              <div className="text-sm font-medium text-green-400">Exit Quality Score</div>
+              <div className="text-2xl font-bold text-green-400 mt-1">77/100</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Delayed Entry Syndrome */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-yellow-500/10 ring-1 ring-yellow-500/20">
+                  <Clock className="h-5 w-5 text-yellow-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Delayed Entry Syndrome</CardTitle>
+                  <CardDescription>FOMO overriding logic in entry timing</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Entry timing quality</span>
+              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+                Strategic entries
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Entries after token peaks</span>
+                <span className="text-yellow-400">18%</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-yellow-400 transition-all duration-300" style={{ width: '18%' }} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Early</div>
+                <div className="text-xs text-muted-foreground">Entry preference</div>
+              </div>
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">82%</div>
+                <div className="text-xs text-muted-foreground">Good timing</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Conviction Deficiency */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
+                  <Target className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Conviction Deficiency</CardTitle>
+                  <CardDescription>Indecisiveness signals in position sizing</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Conviction strength</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                High conviction
+              </Badge>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Average position size</span>
+                <span className="text-purple-400">8.7M lamports</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Position concentration</span>
+                <span className="text-purple-400">High focus</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Hold duration</span>
+                <span className="text-purple-400">3.2 days avg</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Hope Syndrome Tracker */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                  <Heart className="h-5 w-5 text-orange-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Hope Syndrome Tracker</CardTitle>
+                  <CardDescription>Refusal to cut losses and move on</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Loss cutting discipline</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Disciplined
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Tokens held in 70%+ drawdown</span>
+                <span className="text-orange-400">12%</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '12%' }} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Quick</div>
+                <div className="text-xs text-muted-foreground">Loss recognition</div>
+              </div>
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Rational</div>
+                <div className="text-xs text-muted-foreground">Exit style</div>
               </div>
             </div>
           </CardContent>
