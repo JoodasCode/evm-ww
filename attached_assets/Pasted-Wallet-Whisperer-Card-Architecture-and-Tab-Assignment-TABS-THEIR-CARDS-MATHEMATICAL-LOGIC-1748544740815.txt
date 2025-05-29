@@ -1,0 +1,128 @@
+Wallet Whisperer: Card Architecture and Tab Assignment
+
+---
+
+TABS & THEIR CARDS + MATHEMATICAL LOGIC
+
+## 1. Cognitive Snapshot (Top-Level Overview)
+
+**Goal:** Give the user a bird's-eye view of their trading psychology in 3-5 core traits.
+
+### Cards:
+
+* **Archetype Classifier**
+
+  * *Logic:* Combines all card scores into trader persona (e.g. Sniper, FOMO Degen)
+  * *Math:* Weighted average of key cards like Conviction, Timing, Rotation, Diversification
+
+* **Whisperer Score** *(optional if we bring it back)*
+
+  * *Logic:* Combines risk, discipline, and awareness metrics into one score
+  * *Math:* Aggregated z-score of all psychological cards normalized to 0–100
+
+* **Trading Rhythm**
+
+  * *Logic:* Shows average trades/day, peak trading hours, frequency trend
+  * *Math:* Mean daily tx count, modal trading hour, rolling average delta
+
+* **Risk Appetite Meter**
+
+  * *Logic:* Measures position sizing behavior + volatility preference
+  * *Math:* Sizing variance + average volatility of held assets
+
+## 2. Cognitive Patterns (How You Trade)
+
+**Goal:** Explore behavioral mechanics across time and decision-making.
+
+### Cards:
+
+* **Position Sizing Psychology**
+
+  * *Logic:* Detects variance and consistency in trade sizing
+  * *Math:* 1 - ((max - min) / avg), normalized to score
+
+* **Time-of-Day Trading Patterns**
+
+  * *Logic:* Analyzes best/worst ROI by hour bucket
+  * *Math:* ROI grouped by hour-of-day over trailing 30 days
+
+* **Token Rotation Intelligence**
+
+  * *Logic:* Measures switching quality and pattern between tokens
+  * *Math:* Compare ROI before/after switches, count frequency, hold time delta
+
+* **Gas Fee Personality**
+
+  * *Logic:* Evaluates fee premium behavior during trades
+  * *Math:* avg gas vs median network fee, urgency index
+
+* **Market Timing Ability**
+
+  * *Logic:* Scores accuracy of top/bottom timing relative to price chart
+  * *Math:* Entry/exit ±7 day delta from price local top/bottom
+
+## 3. Insights (Why You Trade)
+
+**Goal:** Reveal motivation, sentiment, reaction to events.
+
+### Cards:
+
+* **Conviction Collapse Detector**
+
+  * *Logic:* Detects sudden buy → sell decisions below entry cost
+  * *Math:* Sell < 80% of entry within 24h window = collapse event
+
+* **FOMO vs Fear Cycle Tracker**
+
+  * *Logic:* Tracks emotional behavior cycles over time
+  * *Math:* Frequency of entries after large green candles vs exits after dips
+
+* **Post-Rug Behavior**
+
+  * *Logic:* Tracks behavior after a token rug event
+  * *Math:* Drops >80% + size change in subsequent trades
+
+* **Loss Aversion**
+
+  * *Logic:* Detects unwillingness to sell losing bags
+  * *Math:* Hold time on losing tokens vs profitable exits
+
+* **Profit Taking Discipline**
+
+  * *Logic:* Tracks systematic vs emotional exits
+  * *Math:* % of gains realized within ideal range (15–30%) vs held too long
+
+## 4. Psychoanalytics (The Mindset Layer)
+
+**Goal:** Deep psychological interpretations, LLM-powered narratives.
+
+### Cards:
+
+* **Narrative Loyalty**
+
+  * *Logic:* Tracks commitment to a specific token category or theme
+  * *Math:* % allocation and hold time in dominant category (e.g., meme, AI)
+
+* **Stress Response Patterns**
+
+  * *Logic:* Monitors reactions during volatility
+  * *Math:* Frequency of trades in 20%+ volatility moments
+
+* **Social Trading Influence**
+
+  * *Logic:* Detects pattern mirroring whales/influencers
+  * *Math:* Correlation to major wallet activity and entry sync
+
+* **False Conviction**
+
+  * *Logic:* Detects stated vs actual behavior mismatch
+  * *Math:* Compare stated conviction vs avg hold duration + quick sell ratio
+
+* **LLM-Powered Insight Generator**
+
+  * *Logic:* Converts all scores into human-style psychoanalysis
+  * *Math:* Uses prompts on behavioral card data to generate personality narrative
+
+---
+
+Let me know if you want the same for Performance, Meta, or new ideas.

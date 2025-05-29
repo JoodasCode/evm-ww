@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,48 +12,38 @@ interface CognitiveSnapshotTabProps {
 }
 
 export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProps) {
-  // Mock data structure - replace with actual API call
+  const [cardData, setCardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSnapshotCards = async () => {
+      try {
+        const response = await fetch(`/api/cards/${walletAddress}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cardTypes: ['archetype-classifier', 'trading-rhythm', 'risk-appetite-meter']
+          })
+        });
+        const data = await response.json();
+        setCardData(data);
+      } catch (error) {
+        console.error('Failed to fetch snapshot cards:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSnapshotCards();
+  }, [walletAddress]);
+
+  if (loading) return <div className="text-center py-8">Loading cognitive snapshot...</div>;
+  if (!cardData) return <div className="text-center py-8">Failed to load data</div>;
+
   const cognitiveData = {
-    impulseControl: {
-      level: "Disciplined Sniper",
-      score: 73,
-      dailyTrades: [
-        { day: 'Mon', trades: 2 },
-        { day: 'Tue', trades: 0 },
-        { day: 'Wed', trades: 1 },
-        { day: 'Thu', trades: 4 },
-        { day: 'Fri', trades: 1 },
-        { day: 'Sat', trades: 0 },
-        { day: 'Sun', trades: 2 }
-      ],
-      percentile: 82
-    },
-    cognitiveLoad: {
-      level: "Focused Conviction",
-      activeNarratives: 3,
-      portfolioComplexity: [
-        { name: 'SOL', value: 85, color: '#8B5CF6' },
-        { name: 'Memes', value: 10, color: '#10B981' },
-        { name: 'DeFi', value: 5, color: '#F59E0B' }
-      ],
-      concentrationIndex: 0.85
-    },
-    personalityArchetype: {
-      primary: "Whale Premium Strategist",
-      secondary: "MEV-Protected Trader",
-      confidence: 89,
-      traits: ["Patient", "Strategic", "Quality-Focused"]
-    },
-    trustCircuits: {
-      primaryDex: "Jupiter",
-      loyalty: 76,
-      protocolDistribution: [
-        { protocol: 'Jupiter', usage: 65 },
-        { protocol: 'Raydium', usage: 25 },
-        { protocol: 'Orca', usage: 10 }
-      ],
-      explorationTendency: "Conservative"
-    }
+    archetypeClassifier: cardData.find(c => c.cardType === 'archetype-classifier')?.data || {},
+    tradingRhythm: cardData.find(c => c.cardType === 'trading-rhythm')?.data || {},
+    riskAppetite: cardData.find(c => c.cardType === 'risk-appetite-meter')?.data || {}
   };
 
   const chartConfig = {

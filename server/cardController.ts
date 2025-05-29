@@ -123,28 +123,212 @@ export class CardController {
   }
 
   /**
-   * CARD CALCULATION REGISTRY
-   * Each card has its own specialized calculation function
+   * ENHANCED CARD CALCULATION REGISTRY
+   * Organized by tab with specialized calculation functions
    */
   private cardCalculators = {
-    'conviction-collapse': this.calculateConvictionCollapse.bind(this),
-    'degen-score': this.calculateDegenScore.bind(this),
-    'position-sizing': this.calculatePositionSizing.bind(this),
-    'portfolio-performance': this.calculatePortfolioPerformance.bind(this),
-    'risk-appetite': this.calculateRiskAppetite.bind(this),
-    'trading-frequency': this.calculateTradingFrequency.bind(this),
-    'token-loyalty': this.calculateTokenLoyalty.bind(this),
-    'fomo-behavior': this.calculateFomoBehavior.bind(this),
-    'whale-following': this.calculateWhaleFollowing.bind(this),
-    'meta-freshness': this.calculateMetaFreshness.bind(this)
+    // Cognitive Snapshot Cards
+    'archetype-classifier': this.calculateArchetypeClassifier.bind(this),
+    'trading-rhythm': this.calculateTradingRhythm.bind(this),
+    'risk-appetite-meter': this.calculateRiskAppetiteMeter.bind(this),
+
+    // Cognitive Patterns Cards
+    'position-sizing-psychology': this.calculatePositionSizingPsychology.bind(this),
+    'time-of-day-patterns': this.calculateTimeOfDayPatterns.bind(this),
+    'token-rotation-intelligence': this.calculateTokenRotationIntelligence.bind(this),
+    'gas-fee-personality': this.calculateGasFeePersonality.bind(this),
+    'market-timing-ability': this.calculateMarketTimingAbility.bind(this),
+
+    // Insights Cards
+    'conviction-collapse-detector': this.calculateConvictionCollapseDetector.bind(this),
+    'fomo-fear-cycle': this.calculateFomoFearCycle.bind(this),
+    'post-rug-behavior': this.calculatePostRugBehavior.bind(this),
+    'loss-aversion': this.calculateLossAversion.bind(this),
+    'profit-taking-discipline': this.calculateProfitTakingDiscipline.bind(this),
+
+    // Psychoanalytics Cards
+    'narrative-loyalty': this.calculateNarrativeLoyalty.bind(this),
+    'stress-response-patterns': this.calculateStressResponsePatterns.bind(this),
+    'social-trading-influence': this.calculateSocialTradingInfluence.bind(this),
+    'false-conviction': this.calculateFalseConviction.bind(this),
+    'llm-insight-generator': this.calculateLlmInsightGenerator.bind(this)
   };
 
   /**
-   * INDIVIDUAL CARD CALCULATIONS
+   * ENHANCED CARD CALCULATIONS
    * Each function processes transactions and returns card-specific metrics
    */
 
-  private async calculateConvictionCollapse(transactions: any[], analysis: any) {
+  // === COGNITIVE SNAPSHOT CARDS ===
+
+  private async calculateArchetypeClassifier(transactions: any[], analysis: any) {
+    const convictionScore = analysis?.convictionScore || 50;
+    const riskScore = analysis?.riskScore || 50;
+    const tradingFreq = transactions.length / Math.max(1, this.getTimespanDays(transactions));
+    const avgPositionSize = this.calculateAveragePositionSize(transactions);
+
+    // Weighted scoring for archetype classification
+    let archetypeScore = (convictionScore * 0.3) + (riskScore * 0.25) + (tradingFreq * 10 * 0.25) + (avgPositionSize > 1000 ? 20 : 0);
+    
+    let primary = "Balanced Trader";
+    let secondary = "Cautious Explorer";
+    
+    if (archetypeScore > 80) {
+      primary = "Whale Strategist";
+      secondary = "Premium Executor";
+    } else if (archetypeScore > 60) {
+      primary = "Strategic Sniper";
+      secondary = "Quality Hunter";
+    } else if (archetypeScore < 30) {
+      primary = "FOMO Degen";
+      secondary = "Chaos Trader";
+    }
+
+    return {
+      primary,
+      secondary,
+      confidence: Math.min(95, Math.max(60, archetypeScore)),
+      traits: this.extractTraitsFromScore(archetypeScore),
+      compositeScore: archetypeScore
+    };
+  }
+
+  private async calculateTradingRhythm(transactions: any[], analysis: any) {
+    const timespanDays = this.getTimespanDays(transactions);
+    const avgTradesPerDay = transactions.length / Math.max(1, timespanDays);
+    const hourCounts = this.getHourlyDistribution(transactions);
+    const peakHour = this.findPeakTradingHour(hourCounts);
+    
+    const weeklyTrend = this.calculateWeeklyTrend(transactions);
+    
+    return {
+      avgTradesPerDay: Math.round(avgTradesPerDay * 100) / 100,
+      peakTradingHour: peakHour,
+      weeklyPattern: this.getDailyDistribution(transactions),
+      frequency: avgTradesPerDay > 2 ? "High" : avgTradesPerDay > 0.5 ? "Moderate" : "Low",
+      trend: weeklyTrend,
+      consistency: this.calculateTradingConsistency(transactions)
+    };
+  }
+
+  private async calculateRiskAppetiteMeter(transactions: any[], analysis: any) {
+    const riskScore = analysis?.riskScore || 50;
+    const positionVariance = this.calculatePositionSizeVariance(transactions);
+    const volatilityPreference = this.calculateVolatilityPreference(transactions);
+    
+    const combinedRisk = (riskScore * 0.4) + (positionVariance * 0.3) + (volatilityPreference * 0.3);
+    
+    let riskLevel = "Moderate";
+    if (combinedRisk > 70) riskLevel = "High Risk";
+    else if (combinedRisk > 40) riskLevel = "Moderate Risk";
+    else riskLevel = "Conservative";
+    
+    return {
+      score: Math.round(combinedRisk),
+      level: riskLevel,
+      positionSizing: this.categorizePositionSizing(positionVariance),
+      volatilityTolerance: volatilityPreference,
+      riskFactors: this.identifyRiskFactors(transactions)
+    };
+  }
+
+  // === COGNITIVE PATTERNS CARDS ===
+
+  private async calculatePositionSizingPsychology(transactions: any[], analysis: any) {
+    const positions = transactions.map(tx => Math.abs(tx.amount || 0));
+    const avgPosition = positions.reduce((a, b) => a + b, 0) / positions.length;
+    const maxPosition = Math.max(...positions);
+    const minPosition = Math.min(...positions);
+    
+    const consistency = 1 - ((maxPosition - minPosition) / avgPosition);
+    const consistencyScore = Math.max(0, Math.min(100, consistency * 100));
+    
+    return {
+      pattern: consistencyScore > 70 ? "Consistent Sizer" : consistencyScore > 40 ? "Variable Sizer" : "Chaotic Sizer",
+      consistencyScore: Math.round(consistencyScore),
+      avgPositionSize: Math.round(avgPosition),
+      riskLevel: maxPosition > avgPosition * 3 ? "High Variance" : "Controlled",
+      positionStats: {
+        min: Math.round(minPosition),
+        max: Math.round(maxPosition),
+        avg: Math.round(avgPosition)
+      }
+    };
+  }
+
+  private async calculateTimeOfDayPatterns(transactions: any[], analysis: any) {
+    const hourlyPerformance = this.calculateHourlyROI(transactions);
+    const bestHour = this.findBestPerformingHour(hourlyPerformance);
+    const worstHour = this.findWorstPerformingHour(hourlyPerformance);
+    const mostActiveHour = this.findMostActiveHour(transactions);
+    
+    return {
+      bestTradingHour: bestHour,
+      worstTradingHour: worstHour,
+      mostActiveHour: mostActiveHour,
+      hourlyDistribution: this.getHourlyDistribution(transactions),
+      optimalTimeWindow: this.identifyOptimalTimeWindow(hourlyPerformance),
+      nightTradingRatio: this.calculateNightTradingRatio(transactions)
+    };
+  }
+
+  private async calculateTokenRotationIntelligence(transactions: any[], analysis: any) {
+    const rotations = this.identifyTokenRotations(transactions);
+    const rotationSuccess = this.calculateRotationSuccessRate(rotations);
+    const rotationFreq = rotations.length / Math.max(1, this.getTimespanDays(transactions) / 7);
+    
+    return {
+      intelligenceScore: Math.round(rotationSuccess * 100),
+      rotationFrequency: Math.round(rotationFreq * 100) / 100,
+      successRate: Math.round(rotationSuccess * 100),
+      rotations: rotations.length,
+      strategy: rotationSuccess > 0.6 ? "Smart Rotator" : rotationSuccess > 0.4 ? "Learning Rotator" : "Random Rotator"
+    };
+  }
+
+  private async calculateGasFeePersonality(transactions: any[], analysis: any) {
+    const fees = transactions.map(tx => tx.fee || 5000).filter(f => f > 0);
+    const avgFee = fees.reduce((a, b) => a + b, 0) / fees.length;
+    const avgFeeSOL = avgFee / 1000000000; // Convert lamports to SOL
+    
+    let personality = "Standard User";
+    if (avgFee > 20000000) personality = "Premium Overpayer";
+    else if (avgFee > 10000000) personality = "Quality Seeker";
+    else if (avgFee < 5000000) personality = "Fee Optimizer";
+    
+    const urgencyScore = this.calculateFeeUrgency(fees);
+    
+    return {
+      personality,
+      avgFeeLamports: Math.round(avgFee),
+      avgFeeSol: Math.round(avgFeeSOL * 1000) / 1000,
+      avgFeeUsd: Math.round(avgFeeSOL * 200 * 100) / 100, // Assuming $200 SOL
+      urgencyScore: Math.round(urgencyScore),
+      feePattern: this.analyzeFeePattern(fees)
+    };
+  }
+
+  private async calculateMarketTimingAbility(transactions: any[], analysis: any) {
+    const timingAccuracy = this.calculateEntryExitTiming(transactions);
+    const hitRate = this.calculateTimingHitRate(transactions);
+    
+    let ability = "Learning";
+    if (timingAccuracy > 70) ability = "Excellent Timing";
+    else if (timingAccuracy > 50) ability = "Good Timing";
+    else if (timingAccuracy < 30) ability = "Poor Timing";
+    
+    return {
+      timingScore: Math.round(timingAccuracy),
+      ability,
+      hitRate: Math.round(hitRate),
+      entryAccuracy: this.calculateEntryAccuracy(transactions),
+      exitAccuracy: this.calculateExitAccuracy(transactions)
+    };
+  }
+
+  // === INSIGHTS CARDS ===
+
+  private async calculateConvictionCollapseDetector(transactions: any[], analysis: any) {
     const tokens = this.groupTransactionsByToken(transactions);
     let collapseEvents = 0;
     let totalLossPercent = 0;
