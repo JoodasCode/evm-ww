@@ -2,9 +2,10 @@ export interface WalletContextType {
   wallet: string | null;
   isConnected: boolean;
   isSimulated: boolean;
+  isAnalyzing: boolean;
   connect: () => Promise<void>;
   disconnect: () => void;
-  simulateWallet: (address: string) => void;
+  simulateWallet: (address: string) => Promise<void>;
 }
 
 export interface WhispererScore {

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { WalletContextType } from "@/types/wallet";
+import { apiRequest } from "@/lib/queryClient";
 
 const WalletContext = createContext<WalletContextType | null>(null);
 
@@ -7,6 +8,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [wallet, setWallet] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isSimulated, setIsSimulated] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     // Check URL params for simulation mode
@@ -27,15 +29,22 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       // For now, simulate connection
       if (typeof window !== 'undefined' && (window as any).solana) {
         const response = await (window as any).solana.connect();
-        setWallet(response.publicKey.toString());
+        const walletAddress = response.publicKey.toString();
+        setWallet(walletAddress);
         setIsConnected(true);
         setIsSimulated(false);
+        
+        // Trigger automated analysis
+        await triggerAutomatedAnalysis(walletAddress);
       } else {
         // Fallback simulation
         const mockWallet = "4x7NvzSr8YKz2zMQm9CgKQqLpR8aYkZJbN1pH9Kz2";
         setWallet(mockWallet);
         setIsConnected(true);
         setIsSimulated(false);
+        
+        // Trigger automated analysis
+        await triggerAutomatedAnalysis(mockWallet);
       }
     } catch (error) {
       console.error("Failed to connect wallet:", error);
@@ -57,7 +66,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const simulateWallet = (address: string) => {
+  const simulateWallet = async (address: string) => {
     setWallet(address);
     setIsConnected(true);
     setIsSimulated(true);
@@ -67,12 +76,36 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     url.searchParams.set('wallet', address);
     url.searchParams.set('simulate', 'true');
     window.history.replaceState({}, '', url.toString());
+    
+    // Trigger automated analysis for simulated wallet
+    await triggerAutomatedAnalysis(address);
+  };
+
+  // Automated analysis trigger function
+  const triggerAutomatedAnalysis = async (walletAddress: string) => {
+    try {
+      setIsAnalyzing(true);
+      console.log(`🚀 Starting automated analysis for ${walletAddress}`);
+      
+      // Call the automated analysis endpoint
+      const response = await apiRequest(`/api/wallet/${walletAddress}/analyze`, {
+        method: 'POST'
+      });
+      
+      console.log('✅ Automated analysis completed:', response);
+    } catch (error) {
+      console.error('❌ Automated analysis failed:', error);
+      // Don't throw error - analysis failure shouldn't prevent wallet connection
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const value: WalletContextType = {
     wallet,
     isConnected,
     isSimulated,
+    isAnalyzing,
     connect,
     disconnect,
     simulateWallet,

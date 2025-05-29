@@ -139,6 +139,58 @@ router.get('/api/wallet/:address/psychometrics', async (req, res) => {
   }
 });
 
+// Automated wallet analysis endpoint - triggers complete pipeline
+router.post('/api/wallet/:address/analyze', async (req, res) => {
+  try {
+    const { address } = req.params;
+    console.log(`🚀 Starting automated analysis for wallet: ${address}`);
+    
+    // Import and run the automated pipeline
+    const { walletAnalysisPipeline } = await import('./walletAnalysisPipeline');
+    
+    const analysis = await walletAnalysisPipeline.analyzeWallet(address);
+    
+    res.json({
+      success: true,
+      data: analysis,
+      message: 'Automated wallet analysis completed successfully'
+    });
+    
+  } catch (error) {
+    console.error('Automated analysis error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Automated analysis failed',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Get complete wallet analysis (from database)
+router.get('/api/wallet/:address/complete', async (req, res) => {
+  try {
+    const { address } = req.params;
+    
+    // Import the pipeline to get existing analysis
+    const { walletAnalysisPipeline } = await import('./walletAnalysisPipeline');
+    
+    const analysis = await walletAnalysisPipeline.analyzeWallet(address);
+    
+    res.json({
+      success: true,
+      data: analysis
+    });
+    
+  } catch (error) {
+    console.error('Error fetching complete analysis:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch wallet analysis',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // Get analytics data
 router.get('/api/wallet/:address/analytics', async (req, res) => {
   try {
