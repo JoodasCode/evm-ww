@@ -30,7 +30,7 @@ interface AnalysisResult {
 }
 
 class PostgresWalletPipeline {
-  private pool = new Pool({
+  public pool = new Pool({
     host: process.env.PGHOST,
     port: process.env.PGPORT,
     user: process.env.PGUSER,
