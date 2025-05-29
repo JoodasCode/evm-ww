@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, Brain, Zap, Target, Shield } from "lucide-react";
+import { InfoIcon, Brain, Zap, Target, Shield, User, TrendingUp } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -319,6 +319,137 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               <div className="text-sm font-medium text-foreground">
                 {cognitiveData.trustCircuits.explorationTendency}
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Behavioral Archetype */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
+                  <User className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Behavioral Archetype</CardTitle>
+                  <CardDescription>Who you are at a glance</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-400 mb-2">The Strategist</div>
+              <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20">
+                Premium fee strategy + Protocol diversity
+              </Badge>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center p-2 bg-purple-500/10 rounded">
+                <div className="font-medium text-purple-400">High</div>
+                <div className="text-muted-foreground">Conviction</div>
+              </div>
+              <div className="text-center p-2 bg-purple-500/10 rounded">
+                <div className="font-medium text-purple-400">Selective</div>
+                <div className="text-muted-foreground">Entry</div>
+              </div>
+              <div className="text-center p-2 bg-purple-500/10 rounded">
+                <div className="font-medium text-purple-400">Patient</div>
+                <div className="text-muted-foreground">Execution</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Decision Burnout Meter */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                  <Zap className="h-5 w-5 text-orange-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Decision Burnout Meter</CardTitle>
+                  <CardDescription>Mental fatigue from overtrading and FOMO loops</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Burnout risk</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Low risk
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Trade frequency variance</span>
+                <span className="text-orange-400">23%</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '23%' }} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">1.2</div>
+                <div className="text-xs text-muted-foreground">Trades/day</div>
+              </div>
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Stable</div>
+                <div className="text-xs text-muted-foreground">Pattern</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Confidence Footprint */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
+                  <TrendingUp className="h-5 w-5 text-blue-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Confidence Footprint</CardTitle>
+                  <CardDescription>Signals confidence vs hesitation in decision-making</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Confidence level</span>
+              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+                High confidence
+              </Badge>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Average position size</span>
+                <span className="text-blue-400">8.7M lamports</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Hold time commitment</span>
+                <span className="text-blue-400">3.2 days avg</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Fee aggression</span>
+                <span className="text-blue-400">Premium tier</span>
+              </div>
+            </div>
+            
+            <div className="text-center p-3 bg-blue-500/10 rounded-lg">
+              <div className="text-sm font-medium text-blue-400">Confidence Score</div>
+              <div className="text-2xl font-bold text-blue-400 mt-1">87/100</div>
             </div>
           </CardContent>
         </Card>

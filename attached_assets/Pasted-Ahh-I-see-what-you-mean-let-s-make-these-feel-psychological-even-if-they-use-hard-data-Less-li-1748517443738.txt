@@ -1,0 +1,79 @@
+Ahh I see what you mean — let’s make these *feel* psychological, even if they use hard data. Less like a dashboard, more like a mirror into the trader’s soul.
+
+Here’s a refined version of **3–4 new psychologically themed cards per tab**, using only **Helius + Moralis + portfolio metadata**, but written with deep behavioral/psychoanalytic framing:
+
+---
+
+### 🧩 **Overview Tab — Psychological Framing**
+
+> “Who you are at a glance.”
+
+* **Behavioral Archetype**
+  → Label: *“The Strategist,” “The Gambler,” “The Hoarder,”* based on token count, fee strategy, and protocol diversity.
+
+* **Decision Burnout Meter**
+  → Based on trade frequency and variance in timing — high = overtrading, FOMO loops.
+
+* **Confidence Footprint**
+  → Avg. token size + hold time + fee level → signals confidence vs hesitation.
+
+* **Risk Posture Radar**
+  → Measures aggressiveness based on fee size, swap types, and token concentration.
+
+---
+
+### 🧠 **Behavior Tab — Psychological Framing**
+
+> “Your unconscious routines.”
+
+* **Trading Ritual Clock**
+  → Time-of-day clustering → Are you trading at night? In bursts? Emotional windows?
+
+* **Impulse Depth Score**
+  → % of tokens sold within 10 min → shows lack of commitment, emotional reactivity.
+
+* **Loyalty Disposition**
+  → Protocol or token reuse → are you seeking safety in the familiar or chasing novelty?
+
+* **Micro-Gambling Pattern**
+  → High swap count with tiny amounts = addicted to dopamine loops.
+
+---
+
+### 🔎 **Insight Tab — Psychological Framing**
+
+> “How your past shapes your future.”
+
+* **Regret Pattern Analysis**
+  → Trades exited *right before* price uptrend = chronic premature exit behavior.
+
+* **Delayed Entry Syndrome**
+  → Consistent entry *after* token peaks → fear of missing out overrides logic.
+
+* **Conviction Deficiency**
+  → High token count, low average size, short holds = signal of indecisiveness.
+
+* **Hope Syndrome Tracker**
+  → Tokens held > 30 days with 70%+ drawdown = refusal to cut losses.
+
+---
+
+### 🧬 **Psychoanalytics Tab — Deep Freudian Vibes**
+
+> “What your trades say about your inner psyche.”
+
+* **Fear Index**
+  → Ratio of transfers vs swaps, low exposure = risk aversion, security-seeking.
+
+* **Pain Repetition Cycle**
+  → Rebuying tokens that previously dumped on you → repeating traumatic trades.
+
+* **Mood Oscillation Graph**
+  → Weekly trade frequency volatility = emotional instability in response to markets.
+
+* **Projection Bias Detector**
+  → Trading same token as whales but at different times → imitating without insight.
+
+---
+
+Want me to generate JSON card templates for one of these tabs to use in the frontend build? Or start visual mockups next?

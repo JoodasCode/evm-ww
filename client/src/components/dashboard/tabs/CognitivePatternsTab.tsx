@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, Activity, DollarSign, Shuffle, Timer } from "lucide-react";
+import { InfoIcon, Activity, DollarSign, Shuffle, Timer, Clock, Zap, Heart, Dice6 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -376,6 +376,182 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                   </Badge>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Trading Ritual Clock */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-indigo-500/10 ring-1 ring-indigo-500/20">
+                  <Clock className="h-5 w-5 text-indigo-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Trading Ritual Clock</CardTitle>
+                  <CardDescription>Your unconscious time-based trading routines</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-indigo-400 mb-1">Night Owl</div>
+              <div className="text-sm text-muted-foreground">
+                68% of trades happen after 10 PM
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 gap-1 text-xs">
+              <div className="text-center p-2 bg-indigo-500/5 rounded">
+                <div className="font-medium text-indigo-400">Dawn</div>
+                <div className="text-muted-foreground">5%</div>
+              </div>
+              <div className="text-center p-2 bg-indigo-500/10 rounded">
+                <div className="font-medium text-indigo-400">Day</div>
+                <div className="text-muted-foreground">27%</div>
+              </div>
+              <div className="text-center p-2 bg-indigo-500/20 rounded">
+                <div className="font-medium text-indigo-400">Evening</div>
+                <div className="text-muted-foreground">42%</div>
+              </div>
+              <div className="text-center p-2 bg-indigo-500/30 rounded">
+                <div className="font-medium text-indigo-400">Night</div>
+                <div className="text-muted-foreground">68%</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Impulse Depth Score */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                  <Zap className="h-5 w-5 text-red-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Impulse Depth Score</CardTitle>
+                  <CardDescription>Lack of commitment and emotional reactivity</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Quick exit tendency</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Low impulse
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Tokens sold within 10 minutes</span>
+                <span className="text-red-400">8%</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-red-400 transition-all duration-300" style={{ width: '8%' }} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">3.2 days</div>
+                <div className="text-xs text-muted-foreground">Avg hold time</div>
+              </div>
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Patient</div>
+                <div className="text-xs text-muted-foreground">Exit style</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Loyalty Disposition */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
+                  <Heart className="h-5 w-5 text-green-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Loyalty Disposition</CardTitle>
+                  <CardDescription>Safety in familiar vs chasing novelty</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-400 mb-1">Selective Loyalty</div>
+              <div className="text-sm text-muted-foreground">
+                72% protocol reuse rate
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Jupiter loyalty</span>
+                <span className="text-green-400">89%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Raydium loyalty</span>
+                <span className="text-green-400">34%</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>New protocol exploration</span>
+                <span className="text-yellow-400">28%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Micro-Gambling Pattern */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                  <Dice6 className="h-5 w-5 text-orange-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-semibold">Micro-Gambling Pattern</CardTitle>
+                  <CardDescription>Addiction to dopamine loops via tiny trades</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Dopamine seeking</span>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Healthy levels
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Micro trades (&lt;0.1 SOL)</span>
+                <span className="text-orange-400">12%</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '12%' }} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">8.7M</div>
+                <div className="text-xs text-muted-foreground">Avg size (lamports)</div>
+              </div>
+              <div className="text-center p-2 bg-muted/50 rounded">
+                <div className="font-medium text-foreground">Strategic</div>
+                <div className="text-xs text-muted-foreground">Trade type</div>
+              </div>
             </div>
           </CardContent>
         </Card>
