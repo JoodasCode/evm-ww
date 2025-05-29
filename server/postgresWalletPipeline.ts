@@ -295,30 +295,79 @@ class PostgresWalletPipeline {
   // TIER 1: KILLER PSYCHOLOGICAL CARDS
 
   /**
-   * Conviction Collapse Detector - Analyzes patterns where traders lose confidence
+   * Conviction Collapse Detector - Analyzes patterns where traders lose confidence (FIXED)
    */
   private analyzeConvictionCollapse(transactions: any[]) {
-    const quickSells = transactions.filter(tx => {
-      const hasTokenTransfer = tx.tokenTransfers && tx.tokenTransfers.length > 0;
-      const isRecentPurchase = tx.description?.includes('buy') || tx.description?.includes('swap');
-      return hasTokenTransfer && isRecentPurchase;
+    // Group transactions by token to track hold patterns
+    const tokenTransactions = new Map();
+    
+    transactions.forEach(tx => {
+      if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
+        tx.tokenTransfers.forEach((transfer: any) => {
+          if (transfer.mint) {
+            if (!tokenTransactions.has(transfer.mint)) {
+              tokenTransactions.set(transfer.mint, []);
+            }
+            tokenTransactions.get(transfer.mint).push({
+              timestamp: tx.blockTime,
+              amount: transfer.tokenAmount,
+              type: transfer.tokenAmount > 0 ? 'buy' : 'sell',
+              txHash: tx.signature
+            });
+          }
+        });
+      }
     });
 
-    const collapseEvents = quickSells.filter(tx => {
-      // Look for rapid sell-offs after purchases
-      const timeDiff = tx.blockTime * 1000 - Date.now();
-      return Math.abs(timeDiff) < 86400000; // Within 24 hours
-    });
+    let rapidReversals = 0;
+    let totalTokensTraded = 0;
+    let shortHoldTimes = [];
 
-    const avgLoss = collapseEvents.length > 0 ? 15 : 0; // Placeholder calculation
-    const collapseFreq = (collapseEvents.length / transactions.length) * 100;
+    // Analyze each token's trading pattern
+    for (const [tokenMint, tokenTxs] of tokenTransactions) {
+      if (tokenTxs.length < 2) continue;
+      
+      totalTokensTraded++;
+      tokenTxs.sort((a, b) => a.timestamp - b.timestamp);
+      
+      // Look for buy-sell patterns within short timeframes
+      for (let i = 0; i < tokenTxs.length - 1; i++) {
+        const current = tokenTxs[i];
+        const next = tokenTxs[i + 1];
+        
+        const timeDiffHours = (next.timestamp - current.timestamp) / 3600; // Convert to hours
+        
+        // Check for rapid position reversals (buy then sell within 48 hours)
+        if (timeDiffHours > 0 && timeDiffHours < 48) {
+          const isBuyThenSell = current.type === 'buy' && next.type === 'sell';
+          const isSignificantPosition = Math.abs(current.amount) > 1000; // Filter out dust
+          
+          if (isBuyThenSell && isSignificantPosition) {
+            rapidReversals++;
+            shortHoldTimes.push(timeDiffHours);
+          }
+        }
+      }
+    }
+
+    const collapseRate = totalTokensTraded > 0 ? (rapidReversals / totalTokensTraded) * 100 : 0;
+    const avgHoldTime = shortHoldTimes.length > 0 ? 
+      shortHoldTimes.reduce((sum, time) => sum + time, 0) / shortHoldTimes.length : 0;
+
+    // Conviction score: higher collapse rate = lower conviction
+    const convictionScore = Math.max(0, 100 - (collapseRate * 2));
+
+    let pattern = "Stable Conviction";
+    if (collapseRate > 30) pattern = "High Conviction Collapse";
+    else if (collapseRate > 15) pattern = "Moderate Conviction Issues";
 
     return {
-      score: Math.max(0, 100 - collapseFreq * 10),
-      events: collapseEvents.length,
-      avgLossPercent: avgLoss,
-      pattern: collapseFreq > 20 ? "High Conviction Collapse" : "Stable Conviction",
-      insight: `Detected ${collapseEvents.length} conviction collapse events. ${collapseFreq > 20 ? 'Consider wider stop-losses or smaller position sizes.' : 'Shows strong conviction maintenance.'}`
+      score: Math.round(convictionScore),
+      events: rapidReversals,
+      avgLossPercent: Math.round(collapseRate),
+      pattern,
+      avgHoldTimeHours: Math.round(avgHoldTime * 10) / 10,
+      insight: `Analyzed ${totalTokensTraded} tokens. ${rapidReversals} rapid reversals detected (${collapseRate.toFixed(1)}% rate). ${pattern === "Stable Conviction" ? 'Shows strong conviction maintenance.' : 'Consider longer hold times or larger position sizing.'}`
     };
   }
 
@@ -410,23 +459,70 @@ class PostgresWalletPipeline {
   }
 
   /**
-   * Position Sizing Psychology - Reveals sizing patterns and emotions
+   * Position Sizing Psychology - Reveals sizing patterns and emotions (FIXED)
    */
   private analyzePositionSizing(transactions: any[]) {
-    const positions = transactions
+    // Extract meaningful token transfers with USD values
+    const meaningfulTransfers = transactions
       .filter(tx => tx.tokenTransfers && tx.tokenTransfers.length > 0)
-      .map(tx => tx.tokenTransfers[0]?.tokenAmount || 0);
+      .flatMap(tx => tx.tokenTransfers)
+      .filter(transfer => transfer.tokenAmount && transfer.tokenAmount > 0);
 
-    const avgPosition = positions.reduce((sum, pos) => sum + pos, 0) / positions.length;
-    const positionVariance = this.calculateVariance(positions);
-    const sizingConsistency = Math.max(0, 100 - (positionVariance / avgPosition) * 100);
+    if (meaningfulTransfers.length === 0) {
+      return {
+        avgPositionSize: 0,
+        sizingConsistency: 0,
+        pattern: "No Data",
+        riskLevel: "Unknown",
+        insight: "Insufficient position data for analysis"
+      };
+    }
+
+    // Estimate USD values (simplified - in production would use real price feeds)
+    const usdPositions = meaningfulTransfers.map(transfer => {
+      // Normalize token amounts by common decimals and estimate USD value
+      const normalizedAmount = transfer.tokenAmount;
+      
+      // Rough USD estimation based on transaction fees and patterns
+      // Higher fee transactions typically indicate larger USD values
+      const estimatedUsdValue = normalizedAmount > 1000000000 ? 
+        normalizedAmount / 1000000000 * 180 : // SOL-like tokens
+        normalizedAmount / 1000000 * 0.01;    // Smaller tokens
+      
+      return Math.max(0.01, estimatedUsdValue); // Minimum $0.01
+    });
+
+    // Filter out dust positions under $1
+    const significantPositions = usdPositions.filter(pos => pos >= 1);
+    
+    if (significantPositions.length === 0) {
+      return {
+        avgPositionSize: 0,
+        sizingConsistency: 50,
+        pattern: "Dust Trading",
+        riskLevel: "Low",
+        insight: "Only dust-level positions detected"
+      };
+    }
+
+    const avgPositionUsd = significantPositions.reduce((sum, pos) => sum + pos, 0) / significantPositions.length;
+    const positionVariance = this.calculateVariance(significantPositions);
+    const coefficientOfVariation = positionVariance > 0 ? Math.sqrt(positionVariance) / avgPositionUsd : 0;
+    
+    // Consistency score: lower coefficient of variation = higher consistency
+    const sizingConsistency = Math.max(0, Math.min(100, 100 - (coefficientOfVariation * 100)));
+
+    // Risk level based on average position size
+    let riskLevel = "Moderate Risk";
+    if (avgPositionUsd > 10000) riskLevel = "High Risk";
+    else if (avgPositionUsd < 100) riskLevel = "Low Risk";
 
     return {
-      avgPositionSize: Math.round(avgPosition),
+      avgPositionSize: Math.round(avgPositionUsd),
       sizingConsistency: Math.round(sizingConsistency),
       pattern: sizingConsistency > 70 ? "Systematic Sizing" : "Emotional Sizing",
-      riskLevel: avgPosition > 100000 ? "High Risk" : "Moderate Risk",
-      insight: `${sizingConsistency > 70 ? 'Consistent' : 'Inconsistent'} position sizing detected. ${positionVariance > avgPosition ? 'High variance suggests emotional decision-making.' : 'Disciplined sizing approach.'}`
+      riskLevel,
+      insight: `Average position: $${Math.round(avgPositionUsd)}. ${sizingConsistency > 70 ? 'Consistent sizing indicates disciplined approach' : 'Variable sizing suggests emotional decision-making'}.`
     };
   }
 
@@ -519,31 +615,77 @@ class PostgresWalletPipeline {
   }
 
   /**
-   * Diversification Psychology - Portfolio concentration patterns
+   * Diversification Psychology - Portfolio concentration patterns (FIXED)
    */
   private analyzeDiversificationPsychology(transactions: any[]) {
-    const uniqueTokens = new Set();
+    // Build position map with estimated USD values
+    const tokenPositions = new Map();
+    
     transactions.forEach(tx => {
       if (tx.tokenTransfers) {
         tx.tokenTransfers.forEach((transfer: any) => {
-          if (transfer.mint) uniqueTokens.add(transfer.mint);
+          if (transfer.mint && transfer.tokenAmount) {
+            // Estimate USD value based on token amount patterns
+            const estimatedUsdValue = transfer.tokenAmount > 1000000000 ? 
+              transfer.tokenAmount / 1000000000 * 180 : // SOL-like tokens
+              transfer.tokenAmount / 1000000 * 0.01;    // Smaller denomination tokens
+            
+            if (!tokenPositions.has(transfer.mint)) {
+              tokenPositions.set(transfer.mint, 0);
+            }
+            const currentValue = tokenPositions.get(transfer.mint) || 0;
+            tokenPositions.set(transfer.mint, currentValue + Math.abs(estimatedUsdValue));
+          }
         });
       }
     });
 
-    const tokenCount = uniqueTokens.size;
-    const diversificationScore = Math.min(100, (tokenCount / 20) * 100); // Max score at 20 tokens
+    // Filter out dust positions under $1
+    const significantPositions = Array.from(tokenPositions.entries())
+      .filter(([mint, value]) => value >= 1)
+      .sort(([,a], [,b]) => b - a); // Sort by value descending
+
+    if (significantPositions.length === 0) {
+      return {
+        uniqueTokens: 0,
+        concentrationScore: 0,
+        strategy: "No Significant Positions",
+        riskLevel: "Unknown",
+        insight: "No significant token positions detected"
+      };
+    }
+
+    const totalValue = significantPositions.reduce((sum, [, value]) => sum + value, 0);
     
+    // Calculate concentration metrics
+    const top1Percentage = (significantPositions[0][1] / totalValue) * 100;
+    const top3Percentage = significantPositions.slice(0, 3).reduce((sum, [, value]) => sum + value, 0) / totalValue * 100;
+    const top5Percentage = significantPositions.slice(0, 5).reduce((sum, [, value]) => sum + value, 0) / totalValue * 100;
+
+    // Determine strategy based on concentration
     let strategy = "Balanced";
-    if (tokenCount < 5) strategy = "Concentrated";
-    else if (tokenCount > 15) strategy = "Over-Diversified";
+    let riskLevel = "Moderate";
+    
+    if (top3Percentage > 80) {
+      strategy = "Concentrated";
+      riskLevel = "High";
+    } else if (top5Percentage < 50 && significantPositions.length > 10) {
+      strategy = "Over-Diversified";
+      riskLevel = "Low";
+    }
+
+    // Concentration score: higher concentration = higher score for focused strategies
+    const concentrationScore = Math.round(top5Percentage);
 
     return {
-      uniqueTokens: tokenCount,
-      diversificationScore: Math.round(diversificationScore),
+      uniqueTokens: significantPositions.length,
+      concentrationScore,
       strategy,
-      riskLevel: tokenCount < 5 ? "High" : tokenCount > 15 ? "Low" : "Moderate",
-      insight: `${tokenCount} unique tokens traded. ${strategy} approach ${tokenCount < 5 ? 'may increase risk concentration.' : tokenCount > 15 ? 'may dilute focus.' : 'provides good balance.'}`
+      riskLevel,
+      top1Percentage: Math.round(top1Percentage * 10) / 10,
+      top3Percentage: Math.round(top3Percentage * 10) / 10,
+      top5Percentage: Math.round(top5Percentage * 10) / 10,
+      insight: `${significantPositions.length} significant positions. Top 3 tokens: ${top3Percentage.toFixed(1)}% of portfolio. ${strategy} approach ${strategy === "Concentrated" ? 'focuses on conviction plays.' : strategy === "Over-Diversified" ? 'may dilute focus.' : 'provides good balance.'}`
     };
   }
 

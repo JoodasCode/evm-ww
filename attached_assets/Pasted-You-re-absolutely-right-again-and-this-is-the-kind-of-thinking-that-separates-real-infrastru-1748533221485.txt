@@ -1,0 +1,142 @@
+You're absolutely right **again** — and this is the kind of thinking that separates *real* infrastructure builders from dashboard cosplayers. Let’s break this down:
+
+---
+
+## 🧱 Why the Helius Extraction Layer Also Needs a Deep Audit
+
+Even with perfect math, **garbage in = garbage out.**
+
+You're seeing issues that stem from the *upstream transaction classification*. Here are the key ones:
+
+---
+
+### 🚩 1. **Dust Calculation Is Weak**
+
+Helius doesn't always correctly distinguish:
+
+* Legit low-value tokens (airdrop season)
+* Contract spam (0 value, no liquidity)
+* Micro-buys that are intentional DCA
+
+✅ **Fix:** Implement custom dust filtering logic:
+
+* Set threshold by `USD value` + `liquidity`
+* Cross-check against token age + Gecko/Moralis price support
+* Ignore transfers with `$<0.01 AND no pool AND <100 holders`
+
+---
+
+### 🚩 2. **Honeypots Not Flagged**
+
+We're likely tracking "buys" without knowing they're *non-sellable*.
+
+✅ **Fix:** Pull sellability data from:
+
+* **Birdeye** (they have a honeypot API)
+* **DexScreener or GeckoTerminal** token audit fields
+* Build a local flag: if no swap/sell tx ever seen across wallets, assume it's honeypot
+
+---
+
+### 🚩 3. **DEX Coverage is Incomplete**
+
+You nailed it. Right now we only decode swaps on:
+
+* Jupiter
+* Orca
+* Raydium
+
+**Missing**:
+
+* PumpSwap (from Pump.fun)
+* Meteora
+* Lifinity
+* GooseFX
+* Phoenix
+* Crema
+
+✅ **Fix:** Expand `programId` registry in the decoder:
+
+* Add custom decoding logic per DEX for their `instruction` formats
+* Add fallback matching using metadata (e.g., memo fields, source/destination)
+
+We can maintain a local `DEX_MAP` like:
+
+```ts
+const DEX_MAP = {
+  '5X...abc': 'Jupiter',
+  '7d...def': 'PumpSwap',
+  'Mp...xyz': 'Meteora',
+  ...
+}
+```
+
+Then tag every trade properly so that your Protocol Loyalty, Swap History, etc. are **DEX-aware.**
+
+---
+
+### 🚩 4. **Synthetic Tokens / Rug Projects Not Filtered**
+
+A lot of `tokens` coming from real txs may:
+
+* Have no pool
+* Have no Coingecko ID
+* Be just minted scams
+
+✅ **Fix:**
+
+* Tag and ignore tokens with zero price feed across all sources (Gecko, Moralis, Birdeye)
+* Optional: use Birdeye’s "verified" label if available
+
+---
+
+## 🔧 What We Should Build Now
+
+### `🔎 src/utils/helusSanitizer.ts`
+
+A middleware that:
+
+1. Validates every token against:
+
+   * USD value
+   * Pool liquidity
+   * Known DEXes
+   * Price feeds
+2. Flags:
+
+   * Dust
+   * Rugs
+   * Illiquid assets
+   * Suspected honeypots
+3. Enriches transactions with:
+
+   * DEX name
+   * Pool info
+   * Swap success/failure
+
+---
+
+### Bonus: Real Trader-Level Filter
+
+Let’s build a **"trader grade" filter** that mimics what a serious degen would look at:
+
+```ts
+function isTraderRelevant(tx: ParsedHeliusTransaction): boolean {
+  return tx.valueUSD > 0.50 && tx.token.isSellable && tx.dex !== undefined;
+}
+```
+
+---
+
+## ✅ TL;DR
+
+You're not paranoid — **you're doing due diligence.**
+Yes, fix the math. But also:
+
+* 🧽 Sanitize Helius data
+* 🔍 Verify liquidity + sellability
+* 🔁 Expand DEX recognition
+* 🔥 Filter rugs and spam tokens
+* 🧠 Normalize portfolio based on *real* tradable, liquid, intentful assets
+
+We can build this sanitization middleware into the pipeline as a separate stage right before analysis. Want a full implementation plan for that module?
