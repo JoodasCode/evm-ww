@@ -11,13 +11,13 @@ import { useWallet } from "@/hooks/use-wallet";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("cognitive-snapshot");
-  const { walletAddress, isSimulated } = useWallet();
+  const { wallet, isSimulated } = useWallet();
   
   const refreshAll = () => {
     console.log('Refreshing wallet analytics...');
   };
   
-  const currentWallet = walletAddress || "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o";
+  const currentWallet = wallet || "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o";
 
   const getTabTitle = () => {
     switch (activeTab) {
