@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import fetch from 'node-fetch';
 import { Redis } from '@upstash/redis';
+import Bottleneck from 'bottleneck';
 
 /**
  * CENTRALIZED DATA PIPELINE
@@ -16,6 +17,7 @@ export class CentralDataPipeline {
   private heliusApiKey: string;
   private moralisApiKey: string;
   private coingeckoApiKey: string;
+  private heliusLimiter: Bottleneck;
 
   constructor() {
     // Use PostgreSQL environment variables with SSL
@@ -37,6 +39,12 @@ export class CentralDataPipeline {
     this.heliusApiKey = process.env.HELIUS_API_KEY!;
     this.moralisApiKey = process.env.MORALIS_API_KEY!;
     this.coingeckoApiKey = process.env.COINGECKO_API_KEY!;
+    
+    // Rate limiter for Helius API (10 requests/second)
+    this.heliusLimiter = new Bottleneck({
+      maxConcurrent: 1,
+      minTime: 100 // 100ms = 10 req/sec
+    });
   }
 
   /**
@@ -110,8 +118,14 @@ export class CentralDataPipeline {
       fetchedAt: new Date().toISOString()
     };
     
-    // Cache for 10 minutes
-    await this.redis.set(cacheKey, JSON.stringify(rawData), { ex: 600 });
+    // Cache raw data for 30 minutes with auto-expiry
+    await this.redis.set(cacheKey, JSON.stringify(rawData), { ex: 1800 });
+    
+    // Track wallet activity for cache management
+    await this.redis.zadd("wallet_activity", {
+      score: Date.now(),
+      member: walletAddress
+    });
     
     return rawData;
   }
@@ -183,8 +197,8 @@ export class CentralDataPipeline {
       moralisProcessedAt: new Date().toISOString()
     };
     
-    // Cache clean data in Redis for 30 minutes
-    await this.redis.set(cacheKey, JSON.stringify(cleanData), { ex: 1800 });
+    // Cache clean data for 1 hour with auto-expiry
+    await this.redis.set(cacheKey, JSON.stringify(cleanData), { ex: 3600 });
     
     return cleanData;
   }
@@ -435,18 +449,20 @@ export class CentralDataPipeline {
     console.log(`📡 Fetching Helius data for ${walletAddress}`);
     
     try {
-      // Get enhanced transactions directly
-      const transactionsResponse = await fetch(`https://api.helius.xyz/v0/addresses/${walletAddress}/transactions?api-key=${this.heliusApiKey}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+      // Rate-limited Helius API call
+      const transactions = await this.heliusLimiter.schedule(async () => {
+        const transactionsResponse = await fetch(`https://api.helius.xyz/v0/addresses/${walletAddress}/transactions?api-key=${this.heliusApiKey}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!transactionsResponse.ok) {
+          const errorText = await transactionsResponse.text();
+          throw new Error(`Helius transactions API error ${transactionsResponse.status}: ${errorText}`);
+        }
+        
+        return await transactionsResponse.json();
       });
-      
-      if (!transactionsResponse.ok) {
-        const errorText = await transactionsResponse.text();
-        throw new Error(`Helius transactions API error ${transactionsResponse.status}: ${errorText}`);
-      }
-      
-      const transactions = await transactionsResponse.json();
       
       // Get wallet balance
       const balanceResponse = await fetch(`https://api.helius.xyz/v1/accounts/${walletAddress}?api-key=${this.heliusApiKey}`);
@@ -704,8 +720,8 @@ export class WalletDataConsumer {
       );
       
       if (result.rows.length > 0) {
-        // Cache in Redis for 1 hour
-        await this.redis.set(cacheKey, JSON.stringify(result.rows[0]), { ex: 3600 });
+        // Cache analysis for 24 hours with auto-expiry
+        await this.redis.set(cacheKey, JSON.stringify(result.rows[0]), { ex: 86400 });
         return result.rows[0];
       }
       
@@ -735,6 +751,21 @@ export class WalletDataConsumer {
   async refreshWalletData(walletAddress: string, walletName?: string) {
     const pipeline = new CentralDataPipeline();
     return await pipeline.ingestWallet(walletAddress, walletName);
+  }
+
+  /**
+   * Clean up old cache entries to manage Redis memory
+   */
+  async cleanupOldCacheEntries() {
+    try {
+      // Remove wallet activity entries older than 7 days
+      const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+      await this.redis.zremrangebyscore("wallet_activity", 0, oneWeekAgo);
+      
+      console.log('Cache cleanup completed');
+    } catch (error) {
+      console.error('Cache cleanup failed:', error);
+    }
   }
 
   /**

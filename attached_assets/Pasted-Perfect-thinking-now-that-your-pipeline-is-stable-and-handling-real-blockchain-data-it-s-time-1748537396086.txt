@@ -1,0 +1,89 @@
+Perfect thinking — now that your pipeline is stable and handling **real blockchain data**, it’s time to optimize for **API limits** and **cache management**.
+
+---
+
+## ✅ 1. **Throttle Helius to 10 Requests/sec**
+
+To avoid getting rate-limited by Helius:
+
+### 🔧 Option A: Use a global rate limiter
+
+Use a rate-limiting library like [`p-limit`](https://www.npmjs.com/package/p-limit) or [`Bottleneck`](https://www.npmjs.com/package/bottleneck):
+
+```ts
+import Bottleneck from 'bottleneck';
+
+const limiter = new Bottleneck({
+  maxConcurrent: 10,
+  minTime: 100, // 100ms = 10 req/sec
+});
+
+const fetchWithRateLimit = limiter.wrap(async (address) => {
+  return await fetchFromHelius(address);
+});
+```
+
+Then replace your raw fetch calls with `await fetchWithRateLimit(walletAddress)`.
+
+---
+
+## ✅ 2. **Auto-Expire Data in Upstash Redis**
+
+Since Upstash has **limited memory**, we should **auto-expire old keys** to prevent overflow.
+
+### 🔧 Add TTL (Time-To-Live) when setting cache:
+
+Update your Redis `set()` logic like this:
+
+```ts
+await redis.set(`wallet:clean:${wallet}`, JSON.stringify(cleanData), { ex: 3600 }); // expires after 1 hour
+await redis.set(`wallet:analysis:${wallet}`, JSON.stringify(analysis), { ex: 86400 }); // expires after 1 day
+```
+
+You can adjust TTL based on data type:
+
+| Cache Key          | TTL (seconds) | Reason                          |
+| ------------------ | ------------- | ------------------------------- |
+| `wallet:raw:`      | 1800          | Raw fetch data, refresh often   |
+| `wallet:clean:`    | 3600          | Processed txns, short cache     |
+| `wallet:analysis:` | 86400         | Behavior takes longer to change |
+| `wallet:insight:`  | 43200         | Medium-term pattern cache       |
+
+---
+
+## ✅ 3. **(Optional) Use LRU Logic or Custom Cleanup**
+
+If you want smarter cache clearing (e.g. keep only top 500 active wallets):
+
+* Store all cached wallets in a Redis **sorted set** by last activity:
+
+```ts
+await redis.zadd("wallet_activity", {
+  score: Date.now(),
+  member: walletAddress
+});
+```
+
+* Run a cleanup job every hour:
+
+```ts
+// Remove entries older than 7 days
+const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+await redis.zremrangebyscore("wallet_activity", 0, oneWeekAgo);
+```
+
+* Use `ZCARD` to count active wallets and purge oldest if you go over quota.
+
+---
+
+## 🧠 TL;DR Cheat Sheet
+
+| Feature           | Implementation                          |
+| ----------------- | --------------------------------------- |
+| Helius throttle   | `bottleneck` or `p-limit` at 10 req/sec |
+| Redis auto-expire | `{ ex: ttlInSeconds }` on `set()`       |
+| Cache cleanup     | Sorted sets + scheduled purge jobs      |
+
+---
+
+Let me know if you want me to write the Redis TTL handler directly into your `WalletDataConsumer` or if you'd like to automate the cleanup scheduler too.
