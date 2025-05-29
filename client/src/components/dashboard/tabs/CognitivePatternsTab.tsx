@@ -261,34 +261,55 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                   <CardDescription>Finding alpha before the crowd arrives</CardDescription>
                 </div>
               </div>
+              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                78/100
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-400 mb-1">Early Adopter</div>
-              <div className="text-sm text-muted-foreground">
-                Found 3 tokens before 10x pumps
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/20">
+                <div className="text-xl font-bold text-emerald-400">Early Adopter</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  Found 3 tokens before 10x
+                </div>
+              </div>
+              <div className="text-center p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/20">
+                <div className="text-xl font-bold text-emerald-400">65%</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  SOL ecosystem early
+                </div>
               </div>
             </div>
             
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span>Early BONK discovery</span>
-                <span className="text-emerald-400">+340% timing</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="text-sm font-medium">BONK discovery</span>
+                </div>
+                <Badge variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-400">
+                  +340% timing
+                </Badge>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>WIF entry timing</span>
-                <span className="text-yellow-400">Crowd follower</span>
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <span className="text-sm font-medium">WIF entry</span>
+                </div>
+                <Badge variant="secondary" className="text-xs bg-yellow-500/10 text-yellow-400">
+                  Crowd follower
+                </Badge>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>SOL ecosystem tokens</span>
-                <span className="text-emerald-400">65% early</span>
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Jupiter usage</span>
+                </div>
+                <Badge variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-400">
+                  Month 2 adopter
+                </Badge>
               </div>
-            </div>
-            
-            <div className="text-center p-3 bg-emerald-500/10 rounded-lg">
-              <div className="text-sm font-medium text-emerald-400">Discovery Score</div>
-              <div className="text-2xl font-bold text-emerald-400 mt-1">78/100</div>
             </div>
           </CardContent>
         </Card>
@@ -410,42 +431,47 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
-                  <Zap className="h-5 w-5 text-red-400" />
+                <div className="p-2.5 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
+                  <Zap className="h-5 w-5 text-green-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Impulse Depth Score</CardTitle>
-                  <CardDescription>Lack of commitment and emotional reactivity</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Impulse Control Score</CardTitle>
+                  <CardDescription>Commitment levels and exit discipline</CardDescription>
                 </div>
               </div>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                92/100
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Quick exit tendency</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
-                Low impulse
-              </Badge>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span>Tokens sold within 10 minutes</span>
-                <span className="text-red-400">8%</span>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+                <div className="text-lg font-bold text-green-400">8%</div>
+                <div className="text-xs text-muted-foreground">Quick exits</div>
               </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-red-400 transition-all duration-300" style={{ width: '8%' }} />
+              <div className="text-center p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+                <div className="text-lg font-bold text-blue-400">3.2d</div>
+                <div className="text-xs text-muted-foreground">Avg hold</div>
+              </div>
+              <div className="text-center p-3 bg-purple-500/5 rounded-lg border border-purple-500/20">
+                <div className="text-lg font-bold text-purple-400">92%</div>
+                <div className="text-xs text-muted-foreground">Patience</div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">3.2 days</div>
-                <div className="text-xs text-muted-foreground">Avg hold time</div>
+            <div className="relative">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                <span>Impulsive</span>
+                <span>Patient</span>
               </div>
-              <div className="text-center p-2 bg-muted/50 rounded">
-                <div className="font-medium text-foreground">Patient</div>
-                <div className="text-xs text-muted-foreground">Exit style</div>
+              <div className="w-full bg-muted/50 rounded-full h-3">
+                <div className="bg-gradient-to-r from-green-500 to-green-400 h-3 rounded-full transition-all duration-500" style={{ width: '92%' }}></div>
+              </div>
+              <div className="flex items-center justify-center mt-2">
+                <Badge variant="secondary" className="bg-green-500/10 text-green-400">
+                  Disciplined Trader
+                </Badge>
               </div>
             </div>
           </CardContent>
@@ -456,36 +482,56 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
-                  <Heart className="h-5 w-5 text-green-400" />
+                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
+                  <Heart className="h-5 w-5 text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Loyalty Disposition</CardTitle>
-                  <CardDescription>Safety in familiar vs chasing novelty</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Protocol Loyalty</CardTitle>
+                  <CardDescription>Platform preferences and exploration patterns</CardDescription>
                 </div>
               </div>
+              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+                Selective
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-400 mb-1">Selective Loyalty</div>
-              <div className="text-sm text-muted-foreground">
-                72% protocol reuse rate
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+                <div className="text-xl font-bold text-blue-400">72%</div>
+                <div className="text-xs text-muted-foreground mt-1">Protocol reuse</div>
+              </div>
+              <div className="text-center p-3 bg-yellow-500/5 rounded-lg border border-yellow-500/20">
+                <div className="text-xl font-bold text-yellow-400">28%</div>
+                <div className="text-xs text-muted-foreground mt-1">New exploration</div>
               </div>
             </div>
             
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span>Jupiter loyalty</span>
-                <span className="text-green-400">89%</span>
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded"></div>
+                  <span className="text-sm font-medium">Jupiter</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="text-sm text-green-400 font-medium">89%</div>
+                  <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-400">
+                    High loyalty
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Raydium loyalty</span>
-                <span className="text-green-400">34%</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>New protocol exploration</span>
-                <span className="text-yellow-400">28%</span>
+              
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                  <span className="text-sm font-medium">Raydium</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="text-sm text-yellow-400 font-medium">34%</div>
+                  <Badge variant="secondary" className="text-xs bg-yellow-500/10 text-yellow-400">
+                    Moderate
+                  </Badge>
+                </div>
               </div>
             </div>
           </CardContent>
