@@ -1,0 +1,86 @@
+🔥 Hell yes — and this is the **killer twist** that turns Wallet Whisperer from “just analytics” into a **psychoanalytic intelligence layer for traders**.
+
+Here’s how we **reframe every metric** to feel like *wallet psychology*, not just boring GA-style data:
+
+---
+
+## 🧠 Repackaging Metrics as Psychological Insights
+
+### 🗂 Overview Tab → **Cognitive Snapshot**
+
+> Not “Trading Stats” — it’s the wallet’s *mental profile at a glance*
+
+| Section               | Reframe as...             | Description                                              |
+| --------------------- | ------------------------- | -------------------------------------------------------- |
+| Trading Activity      | **Impulse Control**       | Are you a trigger-happy degen or a disciplined sniper?   |
+| Portfolio Snapshot    | **Cognitive Load**        | How many narratives are you juggling at once?            |
+| Behavioral Summary    | **Personality Archetype** | Your trading psyche: the Strategist? the Spray-and-Pray? |
+| Protocol Interactions | **Trust Circuits**        | Which DEXs do you *gravitate* toward? Do you stay loyal? |
+
+---
+
+### 🔍 Behavior Tab → **Cognitive Patterns**
+
+> We’re not analyzing behavior — we’re decoding habits, compulsions, biases
+
+| Metric               | Reframe As               | Description                                             |
+| -------------------- | ------------------------ | ------------------------------------------------------- |
+| Avg Trades/Day       | **Dopamine Loop**        | Are you chasing the hit?                                |
+| Fee Strategy         | **Cost Sensitivity**     | Do you care about friction or just want speed?          |
+| Portfolio Complexity | **Mental Fragmentation** | Is your conviction focused or scattered?                |
+| Risk Appetite        | **Impulse Threshold**    | What’s your pain tolerance before you pull the trigger? |
+
+---
+
+### 🧩 Insight Tab → **Self-Sabotage & Superpowers**
+
+> Pattern recognition to surface unconscious trading behavior
+
+| Insight          | Reframe As                | Description                                    |
+| ---------------- | ------------------------- | ---------------------------------------------- |
+| Missed Gains     | **Regret Index**          | How often do you cut winners too early?        |
+| Timing Accuracy  | **Gut Instinct Accuracy** | Are your entries based on signals or emotions? |
+| Holding Duration | **Conviction Depth**      | Do you trust your thesis?                      |
+| Token Rotation   | **Attention Span**        | Do you stick to plays or constantly hunt?      |
+
+---
+
+### 🧬 Psychoanalytics Tab → **Wallet Personality Layer**
+
+> This is where we go full Freudian degen
+
+| Card             | Meaning                                                        |
+| ---------------- | -------------------------------------------------------------- |
+| Mood Timeline    | Emotional swings (risk-off vs FOMO spikes)                     |
+| Fee Identity     | Self-worth through transaction cost                            |
+| Behavioral Tags  | Labels like “High-conviction Overpayer” or “Rotating Idealist” |
+| Archetype Engine | “Strategist”, “Junkie”, “Zen Monk”, “Index Maxxer”             |
+
+---
+
+### Bonus Labels (Psych Themes)
+
+* **Risk Aversion** → “You often hesitate before entering”
+* **Overconfidence** → “You increase size after losses”
+* **Escapist Trading** → “High frequency during market boredom”
+* **Fear of Missing Out** → “Buys after major volume spikes”
+
+---
+
+## 🧪 Positioning Statement
+
+> **Wallet Whisperer isn’t just analytics.**
+> It’s a **psychological profile of your trading mind** — extracted from your on-chain actions.
+> We don’t rate wallets. We understand them.
+
+---
+
+## ✅ Next Step: Build the UI using this lens
+
+Want me to generate a new `OverviewTab.tsx` wireframe that uses:
+
+* “Impulse Control” instead of “Trade Frequency”
+* “Cognitive Load” instead of “Token Count”
+* Psychological labels and tooltips?
+
+We’ll turn your wallet into a character study.

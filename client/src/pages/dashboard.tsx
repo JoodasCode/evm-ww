@@ -3,41 +3,34 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import { ModernWhispererScoreCard } from "@/components/modern-whisperer-score-card";
-import { ModernRiskAppetiteCard } from "@/components/modern-risk-appetite-card";
-import { ModernArchetypeCard } from "@/components/modern-archetype-card";
-import { ModernLabelSummaryCard } from "@/components/modern-label-summary-card";
-import { ModernTradeFrequencyCard } from "@/components/modern-trade-frequency-card";
-import { ModernTokenCategoryCard } from "@/components/modern-token-category-card";
-import { EnhancedDegenScoreCard } from "@/components/enhanced-degen-score-card";
+import { CognitiveSnapshotTab } from "@/components/dashboard/tabs/CognitiveSnapshotTab";
+import { CognitivePatternsTab } from "@/components/dashboard/tabs/CognitivePatternsTab";
+import { InsightsTab } from "@/components/dashboard/tabs/InsightsTab";
+import { PsychoanalyticsTab } from "@/components/dashboard/tabs/PsychoanalyticsTab";
 import { useWallet } from "@/hooks/use-wallet";
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [activeSubTab, setActiveSubTab] = useState("trade-frequency");
-  const { isSimulated } = useWallet();
+  const [activeTab, setActiveTab] = useState("cognitive-snapshot");
+  const { walletAddress, isSimulated } = useWallet();
   
   const refreshAll = () => {
-    // Refresh functionality placeholder
-    console.log('Refreshing data...');
+    console.log('Refreshing wallet analytics...');
   };
   
-  const currentWallet = "G8XdYiKt7pzewTnQtpxWeet9hS8uTvymgDJok4f9T74W";
+  const currentWallet = walletAddress || "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o";
 
   const getTabTitle = () => {
     switch (activeTab) {
-      case "overview":
-        return { title: "Portfolio Overview", subtitle: "Complete wallet analysis and key metrics" };
-      case "behavior":
-        return { title: "Trading Behavior", subtitle: "Analyze trading patterns and behaviors" };
-      case "insight":
-        return { title: "Market Insights", subtitle: "Advanced market intelligence and timing" };
-      case "influence":
-        return { title: "Market Influence", subtitle: "Social signals and market positioning" };
-      case "settings":
-        return { title: "Settings", subtitle: "Configure your analysis preferences" };
+      case "cognitive-snapshot":
+        return { title: "Cognitive Snapshot", subtitle: "Your wallet's mental profile at a glance" };
+      case "cognitive-patterns":
+        return { title: "Cognitive Patterns", subtitle: "Decoding habits, compulsions, and trading biases" };
+      case "insights":
+        return { title: "Self-Sabotage & Superpowers", subtitle: "Pattern recognition to surface unconscious trading behavior" };
+      case "psychoanalytics":
+        return { title: "Wallet Personality Layer", subtitle: "Full psychological analysis of your trading psyche" };
       default:
-        return { title: "Dashboard", subtitle: "Wallet intelligence platform" };
+        return { title: "Cognitive Snapshot", subtitle: "Your wallet's mental profile at a glance" };
     }
   };
 
