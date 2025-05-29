@@ -648,7 +648,87 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
         </CardContent>
       </Card>
 
-      {/* Interactive Behavioral Badges */}
+      {/* Narrative Loyalty Map */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2.5 rounded-xl bg-indigo-500/10 ring-1 ring-indigo-500/20">
+                <Activity className="h-5 w-5 text-indigo-400" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-semibold">Narrative Loyalty Map</CardTitle>
+                <CardDescription>How long do you stay true to a thesis?</CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+              Utility Focused
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20 text-center">
+              <div className="text-lg font-bold text-blue-400">67%</div>
+              <div className="text-xs text-muted-foreground">Utility/Infra</div>
+              <Badge variant="secondary" className="mt-1 text-xs bg-blue-500/10 text-blue-400">
+                Primary
+              </Badge>
+            </div>
+            
+            <div className="p-3 bg-orange-500/5 rounded-lg border border-orange-500/20 text-center">
+              <div className="text-lg font-bold text-orange-400">23%</div>
+              <div className="text-xs text-muted-foreground">Memes</div>
+              <Badge variant="secondary" className="mt-1 text-xs bg-orange-500/10 text-orange-400">
+                Secondary
+              </Badge>
+            </div>
+            
+            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20 text-center">
+              <div className="text-lg font-bold text-green-400">10%</div>
+              <div className="text-xs text-muted-foreground">DeFi</div>
+              <Badge variant="secondary" className="mt-1 text-xs bg-green-500/10 text-green-400">
+                Exploration
+              </Badge>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="p-3 bg-muted/30 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-medium text-foreground">Conviction by Category</div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Utility tokens (SOL, JUP)</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-blue-400">8.7M avg</span>
+                    <Badge variant="secondary" className="text-xs bg-blue-500/10 text-blue-400">Strong</Badge>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <span>Meme tokens (BONK, WIF)</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-orange-400">2.1M avg</span>
+                    <Badge variant="secondary" className="text-xs bg-orange-500/10 text-orange-400">Light</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-3 bg-indigo-500/5 rounded-lg border border-indigo-500/20">
+              <div className="text-sm font-medium text-indigo-400">Narrative Shift Analysis</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Dec: Increased utility allocation by 23%. You're building core positions, not chasing trends.
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Enhanced Behavioral Tags */}
       <Card className="border border-border/50 bg-gradient-to-r from-purple-500/5 to-blue-500/5 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center space-x-3">
@@ -656,78 +736,88 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               <Activity className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <CardTitle className="text-lg font-semibold">Behavioral Profile Tags</CardTitle>
-              <CardDescription>Your psychological trading fingerprint</CardDescription>
+              <CardTitle className="text-lg font-semibold">Psychological Trading Profile</CardTitle>
+              <CardDescription>Your comprehensive behavioral fingerprint</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-help">
-                  Whale Premium Strategist
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Pays 3x median fees for optimal execution timing</p>
-              </TooltipContent>
-            </Tooltip>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <div className="text-sm font-medium text-foreground">Execution Style</div>
+              <div className="flex flex-wrap gap-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-help">
+                      Premium Strategist
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pays 8.7M lamports avg - 3x median for optimal timing</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20 transition-colors cursor-help">
+                      MEV Protected
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Uses sophisticated protection against front-running</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-help">
+                      Patient Hunter
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Only 8% quick exits - high impulse control</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
             
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20 transition-colors cursor-help">
-                  MEV Sniper
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Premium MEV protection indicates sophisticated trading</p>
-              </TooltipContent>
-            </Tooltip>
-            
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-help">
-                  Focused Executor
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Low token diversity shows deliberate, focused strategy</p>
-              </TooltipContent>
-            </Tooltip>
-            
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-help">
-                  Patient Hunter
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>High impulse threshold: only 8% quick exits under 2 hours</p>
-              </TooltipContent>
-            </Tooltip>
-            
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20 transition-colors cursor-help">
-                  Speed Obsessed
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Time sensitivity: willing to pay premium for faster execution</p>
-              </TooltipContent>
-            </Tooltip>
-            
-            <Tooltip>
-              <TooltipTrigger>
-                <Badge variant="outline" className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-help">
-                  Risk Calibrated
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Position sizing correlates with token category risk levels</p>
-              </TooltipContent>
-            </Tooltip>
+            <div className="space-y-3">
+              <div className="text-sm font-medium text-foreground">Risk Profile</div>
+              <div className="flex flex-wrap gap-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-help">
+                      Thesis Driven
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>67% utility focus shows conviction-based allocation</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="outline" className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-help">
+                      Size Calibrated
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Position sizing correlates with conviction levels</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20 transition-colors cursor-help">
+                      Focused Executor
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Low token diversity indicates deliberate selection</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

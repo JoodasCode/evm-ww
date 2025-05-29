@@ -1,0 +1,128 @@
+Yes — you're on the right track. The system can determine token categories through a mix of **manual data, metadata parsing, and heuristics**. Here's how it can *actually* know what's what:
+
+---
+
+## 🧠 **How the System Can Categorize a Token**
+
+### ✅ 1. **Direct Tag Lookup (Fastest & Most Reliable)**
+
+If the token mint is in a **pre-tagged `token_tags.json` or Supabase table**, you're done:
+
+```js
+{
+  "mint": "B1NHgE...F99", 
+  "name": "SAMO",
+  "symbol": "SAMO",
+  "tags": ["Meme", "Animal", "Dog"]
+}
+```
+
+This should power 80% of what you'll encounter — and it's worth building this dataset manually for the top 500–1000 traded tokens.
+
+---
+
+### 🔍 2. **Fuzzy Matching from Moralis / Helius Metadata**
+
+Use `name`, `symbol`, and `description` fields (if available):
+
+#### Examples:
+
+* `"name": "ChadGPT"` → `["Meme", "AI"]`
+* `"symbol": "WEN"` with no website, launched via pump.fun → `["Meme", "Vapor"]`
+* `"description": "governance token for the LP DAO"` → `["Utility", "Governance"]`
+
+You can use:
+
+* Regex matches
+* Keyword presence lists
+* Description embeddings (if you want to go advanced)
+
+---
+
+### 🧠 3. **Behavioral Inference**
+
+If metadata is missing or unclear, derive the category from **on-chain behavior**:
+
+| Signal                                           | Implied Category   |
+| ------------------------------------------------ | ------------------ |
+| Pump.fun mint, trades start <2h ago              | Meme               |
+| High early volume, lots of unique buyers, low LP | Meme               |
+| Bought after launch, held <1h                    | Meme impulse trade |
+| Avg. hold time >10d, high position size          | Utility/Infra      |
+| Used in swap on Jupiter/Raydium                  | DeFi token         |
+
+This logic can live in a `inferCategoryFromBehavior(walletData, tokenMint)` function.
+
+---
+
+### 🧰 4. **DEX Screener / GeckoTerminal Integration (Optional Enhancer)**
+
+Many tokens are already labeled on:
+
+* **DEX Screener** (Trending, Meme, Utility, etc.)
+* **GeckoTerminal / CoinGecko** (if listed)
+
+They often expose:
+
+* Market cap
+* Token type
+* Verified status
+* Contract tags (e.g. "AI", "DeFi", "Governance")
+
+If you want to make this future-proof, build a `tagEnrichmentEngine()` that:
+
+1. Checks local tags
+2. Falls back to Moralis metadata
+3. If missing, uses heuristics
+4. (Optional) Enriches with external API (DexScreener/Gecko)
+
+---
+
+### ✅ Example: `categorizeToken(token: TokenMetadata): string[]`
+
+```ts
+function categorizeToken(token) {
+  const tags = [];
+
+  const name = token.name.toLowerCase();
+  const symbol = token.symbol.toLowerCase();
+  const desc = token.description?.toLowerCase() || '';
+
+  // Direct match
+  if (symbol.includes('samo') || name.includes('dog') || desc.includes('shiba')) {
+    tags.push('Meme', 'Animal');
+  }
+
+  if (name.includes('gpt') || symbol.includes('ai') || desc.includes('language model')) {
+    tags.push('Meme', 'AI');
+  }
+
+  if (desc.includes('governance') || desc.includes('staking')) {
+    tags.push('Utility', 'Governance');
+  }
+
+  if (token.source === 'pump.fun') {
+    tags.push('Meme');
+  }
+
+  // Behavioral fallbacks
+  if (token.txCount > 1000 && avgHoldTime < 1h) {
+    tags.push('Likely Meme');
+  }
+
+  return [...new Set(tags)];
+}
+```
+
+---
+
+## ✅ TL;DR
+
+Your system can know a token’s type through:
+
+* Manual tagging (primary method)
+* Moralis/Helius metadata keywords
+* On-chain behavioral inference
+* External enrichment (DEX Screener/Gecko — optional)
+
+Want me to build a tagging engine skeleton with logic like this? Or seed a starter JSON file with 50–100 common tokens already categorized?

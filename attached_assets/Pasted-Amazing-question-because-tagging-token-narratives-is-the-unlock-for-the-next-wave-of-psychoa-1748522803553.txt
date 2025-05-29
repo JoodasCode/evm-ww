@@ -1,0 +1,99 @@
+Amazing question — because tagging **token narratives** is *the unlock* for the next wave of psychoanalysis.
+
+Here’s a battle-tested approach that works *now*, using minimal effort but still scalable:
+
+---
+
+## 🧠 Why Categorize Tokens?
+
+Because it turns raw trades into **behavioral context**:
+
+> "You keep buying AI tokens during hype windows"
+> "You exit utility tokens fast but hold memes too long"
+> "You used to play Animal memes. Now you're chasing Infra."
+
+Without category tagging, all trades look the same.
+
+---
+
+## 🛠️ How to Categorize Tokens in V1 (Practical Method)
+
+### ✅ 1. **Manual Seed Tagging (Top 500)**
+
+Start with:
+
+* A simple `token_tags.json` object:
+
+```json
+{
+  "GEMMY": ["Meme", "Animal"],
+  "SAMO": ["Meme", "Dog"],
+  "JUP": ["Infra", "DEX"],
+  "BONK": ["Meme", "Dog"],
+  "CHADGPT": ["Meme", "AI"],
+  "PYTH": ["Oracle", "Utility"],
+  "MOTHER": ["Meme", "Character"],
+  "WEN": ["Meme", "Vapor"]
+}
+```
+
+You can seed 200–500 tokens manually. 80/20 rule applies — this covers most of what people trade.
+
+### ✅ 2. **Fuzzy Autotagger (Fallback)**
+
+If token not in list:
+
+* Use basic heuristics like:
+
+  * Token name includes `GPT`, `AI`, `FLOKI`, `INU`, `DOGE` → likely Meme/Animal/AI
+  * Marketcap < \$10M, LP < \$50k, + verified on pump.fun = Meme
+  * `!verified`, recent launch, trending on dexscreener = Meme
+  * Tokens bought within 5 mins of listing = Likely Meme (behavior-based tag)
+
+You can flag these as:
+
+```js
+tags: ["Unverified", "Likely Meme (Heuristic)"]
+```
+
+### ✅ 3. **Community Override (Future)**
+
+Eventually, allow user-tagged overrides:
+
+> “Classify this as AI/Utility/Meme” (stored in Supabase)
+
+---
+
+## 🧬 How It Powers Psychoanalytics
+
+Once tagged, you unlock:
+
+* **Narrative Loyalty** → “You’re a meme loyalist (81% of trades)”
+* **Conviction Bias** → “You size up for Infra, but cut Meme tokens fast”
+* **Cycle Drift** → “In March, you chased AI tokens. In May, rotated to Dogs”
+* **Performance by Category** → “Memes = -40% avg | Infra = +12% avg”
+
+---
+
+## 🧠 Categories You Should Support in V1
+
+| Category | Subtype Ideas                          |
+| -------- | -------------------------------------- |
+| Meme     | Animal, AI, Dog, Personality, Pump.fun |
+| Utility  | LP token, Governance, NFT infra        |
+| Infra    | DEX, Bridge, Oracle, Chain, Layer 2    |
+| NFT      | NFT coin, ecosystem token              |
+| DeFi     | LPs, yield, stablecoins                |
+| Scam     | Honeypot, rug-prone, “danger zone”     |
+
+You don’t need to go crazy — just track **Meme vs Infra vs Utility** at a minimum and layer on as needed.
+
+---
+
+If you want, I can help:
+
+* Write the `token_tags.json` starter file
+* Build the fallback autotagger logic
+* Add a `categorizeToken(mint, metadata)` helper function you can use in the pipeline
+
+Let me know. This is how you turn Wallet Whisperer into a **narrative intelligence system**, not just a behavior tracker.
