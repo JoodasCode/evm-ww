@@ -4,11 +4,7 @@
 
 import express from 'express';
 import { createServer } from 'http';
-import { fetchTransactionSignatures, fetchTransactionDetails, fetchTokenBalances } from './services/heliusClient';
-import { fetchTokenMetadata, fetchTokenPrice } from './services/moralisClient';
-import { getTokenBalances } from './services/tokenBalanceService';
-import { calculateWhispererScore } from './services/whispererScoreService';
-import { getCachedData, setCachedData } from './services/redisService';
+import { walletPipeline } from './postgresWalletPipeline';
 import config from './config';
 
 const router = express.Router();
@@ -26,28 +22,40 @@ router.get('/api/health', (req, res) => {
   });
 });
 
-// Get wallet overview data
-router.get('/api/wallet/:address', async (req, res) => {
+// Complete wallet analysis endpoint
+router.post('/api/wallet/:address/analyze', async (req, res) => {
   try {
     const { address } = req.params;
     
-    // Get token balances with enriched data
-    const balances = await getTokenBalances(address);
+    console.log(`Starting analysis for wallet: ${address}`);
     
-    // Calculate portfolio value
-    const portfolioValue = balances.reduce((total, token) => total + token.usdValue, 0);
+    // Run complete analysis through PostgreSQL pipeline
+    const analysis = await walletPipeline.analyzeWallet(address);
     
-    // Get recent transactions
-    const transactions = await fetchTransactionSignatures(address, 10);
+    res.json({
+      success: true,
+      data: analysis
+    });
+    
+  } catch (error) {
+    console.error('Analysis failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get wallet overview data  
+router.get('/api/wallet/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
     
     res.json({
       success: true,
       data: {
         address,
-        portfolioValue: portfolioValue.toFixed(2),
-        tokenCount: balances.length,
-        recentTransactions: transactions.length,
-        balances: balances.slice(0, 10), // Top 10 tokens
+        message: 'Use POST /api/wallet/{address}/analyze for complete analysis',
         lastUpdated: new Date().toISOString()
       }
     });
