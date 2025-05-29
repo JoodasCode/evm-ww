@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { PieChart, Brain, Lightbulb, Users, Settings, Wallet } from "lucide-react";
+import { Brain, Zap, TrendingUp, Users, Wallet } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 
 interface SidebarProps {
@@ -16,11 +16,10 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   };
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: PieChart },
-    { id: 'behavior', label: 'Behavior', icon: Brain },
-    { id: 'insight', label: 'Insight', icon: Lightbulb },
-    { id: 'influence', label: 'Influence', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'cognitive-snapshot', label: 'Cognitive Snapshot', icon: Brain },
+    { id: 'cognitive-patterns', label: 'Cognitive Patterns', icon: Zap },
+    { id: 'insights', label: 'Insights', icon: TrendingUp },
+    { id: 'psychoanalytics', label: 'Psychoanalytics', icon: Users },
   ];
 
   return (

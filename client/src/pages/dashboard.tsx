@@ -60,174 +60,19 @@ export default function Dashboard() {
     }
   };
 
-  const renderSubTabContent = () => {
-    if (activeTab === "overview") {
-      return (
-        <div className="space-y-4 w-full">
-          {/* Top Row - Key Metrics */}
-          <div className="grid grid-cols-12 gap-4 w-full">
-            <div className="col-span-4">
-              <ModernWhispererScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="col-span-4">
-              <EnhancedDegenScoreCard walletAddress={currentWallet} />
-            </div>
-            <div className="col-span-4">
-              <ModernRiskAppetiteCard walletAddress={currentWallet} />
-            </div>
-          </div>
-          
-          {/* Second Row - Archetype */}
-          <div className="grid grid-cols-12 gap-4 w-full">
-            <div className="col-span-12">
-              <ModernArchetypeCard walletAddress={currentWallet} />
-            </div>
-          </div>
-          
-          {/* Bottom Row - Labels */}
-          <div className="grid grid-cols-12 gap-4 w-full">
-            <div className="col-span-12">
-              <ModernLabelSummaryCard walletAddress={currentWallet} />
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Behavior subtabs
-    if (activeTab === "behavior") {
-      switch (activeSubTab) {
-        case "trade-frequency":
-          return <ModernTradeFrequencyCard walletAddress={currentWallet} />;
-        case "token-categories":
-          return <ModernTokenCategoryCard walletAddress={currentWallet} />;
-        case "degen-score":
-          return <EnhancedDegenScoreCard walletAddress={currentWallet} />;
-        case "risk-profile":
-          return <ModernRiskAppetiteCard walletAddress={currentWallet} />;
-        default:
-          return <ModernTradeFrequencyCard walletAddress={currentWallet} />;
-      }
-    }
-
-    // Insight subtabs
-    if (activeTab === "insight") {
-      switch (activeSubTab) {
-        case "whisperer-score":
-          return <ModernWhispererScoreCard walletAddress={currentWallet} />;
-        case "timing-accuracy":
-          return (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Timing Accuracy</h3>
-              <p className="text-muted-foreground">Advanced timing analysis coming soon</p>
-            </div>
-          );
-        case "conviction-map":
-          return (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Conviction Map</h3>
-              <p className="text-muted-foreground">Conviction mapping analysis coming soon</p>
-            </div>
-          );
-        default:
-          return <ModernWhispererScoreCard walletAddress={currentWallet} />;
-      }
-    }
-
-    // Influence subtabs
-    if (activeTab === "influence") {
-      switch (activeSubTab) {
-        case "whale-following":
-          return (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Whale Following</h3>
-              <p className="text-muted-foreground">Whale tracking analysis coming soon</p>
-            </div>
-          );
-        case "alpha-signals":
-          return (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Alpha Signals</h3>
-              <p className="text-muted-foreground">Alpha signal detection coming soon</p>
-            </div>
-          );
-        case "market-sentiment":
-          return (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Market Sentiment</h3>
-              <p className="text-muted-foreground">Sentiment analysis coming soon</p>
-            </div>
-          );
-        default:
-          return (
-            <div className="bg-card border border-border rounded-xl p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Whale Following</h3>
-              <p className="text-muted-foreground">Whale tracking analysis coming soon</p>
-            </div>
-          );
-      }
-    }
-
-    // Settings tab
-    if (activeTab === "settings") {
-      return (
-        <div className="max-w-4xl space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-card border border-border rounded-xl p-6">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Data Management</h3>
-              <div className="space-y-3">
-                <Button onClick={refreshAll} className="w-full justify-start" variant="outline">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh Analysis
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  Clear Cache
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  Export Data
-                </Button>
-              </div>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-6">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Privacy Settings</h3>
-              <p className="text-muted-foreground">Privacy and data sharing preferences coming soon</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return <div className="text-foreground">Select a tab</div>;
-  };
-
   const renderTabContent = () => {
-    const subTabs = getSubTabs(activeTab);
-    
-    return (
-      <div className="w-full">
-        {/* Sub Navigation */}
-        {subTabs.length > 0 && (
-          <div className="flex space-x-1 mb-6 bg-slate-800/30 rounded-lg p-1">
-            {subTabs.map((subTab) => (
-              <button
-                key={subTab.id}
-                onClick={() => setActiveSubTab(subTab.id)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeSubTab === subTab.id
-                    ? "bg-slate-700 text-white shadow-lg"
-                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
-                }`}
-              >
-                {subTab.label}
-              </button>
-            ))}
-          </div>
-        )}
-        
-        {/* Content */}
-        {renderSubTabContent()}
-      </div>
-    );
+    switch (activeTab) {
+      case "cognitive-snapshot":
+        return <CognitiveSnapshotTab walletAddress={currentWallet} />;
+      case "cognitive-patterns":
+        return <CognitivePatternsTab walletAddress={currentWallet} />;
+      case "insights":
+        return <InsightsTab walletAddress={currentWallet} />;
+      case "psychoanalytics":
+        return <PsychoanalyticsTab walletAddress={currentWallet} />;
+      default:
+        return <CognitiveSnapshotTab walletAddress={currentWallet} />;
+    }
   };
 
   const tabInfo = getTabTitle();
