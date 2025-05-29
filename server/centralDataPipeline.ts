@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import fetch from 'node-fetch';
-import Redis from 'ioredis';
+import { Redis } from '@upstash/redis';
 
 /**
  * CENTRALIZED DATA PIPELINE
@@ -20,9 +20,11 @@ export class CentralDataPipeline {
   constructor() {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
     
-    // Parse Redis URL properly for authentication
-    const redisUrl = process.env.REDIS_URL!;
-    this.redis = new Redis(redisUrl);
+    // Configure Upstash Redis
+    this.redis = new Redis({
+      url: 'https://tender-cougar-30690.upstash.io',
+      token: 'AXfiAAIjcDEzN2NmM2Y0YTk4NGI0ZDY5YTg3MmI1MjhmOTkxZjYzYXAxMA',
+    });
     
     this.heliusApiKey = process.env.HELIUS_API_KEY!;
     this.moralisApiKey = process.env.MORALIS_API_KEY!;
@@ -101,7 +103,7 @@ export class CentralDataPipeline {
     };
     
     // Cache for 10 minutes
-    await this.redis.setex(cacheKey, 600, JSON.stringify(rawData));
+    await this.redis.set(cacheKey, JSON.stringify(rawData), { ex: 600 });
     
     return rawData;
   }
@@ -174,7 +176,7 @@ export class CentralDataPipeline {
     };
     
     // Cache clean data in Redis for 30 minutes
-    await this.redis.setex(cacheKey, 1800, JSON.stringify(cleanData));
+    await this.redis.set(cacheKey, JSON.stringify(cleanData), { ex: 1800 });
     
     return cleanData;
   }
@@ -640,9 +642,11 @@ export class WalletDataConsumer {
   constructor() {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
     
-    // Parse Redis URL properly for authentication
-    const redisUrl = process.env.REDIS_URL!;
-    this.redis = new Redis(redisUrl);
+    // Configure Upstash Redis
+    this.redis = new Redis({
+      url: 'https://tender-cougar-30690.upstash.io',
+      token: 'AXfiAAIjcDEzN2NmM2Y0YTk4NGI0ZDY5YTg3MmI1MjhmOTkxZjYzYXAxMA',
+    });
   }
 
   /**
@@ -666,7 +670,7 @@ export class WalletDataConsumer {
       );
       
       // Cache in Redis for 15 minutes
-      await this.redis.setex(cacheKey, 900, JSON.stringify(result.rows));
+      await this.redis.set(cacheKey, JSON.stringify(result.rows), { ex: 900 });
       
       return result.rows;
     } finally {
