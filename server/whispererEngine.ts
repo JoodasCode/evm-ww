@@ -194,11 +194,17 @@ class WhispererEngine {
       });
 
       if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Groq API error details:', errorText);
+        throw new Error(`Groq API error: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
-      return JSON.parse(result.choices[0].message.content);
+      const content = result.choices[0].message.content;
+      
+      // Clean up any markdown formatting
+      const cleanContent = content.replace(/```json\s*|\s*```/g, '').trim();
+      return JSON.parse(cleanContent);
       
     } catch (error) {
       console.error('Groq narrative generation failed:', error);
