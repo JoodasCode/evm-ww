@@ -455,41 +455,60 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           </CardContent>
         </Card>
 
-        {/* Conviction Deficiency */}
+        {/* False Conviction Detector */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
-                  <Target className="h-5 w-5 text-purple-400" />
+                <div className="p-2.5 rounded-xl bg-yellow-500/10 ring-1 ring-yellow-500/20">
+                  <Target className="h-5 w-5 text-yellow-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Conviction Deficiency</CardTitle>
-                  <CardDescription>Indecisiveness signals in position sizing</CardDescription>
+                  <CardTitle className="text-lg font-semibold">False Conviction Detector</CardTitle>
+                  <CardDescription>Are you acting confident... or pretending to be?</CardDescription>
                 </div>
               </div>
+              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+                Authentic
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Conviction strength</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
-                High conviction
-              </Badge>
+            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+              <div className="text-sm font-medium text-green-400">Conviction Analysis</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Your actions match your words: premium fees + extended hold times = real conviction
+              </div>
             </div>
             
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium text-foreground">Fee vs Hold</div>
+                <div className="text-lg font-bold text-green-400 mt-1">Aligned</div>
+                <div className="text-xs text-muted-foreground">Premium fees + 3.2d avg hold</div>
+              </div>
+              
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium text-foreground">Size vs Duration</div>
+                <div className="text-lg font-bold text-green-400 mt-1">Consistent</div>
+                <div className="text-xs text-muted-foreground">8.7M lamports *(≈ $1.60)* positions</div>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span>Average position size</span>
-                <span className="text-purple-400">8.7M lamports</span>
+                <span>False conviction signals</span>
+                <span className="text-green-400">None detected</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span>Position concentration</span>
-                <span className="text-purple-400">High focus</span>
+                <span>Quick exit after premium fee</span>
+                <span className="text-green-400">2% (very low)</span>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Hold duration</span>
-                <span className="text-purple-400">3.2 days avg</span>
+            </div>
+            
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <div className="text-xs text-muted-foreground">
+                "You don't just talk the talk - your trading patterns show genuine confidence in your decisions"
               </div>
             </div>
           </CardContent>
