@@ -9,7 +9,8 @@
  * 5. Cache for performance
  */
 
-import { createClient } from '@supabase/supabase-js';
+import pkg from 'pg';
+const { Pool } = pkg;
 import { categorizeToken, analyzeTradingNarratives, TokenMetadata } from '../shared/tokenCategorization';
 
 interface AnalysisResult {
@@ -33,10 +34,14 @@ interface AnalysisResult {
 }
 
 class WalletAnalysisPipeline {
-  private supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!
-  );
+  private pool = new Pool({
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    database: process.env.PGDATABASE,
+    ssl: { rejectUnauthorized: false }
+  });
 
   private heliusApiKey = process.env.HELIUS_API_KEY!;
   private moralisApiKey = process.env.MORALIS_API_KEY;

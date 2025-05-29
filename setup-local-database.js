@@ -2,9 +2,14 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 
-// Use environment variable for database connection
+// Use new PostgreSQL database connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  host: process.env.PGHOST,
+  port: process.env.PGPORT,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  ssl: { rejectUnauthorized: false }
 });
 
 async function setupWalletWhispererDatabase() {
