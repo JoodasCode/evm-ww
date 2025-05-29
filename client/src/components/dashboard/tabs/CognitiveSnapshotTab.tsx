@@ -114,9 +114,20 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
   if (!cardData) return <div className="text-center py-8">Failed to load data</div>;
 
   const cognitiveData = {
-    archetypeClassifier: cardData.find(c => c.cardType === 'archetype-classifier')?.data || {},
-    tradingRhythm: cardData.find(c => c.cardType === 'trading-rhythm')?.data || {},
-    riskAppetite: cardData.find(c => c.cardType === 'risk-appetite-meter')?.data || {}
+    archetypeClassifier: cardData.find((c: any) => c.cardType === 'archetype-classifier')?.data || {},
+    tradingRhythm: cardData.find((c: any) => c.cardType === 'trading-rhythm')?.data || {},
+    riskAppetite: cardData.find((c: any) => c.cardType === 'risk-appetite-meter')?.data || {}
+  };
+
+  // Use actual data from your wallet analysis
+  const displayData = {
+    archetype: cognitiveData.archetypeClassifier.primary || 'Unknown',
+    confidence: cognitiveData.archetypeClassifier.confidence || 0,
+    traits: cognitiveData.archetypeClassifier.traits || [],
+    riskLevel: cognitiveData.riskAppetite.level || 'Moderate',
+    riskScore: cognitiveData.riskAppetite.score || 0,
+    frequency: cognitiveData.tradingRhythm.frequency || 'Low',
+    weeklyPattern: cognitiveData.tradingRhythm.weeklyPattern || []
   };
 
   const chartConfig = {
@@ -169,15 +180,15 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-xl font-bold text-foreground">{cognitiveData.impulseControl.level}</div>
+              <div className="text-xl font-bold text-foreground">{displayData.riskLevel}</div>
               <div className="text-sm text-muted-foreground">
-                Top {100 - cognitiveData.impulseControl.percentile}% of traders
+                Risk Score: {displayData.riskScore}
               </div>
             </div>
             
             <ChartContainer config={chartConfig} className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={cognitiveData.impulseControl.dailyTrades} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
+                <BarChart data={displayData.weeklyPattern} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
@@ -227,9 +238,9 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-xl font-bold text-foreground">{cognitiveData.cognitiveLoad.level}</div>
+              <div className="text-xl font-bold text-foreground">{displayData.archetype}</div>
               <div className="text-sm text-muted-foreground">
-                {cognitiveData.cognitiveLoad.activeNarratives} active narratives
+                {displayData.confidence}% confidence
               </div>
             </div>
             
@@ -237,14 +248,22 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <Pie
-                    data={cognitiveData.cognitiveLoad.portfolioComplexity}
+                    data={[
+                      { name: 'Risk Tolerance', value: displayData.riskScore, color: '#8884d8' },
+                      { name: 'Confidence', value: displayData.confidence, color: '#82ca9d' },
+                      { name: 'Trading Activity', value: displayData.frequency === 'Low' ? 30 : 70, color: '#ffc658' }
+                    ]}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
                     outerRadius={90}
                     dataKey="value"
                   >
-                    {cognitiveData.cognitiveLoad.portfolioComplexity.map((entry, index) => (
+                    {[
+                      { name: 'Risk Tolerance', value: displayData.riskScore, color: '#8884d8' },
+                      { name: 'Confidence', value: displayData.confidence, color: '#82ca9d' },
+                      { name: 'Trading Activity', value: displayData.frequency === 'Low' ? 30 : 70, color: '#ffc658' }
+                    ].map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -254,8 +273,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
             </ChartContainer>
             
             <div className="space-y-2">
-              {cognitiveData.cognitiveLoad.portfolioComplexity.map((item) => (
-                <div key={item.name} className="flex items-center justify-between text-sm">
+              {displayData.traits.map((trait: string, index: number) => (
+                <div key={index} className="flex items-center justify-between text-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
                     <span>{item.name}</span>
