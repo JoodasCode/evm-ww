@@ -23,6 +23,26 @@ router.get('/api/health', (req, res) => {
   });
 });
 
+// Wallet analysis endpoint
+router.post('/api/wallet/:address/analyze', async (req, res) => {
+  try {
+    const { address } = req.params;
+    console.log(`🚀 Starting analysis for wallet: ${address}`);
+    
+    const analysis = await walletPipeline.analyzeWallet(address);
+    
+    console.log(`✅ Analysis completed for ${address}`);
+    res.json(analysis);
+  } catch (error) {
+    console.error(`❌ Analysis failed for ${address}:`, error);
+    res.status(500).json({ 
+      error: 'Analysis failed', 
+      message: error.message,
+      wallet: address 
+    });
+  }
+});
+
 // Enhanced Cards endpoint - reads stored data only
 router.post('/api/cards/:address', async (req, res) => {
   try {
