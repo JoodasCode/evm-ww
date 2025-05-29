@@ -557,9 +557,10 @@ class WalletAnalysisPipeline {
         .from('wallet_logins')
         .upsert({
           wallet_address: walletAddress,
-          login_timestamp: new Date().toISOString(),
+          logged_in_at: new Date().toISOString(),
           session_id: `session_${Date.now()}`,
-          updated_at: new Date().toISOString()
+          user_agent: 'Wallet-Whisperer-Pipeline',
+          ip_address: '127.0.0.1'
         });
       
       console.log(`📝 Recorded wallet login for ${walletAddress}`);
