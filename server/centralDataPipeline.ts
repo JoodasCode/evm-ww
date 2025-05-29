@@ -19,7 +19,11 @@ export class CentralDataPipeline {
 
   constructor() {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    this.redis = new Redis(process.env.REDIS_URL!);
+    
+    // Parse Redis URL properly for authentication
+    const redisUrl = process.env.REDIS_URL!;
+    this.redis = new Redis(redisUrl);
+    
     this.heliusApiKey = process.env.HELIUS_API_KEY!;
     this.moralisApiKey = process.env.MORALIS_API_KEY!;
     this.coingeckoApiKey = process.env.COINGECKO_API_KEY!;
@@ -635,7 +639,10 @@ export class WalletDataConsumer {
 
   constructor() {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    this.redis = new Redis(process.env.REDIS_URL!);
+    
+    // Parse Redis URL properly for authentication
+    const redisUrl = process.env.REDIS_URL!;
+    this.redis = new Redis(redisUrl);
   }
 
   /**
