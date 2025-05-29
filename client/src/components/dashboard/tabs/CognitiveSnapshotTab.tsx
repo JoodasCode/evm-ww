@@ -276,10 +276,10 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               {displayData.traits.map((trait: string, index: number) => (
                 <div key={index} className="flex items-center justify-between text-sm">
                   <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span>{item.name}</span>
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span>{trait}</span>
                   </div>
-                  <span className="font-medium">{item.value}%</span>
+                  <span className="font-medium">Active</span>
                 </div>
               ))}
             </div>
