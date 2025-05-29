@@ -50,19 +50,8 @@ router.post('/api/cards/:address', async (req, res) => {
     // Step 2: Fallback to Postgres if Redis miss
     if (!analysis) {
       try {
-        const query = `
-          SELECT wallet_address, archetype, confidence, emotional_states, behavioral_traits,
-                 whisperer_score, degen_score, risk_score, fomo_score, 
-                 patience_score, conviction_score, influence_score, roi_score,
-                 trading_frequency, transaction_count, portfolio_value,
-                 psychological_cards, last_analyzed
-          FROM wallet_labels
-          WHERE wallet_address = $1
-          ORDER BY last_analyzed DESC
-          LIMIT 1
-        `;
-        
-        const pgResult = await walletPipeline.pool.query(query, [address]);
+        // Use the existing walletPipeline connection that works for analysis
+        const pgResult = await walletPipeline.queryStoredAnalysis(address);
         
         if (pgResult.rows.length > 0) {
           const row = pgResult.rows[0];

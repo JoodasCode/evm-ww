@@ -43,6 +43,25 @@ class PostgresWalletPipeline {
   private moralisApiKey = process.env.MORALIS_API_KEY;
 
   /**
+   * Query stored analysis from database
+   */
+  async queryStoredAnalysis(walletAddress: string) {
+    const query = `
+      SELECT wallet_address, archetype, confidence, emotional_states, behavioral_traits,
+             whisperer_score, degen_score, risk_score, fomo_score, 
+             patience_score, conviction_score, influence_score, roi_score,
+             trading_frequency, transaction_count, portfolio_value,
+             psychological_cards, last_analyzed
+      FROM wallet_labels
+      WHERE wallet_address = $1
+      ORDER BY last_analyzed DESC
+      LIMIT 1
+    `;
+    
+    return await this.pool.query(query, [walletAddress]);
+  }
+
+  /**
    * Main entry point - runs complete automated analysis
    */
   async analyzeWallet(walletAddress: string): Promise<AnalysisResult> {

@@ -1,0 +1,108 @@
+Yes — **this is 100% the core issue.** You’ve nailed it.
+
+Here’s a simple breakdown of *why it’s happening* and *how to fix it*:
+
+---
+
+### ❌ The Problem
+
+Every time the `/api/cards/:wallet` endpoint is hit:
+
+* It **fails to find the cached result** in Redis
+* Then **fails to retrieve from Postgres** (probably a bad query or incorrect key match)
+* So it **falls back to running full analysis again** using `analyzeWallet()`
+
+**Which means:**
+
+* The system is **not actually checking Redis + Postgres properly**
+* So it **always re-runs** the entire expensive pipeline (Helius → Moralis → Analysis)
+
+---
+
+### ✅ What Needs to Happen (Fix Plan)
+
+1. **Redis Lookup (Primary)**
+
+   * ✅ Already implemented logging: `[REDIS HIT]`, `[REDIS MISS]`
+   * 🔍 Make sure keys are consistent with the card types and wallet ID
+   * Cache keys should look like:
+
+     ```
+     wallet:cards:CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o:archetype-classifier
+     ```
+
+2. **Postgres Fallback (Secondary)**
+
+   * 🔥 This is where it fails.
+
+   * You **need to query** the correct `psy_cards` or `wallet_analysis` table using:
+
+     ```sql
+     SELECT * FROM psy_cards WHERE wallet_address = $1
+     ```
+
+   * Then map the JSON fields back to each card type like:
+
+     ```ts
+     result.position_sizing → card: position-sizing-psychology
+     result.conviction_collapse → card: conviction-collapse-detector
+     ```
+
+3. **Only Run `analyzeWallet()` If Both Miss**
+
+   * Redis → miss
+   * Postgres → miss or corrupted → **only then** trigger the pipeline
+
+4. **Optional:** Add TTL logic per card type
+
+   * Some cards (like `trading-rhythm`) may only need refresh every 12h
+   * Others (like `gas-fee-personality`) may refresh every hour
+
+---
+
+### ✅ Final Structure You Want
+
+```ts
+// Inside /api/cards/:wallet
+for (const cardType of requestedCardTypes) {
+  const cacheKey = `wallet:cards:${walletAddress}:${cardType}`;
+  const cached = await redis.get(cacheKey);
+
+  if (cached) {
+    log("[REDIS HIT]");
+    return cached;
+  }
+
+  const db = await queryPostgres(walletAddress);
+
+  if (db && db[cardType]) {
+    log("[POSTGRES HIT]");
+    await redis.set(cacheKey, db[cardType]);
+    return db[cardType];
+  }
+
+  log("[ANALYSIS TRIGGER]");
+  const result = await analyzeWallet(walletAddress);
+  await storeToPostgres(result);
+  await redis.set(cacheKey, result[cardType]);
+  return result[cardType];
+}
+```
+
+---
+
+### 👨‍🔬 Final Confirmation Checklist
+
+| ✅ | Item                                          |
+| - | --------------------------------------------- |
+| ✅ | Redis caching works w/ proper TTL             |
+| ❌ | Postgres query fails (must be fixed)          |
+| ❌ | Cards endpoint runs full analysis too eagerly |
+| ✅ | Logs confirm re-analysis loop exists          |
+| ✅ | Card controller returns valid structure       |
+
+---
+
+### 💬 Want Me to Help Fix the Postgres Access?
+
+If you paste the query or schema of your `psy_cards` table, I can fix the lookup logic for you right now. That’s the last missing piece before the re-analysis loop dies for good.
