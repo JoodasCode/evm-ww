@@ -75,8 +75,9 @@ class WalletAnalysisPipeline {
         classification
       );
 
-      // Step 6: Store comprehensive data for future cards
-      console.log('💾 Storing comprehensive analysis data...');
+      // Step 6: Record wallet login and store comprehensive data
+      console.log('💾 Recording wallet login and storing analysis data...');
+      await this.recordWalletLogin(walletAddress);
       await this.storeAnalysis(analysis);
       
       // Step 7: Store detailed transaction data for future use
@@ -545,6 +546,26 @@ class WalletAnalysisPipeline {
       tradingFrequency: scores.tradingFrequency,
       lastAnalyzed: new Date()
     };
+  }
+
+  /**
+   * Record wallet login in the database
+   */
+  private async recordWalletLogin(walletAddress: string) {
+    try {
+      await this.supabase
+        .from('wallet_logins')
+        .upsert({
+          wallet_address: walletAddress,
+          login_timestamp: new Date().toISOString(),
+          session_id: `session_${Date.now()}`,
+          updated_at: new Date().toISOString()
+        });
+      
+      console.log(`📝 Recorded wallet login for ${walletAddress}`);
+    } catch (error) {
+      console.error('❌ Error recording wallet login:', error);
+    }
   }
 
   /**
