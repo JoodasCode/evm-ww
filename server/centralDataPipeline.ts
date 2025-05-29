@@ -685,9 +685,24 @@ export class WalletDataConsumer {
       
       if (cached && lastProcessed) {
         const dataAge = Date.now() - parseInt(lastProcessed);
+        const data = JSON.parse(cached);
+        
+        // Add staleness metadata for frontend
+        const stalenessScore = dataAge < 1800000 ? 'fresh' : // < 30min
+                              dataAge < 3600000 ? 'recent' : // < 1hr  
+                              dataAge < 21600000 ? 'stale' : // < 6hr
+                              'archived'; // > 6hr
+        
+        data.metadata = {
+          lastUpdated: parseInt(lastProcessed),
+          ageMinutes: Math.floor(dataAge / 60000),
+          stalenessScore,
+          shouldRefresh: dataAge > 3600000
+        };
+        
         // Data is fresh if less than 1 hour old
         if (dataAge < 3600000) {
-          return JSON.parse(cached);
+          return data;
         }
       }
       
@@ -705,9 +720,11 @@ export class WalletDataConsumer {
       await this.redis.set(statusKey, 'processing', { ex: 300 });
       
       try {
-        // Trigger fresh ingestion
-        const pipeline = new CentralDataPipeline();
-        const result = await pipeline.ingestWallet(walletAddress);
+        // Trigger fresh ingestion with retry logic
+        const result = await this.retryWithBackoff(async () => {
+          const pipeline = new CentralDataPipeline();
+          return await pipeline.ingestWallet(walletAddress);
+        });
         
         // Mark as ready and set timestamp
         await this.redis.set(statusKey, 'ready', { ex: 3600 });
@@ -812,6 +829,60 @@ export class WalletDataConsumer {
   async refreshWalletData(walletAddress: string, walletName?: string) {
     const pipeline = new CentralDataPipeline();
     return await pipeline.ingestWallet(walletAddress, walletName);
+  }
+
+  /**
+   * Retry function with exponential backoff
+   */
+  private async retryWithBackoff<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3,
+    baseDelay: number = 1000
+  ): Promise<T> {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        
+        const delay = baseDelay * Math.pow(2, attempt); // Exponential backoff
+        console.log(`Retry attempt ${attempt + 1}/${maxRetries + 1} in ${delay}ms`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    throw new Error('Max retries exceeded');
+  }
+
+  /**
+   * Add a manual refresh endpoint for power users
+   */
+  async forceRefreshWallet(walletAddress: string, walletName?: string) {
+    const statusKey = `wallet:status:${walletAddress}`;
+    
+    // Check if already processing
+    const status = await this.redis.get(statusKey);
+    if (status === 'processing') {
+      return { success: false, message: 'Wallet refresh already in progress' };
+    }
+    
+    try {
+      console.log('🔄 Force refreshing wallet data for', walletAddress);
+      const pipeline = new CentralDataPipeline();
+      const result = await pipeline.ingestWallet(walletAddress, walletName);
+      
+      return { 
+        success: true, 
+        message: 'Wallet refreshed successfully',
+        transactions: result.cleanData?.transactions?.length || 0
+      };
+    } catch (error) {
+      return { 
+        success: false, 
+        message: `Refresh failed: ${error.message}` 
+      };
+    }
   }
 
   /**
