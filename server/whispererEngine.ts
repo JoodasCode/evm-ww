@@ -25,7 +25,7 @@ interface WhispererProfile {
 }
 
 class WhispererEngine {
-  private anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+  private groqApiKey = process.env.GROQ_API_KEY;
 
   /**
    * Generate psychological narratives from card data
@@ -33,11 +33,18 @@ class WhispererEngine {
   async generateNarratives(cardData: any): Promise<WhispererProfile> {
     const profile = this.buildBaseProfile(cardData);
     
-    if (!this.anthropicApiKey) {
-      throw new Error('Anthropic API key required for psychological narrative generation');
+    if (!this.groqApiKey) {
+      console.warn('⚠️ Groq API key not available - using fallback narratives');
+      profile.narratives = this.generateFallbackNarratives(profile);
+      return profile;
     }
 
-    profile.narratives = await this.generateClaudeNarratives(profile);
+    try {
+      profile.narratives = await this.generateGroqNarratives(profile);
+    } catch (error) {
+      console.error('Groq narrative generation failed:', error);
+      profile.narratives = this.generateFallbackNarratives(profile);
+    }
 
     return profile;
   }
@@ -157,41 +164,44 @@ class WhispererEngine {
   }
 
   /**
-   * Generate Claude-powered psychological narratives
+   * Generate Groq-powered psychological narratives
    */
-  private async generateClaudeNarratives(profile: Omit<WhispererProfile, 'narratives'>): Promise<WhispererProfile['narratives']> {
+  private async generateGroqNarratives(profile: Omit<WhispererProfile, 'narratives'>): Promise<WhispererProfile['narratives']> {
     const prompt = this.buildNarrativePrompt(profile);
     
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'x-api-key': this.anthropicApiKey,
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01'
+          'Authorization': `Bearer ${this.groqApiKey}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'claude-3-7-sonnet-20250219', // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-          max_tokens: 800,
-          system: 'You are The Whisperer, a brutally honest crypto trading psychoanalyst. Generate 4 different narrative styles for this trader profile. Be observational, not prescriptive. Show patterns, not solutions. Respond only with valid JSON.',
+          model: 'llama-3.1-70b-versatile',
           messages: [
+            {
+              role: 'system',
+              content: 'You are The Whisperer, a brutally honest crypto trading psychoanalyst. Generate 4 different narrative styles for this trader profile. Be observational, not prescriptive. Show patterns, not solutions. Respond only with valid JSON.'
+            },
             {
               role: 'user',
               content: prompt
             }
-          ]
+          ],
+          max_tokens: 800,
+          temperature: 0.7
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Claude API error: ${response.status}`);
+        throw new Error(`Groq API error: ${response.status}`);
       }
 
       const result = await response.json();
-      return JSON.parse(result.content[0].text);
+      return JSON.parse(result.choices[0].message.content);
       
     } catch (error) {
-      console.error('Claude narrative generation failed:', error);
+      console.error('Groq narrative generation failed:', error);
       throw error;
     }
   }
