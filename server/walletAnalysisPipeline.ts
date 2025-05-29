@@ -38,6 +38,7 @@ class WalletAnalysisPipeline {
   );
 
   private heliusApiKey = process.env.HELIUS_API_KEY!;
+  private moralisApiKey = process.env.MORALIS_API_KEY;
 
   /**
    * Main entry point - runs complete automated analysis
@@ -53,13 +54,14 @@ class WalletAnalysisPipeline {
         return existing;
       }
 
-      // Step 2: Fetch enhanced blockchain data using Helius + Moralis combo
-      console.log('📊 Fetching enhanced transaction data (Helius + Moralis)...');
-      const transactions = await this.fetchEnhancedTransactionData(walletAddress);
+      // Step 2: Complete data enrichment from all APIs
+      console.log('📊 Starting complete data enrichment (Helius + Moralis + Gecko Terminal)...');
+      const { dataEnrichmentService } = await import('./dataEnrichmentService');
+      const completeData = await dataEnrichmentService.enrichWalletData(walletAddress);
 
       // Step 3: Calculate behavioral scores from enriched data
       console.log('🧠 Calculating behavioral scores...');
-      const behavioralScores = await this.calculateBehavioralScores(transactions);
+      const behavioralScores = await this.calculateBehavioralScores(completeData.transactions);
 
       // Step 4: Run Label Engine classification
       console.log('🏷️ Running archetype classification...');
@@ -73,17 +75,130 @@ class WalletAnalysisPipeline {
         classification
       );
 
-      // Step 6: Store in database
-      console.log('💾 Storing analysis results...');
+      // Step 6: Store comprehensive data for future cards
+      console.log('💾 Storing comprehensive analysis data...');
       await this.storeAnalysis(analysis);
+      
+      // Step 7: Store detailed transaction data for future use
+      console.log('📊 Storing enriched transaction data...');
+      await this.storeTransactionData(walletAddress, transactions);
 
-      console.log('✅ Automated analysis complete!');
+      console.log('✅ Complete data enrichment and analysis finished!');
       return analysis;
 
     } catch (error) {
       console.error('❌ Analysis pipeline error:', error);
-      throw new Error(`Analysis failed: ${error.message}`);
+      throw new Error(`Analysis failed: ${(error as Error).message}`);
     }
+  }
+
+  /**
+   * Store comprehensive transaction data enriched with all APIs
+   */
+  private async storeTransactionData(walletAddress: string, transactions: any[]) {
+    try {
+      for (const tx of transactions) {
+        // Store base transaction
+        await this.supabase
+          .from('wallet_trades')
+          .upsert({
+            wallet_address: walletAddress,
+            signature: tx.signature,
+            block_time: tx.blockTime,
+            transaction_type: tx.type || 'unknown',
+            data_sources: tx.dataSource || 'helius',
+            enriched: tx.enriched || false,
+            raw_data: tx,
+            updated_at: new Date().toISOString()
+          });
+
+        // Store token metadata from Moralis
+        if (tx.tokenMetadata) {
+          for (const [mint, metadata] of Object.entries(tx.tokenMetadata)) {
+            await this.supabase
+              .from('token_metadata')
+              .upsert({
+                mint_address: mint,
+                name: (metadata as any).name,
+                symbol: (metadata as any).symbol,
+                decimals: (metadata as any).decimals,
+                logo_uri: (metadata as any).logoURI,
+                source: 'moralis',
+                metadata: metadata,
+                updated_at: new Date().toISOString()
+              });
+          }
+        }
+
+        // Store price data from Gecko Terminal
+        if (tx.priceData) {
+          for (const [mint, priceInfo] of Object.entries(tx.priceData)) {
+            await this.supabase
+              .from('token_prices')
+              .upsert({
+                mint_address: mint,
+                price_usd: (priceInfo as any).price_usd,
+                source: 'gecko_terminal',
+                timestamp: (priceInfo as any).timestamp,
+                updated_at: new Date().toISOString()
+              });
+          }
+        }
+
+        // Store individual token transfers with enriched data
+        if (tx.tokenTransfers) {
+          for (const transfer of tx.tokenTransfers) {
+            const priceUsd = tx.priceData?.[transfer.mint]?.price_usd || null;
+            const usdValue = priceUsd ? (transfer.tokenAmount * parseFloat(priceUsd)) : null;
+
+            await this.supabase
+              .from('token_transfers')
+              .upsert({
+                wallet_address: walletAddress,
+                signature: tx.signature,
+                mint_address: transfer.mint,
+                token_amount: transfer.tokenAmount,
+                price_usd: priceUsd,
+                usd_value: usdValue,
+                from_address: transfer.fromUserAccount,
+                to_address: transfer.toUserAccount,
+                transfer_type: this.classifyTransferType(transfer),
+                updated_at: new Date().toISOString()
+              });
+          }
+        }
+
+        // Store SOL transfers with current price
+        if (tx.nativeTransfers) {
+          for (const transfer of tx.nativeTransfers) {
+            await this.supabase
+              .from('sol_transfers')
+              .upsert({
+                wallet_address: walletAddress,
+                signature: tx.signature,
+                amount_sol: transfer.amount / 1e9,
+                from_address: transfer.fromUserAccount,
+                to_address: transfer.toUserAccount,
+                updated_at: new Date().toISOString()
+              });
+          }
+        }
+      }
+
+      console.log('💾 Stored comprehensive transaction data for future card development');
+    } catch (error) {
+      console.error('❌ Error storing transaction data:', error);
+    }
+  }
+
+  /**
+   * Classify transfer type for better data organization
+   */
+  private classifyTransferType(transfer: any): string {
+    if (transfer.fromUserAccount === transfer.toUserAccount) return 'self';
+    if (!transfer.fromUserAccount) return 'mint';
+    if (!transfer.toUserAccount) return 'burn';
+    return 'transfer';
   }
 
   /**
@@ -119,25 +234,131 @@ class WalletAnalysisPipeline {
   }
 
   /**
-   * Enrich transactions with Moralis token metadata and pricing
+   * Enrich transactions with Moralis token metadata and Gecko Terminal pricing
    */
   private async enrichWithMoralis(transactions: any[]) {
-    console.log('🔧 Enriching transactions with Moralis data...');
+    console.log('🔧 Enriching transactions with Moralis + Gecko Terminal data...');
     
-    // For now, return Helius data (Moralis enrichment can be added when needed)
-    // This maintains the enhanced pipeline structure while using authentic Helius data
-    return transactions.map(tx => ({
-      ...tx,
-      enriched: true,
-      dataSource: 'helius_primary',
-      // Add placeholder for future Moralis enrichment
-      tokenMetadata: null,
-      priceData: null
-    }));
+    const enrichedTransactions = [];
+    
+    for (const tx of transactions) {
+      let enrichedTx = { ...tx, dataSource: 'helius_primary' };
+      
+      // Extract token mints from transaction
+      const tokenMints = this.extractTokenMints(tx);
+      
+      if (tokenMints.length > 0) {
+        // Get token metadata from Moralis (if available)
+        const tokenMetadata = await this.fetchMoralisTokenData(tokenMints);
+        
+        // Get current prices from Gecko Terminal (public API)
+        const priceData = await this.fetchGeckoTerminalPrices(tokenMints);
+        
+        enrichedTx = {
+          ...enrichedTx,
+          tokenMetadata,
+          priceData,
+          enriched: true,
+          dataSource: 'helius_moralis_gecko'
+        };
+      }
+      
+      enrichedTransactions.push(enrichedTx);
+    }
+    
+    console.log(`💎 Enhanced ${enrichedTransactions.length} transactions with full API combo`);
+    return enrichedTransactions;
   }
 
   /**
-   * Calculate comprehensive behavioral scores
+   * Extract token mints from transaction data
+   */
+  private extractTokenMints(transaction: any): string[] {
+    const mints = new Set<string>();
+    
+    // Extract from token transfers
+    if (transaction.tokenTransfers) {
+      transaction.tokenTransfers.forEach((transfer: any) => {
+        if (transfer.mint) mints.add(transfer.mint);
+      });
+    }
+    
+    // Extract from account data
+    if (transaction.accountData) {
+      transaction.accountData.forEach((account: any) => {
+        if (account.mint) mints.add(account.mint);
+      });
+    }
+    
+    return Array.from(mints);
+  }
+
+  /**
+   * Fetch token metadata from Moralis
+   */
+  private async fetchMoralisTokenData(tokenMints: string[]) {
+    if (!this.moralisApiKey || tokenMints.length === 0) {
+      return null;
+    }
+    
+    try {
+      // Moralis Solana API endpoint for token metadata
+      const tokenData = {};
+      
+      for (const mint of tokenMints.slice(0, 5)) { // Limit to avoid rate limits
+        const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${mint}/metadata`, {
+          headers: {
+            'X-API-Key': this.moralisApiKey
+          }
+        });
+        
+        if (response.ok) {
+          const metadata = await response.json();
+          tokenData[mint] = metadata;
+        }
+      }
+      
+      return tokenData;
+    } catch (error) {
+      console.log('⚠️ Moralis enrichment unavailable');
+      return null;
+    }
+  }
+
+  /**
+   * Fetch current prices from Gecko Terminal (public API)
+   */
+  private async fetchGeckoTerminalPrices(tokenMints: string[]) {
+    if (tokenMints.length === 0) return null;
+    
+    try {
+      const priceData = {};
+      
+      for (const mint of tokenMints.slice(0, 5)) { // Limit requests
+        // Gecko Terminal public API for Solana token prices
+        const response = await fetch(`https://api.geckoterminal.com/api/v2/simple/networks/solana/token_price/${mint}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data && data.data.attributes) {
+            priceData[mint] = {
+              price_usd: data.data.attributes.token_prices[mint],
+              timestamp: new Date().toISOString()
+            };
+          }
+        }
+      }
+      
+      console.log(`📈 Retrieved prices for ${Object.keys(priceData).length} tokens from Gecko Terminal`);
+      return priceData;
+    } catch (error) {
+      console.log('⚠️ Gecko Terminal pricing unavailable');
+      return null;
+    }
+  }
+
+  /**
+   * Calculate comprehensive behavioral scores using enriched data
    */
   private async calculateBehavioralScores(transactions: any[]) {
     const scores = {
@@ -156,22 +377,26 @@ class WalletAnalysisPipeline {
       return scores;
     }
 
-    // Calculate trading frequency
+    console.log('🧮 Calculating enhanced behavioral scores with API combo data...');
+
+    // Enhanced calculations using enriched data
     const timeSpan = this.calculateTimeSpan(transactions);
     scores.tradingFrequency = transactions.length / Math.max(timeSpan, 1);
 
-    // Calculate average transaction value
-    const avgValue = this.calculateAvgValue(transactions);
+    // Calculate enhanced portfolio metrics using price data
+    const portfolioMetrics = this.calculateEnhancedPortfolioMetrics(transactions);
+    const avgValue = portfolioMetrics.avgTransactionValue;
+    const totalUsdValue = portfolioMetrics.totalUsdValue;
     
-    // Calculate behavioral scores based on patterns
-    scores.patienceScore = Math.min(100, Math.max(0, 100 - (scores.tradingFrequency * 10)));
-    scores.fomoScore = Math.min(100, scores.tradingFrequency * 15);
-    scores.riskScore = Math.min(100, avgValue * 100);
-    scores.convictionScore = Math.min(100, 90 - (scores.fomoScore * 0.5));
-    scores.influenceScore = Math.min(100, transactions.length * 2);
-    scores.roiScore = Math.min(100, Math.max(0, (avgValue - 0.01) * 1000));
+    // Enhanced behavioral scores using real price data
+    scores.patienceScore = Math.min(100, Math.max(0, 100 - (scores.tradingFrequency * 8)));
+    scores.fomoScore = Math.min(100, Math.max(0, scores.tradingFrequency * 12));
+    scores.riskScore = Math.min(100, Math.max(0, (avgValue * 50) + (totalUsdValue / 1000)));
+    scores.convictionScore = Math.min(100, Math.max(0, 95 - (scores.fomoScore * 0.4)));
+    scores.influenceScore = Math.min(100, Math.max(0, (transactions.length * 1.5) + (totalUsdValue / 100)));
+    scores.roiScore = Math.min(100, Math.max(0, portfolioMetrics.estimatedROI * 10));
 
-    // Calculate Whisperer Score (weighted average)
+    // Enhanced Whisperer Score calculation
     scores.whispererScore = Math.round(
       (scores.patienceScore * 0.25) +
       (scores.convictionScore * 0.25) +
@@ -180,15 +405,77 @@ class WalletAnalysisPipeline {
       (scores.influenceScore * 0.15)
     );
 
-    // Calculate Degen Score
+    // Enhanced Degen Score with price volatility factor
+    const volatilityFactor = portfolioMetrics.priceVolatility || 1;
     scores.degenScore = Math.round(
-      (scores.fomoScore * 0.4) +
-      (scores.riskScore * 0.3) +
-      (scores.tradingFrequency * 2) +
-      ((100 - scores.patienceScore) * 0.2)
+      (scores.fomoScore * 0.35) +
+      (scores.riskScore * 0.25) +
+      (scores.tradingFrequency * 1.5) +
+      ((100 - scores.patienceScore) * 0.15) +
+      (volatilityFactor * 5)
     );
 
+    console.log(`✅ Enhanced scores: Whisperer ${scores.whispererScore}, Degen ${scores.degenScore}`);
     return scores;
+  }
+
+  /**
+   * Calculate enhanced portfolio metrics using price data from Gecko Terminal
+   */
+  private calculateEnhancedPortfolioMetrics(transactions: any[]) {
+    let totalUsdValue = 0;
+    let transactionValues = [];
+    let priceVolatility = 1;
+    let validPriceCount = 0;
+
+    transactions.forEach(tx => {
+      let txUsdValue = 0;
+      
+      // Use enriched price data if available
+      if (tx.priceData && tx.tokenTransfers) {
+        tx.tokenTransfers.forEach((transfer: any) => {
+          if (transfer.mint && tx.priceData[transfer.mint]) {
+            const price = parseFloat(tx.priceData[transfer.mint].price_usd || 0);
+            const amount = transfer.tokenAmount || 0;
+            txUsdValue += price * amount;
+            validPriceCount++;
+          }
+        });
+      }
+      
+      // Fallback to SOL value calculation
+      if (txUsdValue === 0 && tx.nativeTransfers) {
+        tx.nativeTransfers.forEach((transfer: any) => {
+          txUsdValue += (transfer.amount / 1e9) * 100; // Approximate SOL price
+        });
+      }
+      
+      if (txUsdValue > 0) {
+        totalUsdValue += txUsdValue;
+        transactionValues.push(txUsdValue);
+      }
+    });
+
+    // Calculate volatility from transaction value distribution
+    if (transactionValues.length > 1) {
+      const mean = transactionValues.reduce((a, b) => a + b, 0) / transactionValues.length;
+      const variance = transactionValues.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / transactionValues.length;
+      priceVolatility = Math.sqrt(variance) / mean || 1;
+    }
+
+    const avgTransactionValue = transactionValues.length > 0 
+      ? totalUsdValue / transactionValues.length / 100 // Normalize
+      : this.calculateAvgValue(transactions);
+
+    const estimatedROI = validPriceCount > 0 ? Math.min(10, totalUsdValue / 1000) : 1.5;
+
+    return {
+      totalUsdValue,
+      avgTransactionValue,
+      priceVolatility: Math.min(5, priceVolatility),
+      estimatedROI,
+      enrichedDataPoints: validPriceCount
+    };
   }
 
   /**
@@ -265,7 +552,7 @@ class WalletAnalysisPipeline {
    */
   private async storeAnalysis(analysis: AnalysisResult) {
     try {
-      // Store wallet scores
+      // Store comprehensive wallet scores with enriched data
       await this.supabase
         .from('wallet_scores')
         .upsert({
@@ -275,6 +562,8 @@ class WalletAnalysisPipeline {
           roi_score: analysis.roiScore,
           influence_score: analysis.influenceScore,
           timing_score: 100 - analysis.fomoScore,
+          data_sources: 'helius_moralis_gecko',
+          enriched_data_points: analysis.enrichedDataPoints || 0,
           updated_at: new Date().toISOString()
         });
 
