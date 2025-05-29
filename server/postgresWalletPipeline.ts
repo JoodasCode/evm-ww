@@ -5,6 +5,7 @@
 
 import pkg from 'pg';
 const { Pool } = pkg;
+import { pool } from './db';
 import { categorizeToken, analyzeTradingNarratives, TokenMetadata } from '../shared/tokenCategorization';
 import { whispererEngine } from './whispererEngine';
 
@@ -30,14 +31,7 @@ interface AnalysisResult {
 }
 
 class PostgresWalletPipeline {
-  public pool = new Pool({
-    host: process.env.PGHOST,
-    port: process.env.PGPORT,
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    database: process.env.PGDATABASE,
-    ssl: { rejectUnauthorized: false }
-  });
+  public pool = pool;
 
   private heliusApiKey = process.env.HELIUS_API_KEY!;
   private moralisApiKey = process.env.MORALIS_API_KEY;

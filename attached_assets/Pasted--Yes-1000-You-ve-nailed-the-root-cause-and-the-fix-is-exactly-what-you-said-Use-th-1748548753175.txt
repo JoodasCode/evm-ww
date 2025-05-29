@@ -1,0 +1,74 @@
+**Yes — 1000%.** You’ve nailed the root cause, and the fix is exactly what you said:
+
+> 🛠️ **Use the *exact same* Postgres connection setup from the analysis pipeline in your cards route.**
+
+---
+
+### ✅ Let’s Implement a Direct Fix
+
+Here’s a **reusable database connection module** you should create so both the analysis pipeline and cards endpoint pull from the same source of truth.
+
+---
+
+### 📁 `server/db.ts` – Shared DB Connection
+
+```ts
+import { Pool } from 'pg';
+
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // required for many hosted databases like Supabase/Render
+  },
+});
+```
+
+> ✅ Use this `pool` everywhere in your app instead of recreating a new connection or pool per file.
+
+---
+
+### 🧠 Replace all `new Pool(...)` calls
+
+In `server/postgresWalletPipeline.ts`, `server/routes.ts`, and anywhere else you use the DB, just do this:
+
+```ts
+import { pool } from './db';
+```
+
+Then call:
+
+```ts
+const result = await pool.query('SELECT * FROM psy_cards WHERE wallet_address = $1', [walletAddress]);
+```
+
+---
+
+### 🔒 If ENV Issues Are Suspected
+
+If you're using `.env` files, double-check:
+
+```
+DATABASE_URL=postgres://user:password@host:port/dbname
+```
+
+And make sure that it's:
+
+* **loaded by dotenv** (`require('dotenv').config()` at the top of your `index.ts`)
+* **available in all environments** (Replit, Vercel, Node shell, etc.)
+
+---
+
+### 🚀 After Fixing This
+
+Once the shared `db.ts` is in place and reused, this happens:
+
+| Step          | Result                                    |
+| ------------- | ----------------------------------------- |
+| Redis MISS    | ✅ Triggers DB check                       |
+| Postgres HIT  | ✅ Reads from `psy_cards` without crashing |
+| Data Returned | ✅ No fresh analysis needed                |
+| Next Request  | ✅ Cached or DB result used                |
+
+---
+
+Let me know if you want me to rewrite your `routes.ts` and `postgresWalletPipeline.ts` files to apply this fix cleanly.

@@ -5,6 +5,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import { walletPipeline } from './postgresWalletPipeline';
+import { pool } from './db';
 import config from './config';
 
 const router = express.Router();
@@ -52,13 +53,6 @@ router.post('/api/cards/:address', async (req, res) => {
       try {
         console.log(`[POSTGRES DEBUG] Attempting to query stored analysis for ${address}`);
         
-        // Use direct database connection with the same pattern as working pipeline
-        const { Pool } = require('pg');
-        const pool = new Pool({
-          connectionString: process.env.DATABASE_URL,
-          ssl: { rejectUnauthorized: false }
-        });
-        
         // Check what tables exist first
         const tableCheck = await pool.query(`
           SELECT table_name FROM information_schema.tables 
@@ -88,9 +82,7 @@ router.post('/api/cards/:address', async (req, res) => {
           }
         }
         
-        await pool.end();
-        
-        if (pgResult.rows.length > 0) {
+        if (pgResult && pgResult.rows.length > 0) {
           const row = pgResult.rows[0];
           analysis = {
             walletAddress: row.wallet_address,
@@ -392,4 +384,5 @@ function filterCards(analysis: any, requestedCardTypes: string[]) {
 
 export function registerRoutes(app: express.Application) {
   app.use(router);
+  return createServer(app);
 }
