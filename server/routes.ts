@@ -5,9 +5,11 @@
 import express from 'express';
 import { createServer } from 'http';
 import { walletPipeline } from './postgresWalletPipeline';
+import { CardController } from './cardController.js';
 import config from './config';
 
 const router = express.Router();
+const cardController = new CardController();
 
 // Health check endpoint
 router.get('/api/health', (req, res) => {

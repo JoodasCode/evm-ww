@@ -1,0 +1,119 @@
+**Wallet Whisperer Psychological Card Engine Specification**
+
+Prepared by: Abdulkadir + ChatGPT
+
+---
+
+## Overview
+
+This document outlines the architecture and logic for the Wallet Whisperer card engine. It defines how psychological and behavioral trading insights are extracted from raw wallet data through a smart, scalable, and modular system.
+
+---
+
+## Architecture Summary
+
+```
+[Helius + Moralis] → Central Pipeline → Redis + PostgreSQL
+                               ↓
+                      Card Controller Engine
+                               ↓
+                     Individual UI Cards (Frontend)
+```
+
+### Key Layers:
+
+* **Central Pipeline**: Fetches and sanitizes real wallet transaction data
+* **Redis**: Stores cached data for fast access with TTL rules
+* **Postgres**: Long-term storage of clean data and psychological analysis
+* **Card Controller**: Handles all card-specific logic and manages data delivery
+
+---
+
+## Card Controller Responsibilities
+
+* **Data Routing**: Pulls clean data from Redis or triggers pipeline when stale/missing
+* **TTL Logic**: Transaction TTL (1 hour), Psychological analysis TTL (24h)
+* **Processing Locks**: Prevents duplicate ingestion via 5-min status flags
+* **Batch Calculation**: Runs all required card functions in parallel on shared data
+* **Error + Loading Management**: Unifies fallback handling across cards
+
+---
+
+## Calculation Architecture
+
+```
+Card Controller → Calculation Engine → Card Registry
+                        ↓
+                Per-card formulas run independently
+```
+
+### Registry Pattern Example:
+
+```ts
+const cardCalculators = {
+  'conviction-collapse': (txs) => calculateConvictionMetrics(txs),
+  'degen-score': (txs) => calculateDegenBehavior(txs),
+  'position-sizing': (txs) => calculateSizingPatterns(txs),
+  'portfolio-performance': (txs) => calculateROIMetrics(txs),
+};
+```
+
+---
+
+## Supported Card Types
+
+1. **Psychological Cards**
+
+   * Archetype Identifier
+   * Conviction Collapse
+   * Risk Appetite & Position Sizing
+2. **Performance Cards**
+
+   * ROI / Realized Gains
+   * Volume Consistency
+   * Token Rotation Trends
+3. **Behavioral Cards**
+
+   * Degen Score
+   * Patience Score
+   * Whale Following Tendencies
+4. **Meta Cards**
+
+   * Data Freshness (staleness flags)
+   * Last Update Timestamp
+   * Refresh Controls
+
+---
+
+## Smart Triggers
+
+* Fresh wallet request? → Pull from Redis (if fresh) else trigger pipeline
+* Missing card result? → Recalculate only that card
+* System overload? → Respect rate limits (e.g. 10/s for Helius)
+
+---
+
+## Tech Stack Notes
+
+* **Redis**: Upstash (production-friendly, easy TTL handling)
+* **Database**: PostgreSQL with JSONB for flexible psy\_card storage
+* **Data Sources**: Helius (TXs), Moralis (token info), Manual price injection if needed
+
+---
+
+## Bonus Features (Planned)
+
+* Dependency chaining for complex cards (e.g. Degen Score uses Conviction)
+* Live card refresh buttons
+* Background cron to auto-refresh stale Redis data
+* Storytelling LLM to explain insights in plain language
+
+---
+
+Let me know if you have questions.
+This system is already live-tested on real wallets like `CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o` and production-ready.
+
+---
+
+Owned by: Abdulkadir (Product Lead)
+Built with: ChatGPT (System Architect)
