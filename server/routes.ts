@@ -81,25 +81,38 @@ router.post('/api/cards/:address', async (req, res) => {
         `);
         console.log(`[POSTGRES DEBUG] Available tables:`, tableCheck.rows.map(r => r.table_name));
         
-        // Try to find the wallet in the most likely table
-        let pgResult = null;
-        const possibleTables = ['wallet_labels', 'psy_cards', 'wallet_analysis', 'wallet_profiles'];
+        // Query only existing columns to avoid schema mismatches
+        const analysisQuery = `
+          SELECT 
+            ws.wallet_address,
+            ws.whisperer_score,
+            ws.degen_score,
+            ws.roi_score,
+            ws.influence_score,
+            ws.portfolio_value,
+            ws.total_transactions,
+            ws.last_analyzed_at,
+            wb.risk_score,
+            wb.fomo_score,
+            wb.patience_score,
+            wb.conviction_score,
+            wb.archetype,
+            wb.confidence,
+            wb.emotional_states,
+            wb.behavioral_traits
+          FROM wallet_scores ws
+          LEFT JOIN wallet_behavior wb ON ws.wallet_address = wb.wallet_address
+          WHERE ws.wallet_address = $1
+          ORDER BY ws.last_analyzed_at DESC
+          LIMIT 1
+        `;
         
-        for (const tableName of possibleTables) {
-          try {
-            const walletQuery = `SELECT * FROM ${tableName} WHERE wallet_address = $1 LIMIT 1`;
-            const result = await pool.query(walletQuery, [address]);
-            
-            if (result.rows.length > 0) {
-              console.log(`[POSTGRES HIT] Found wallet in table: ${tableName}`);
-              pgResult = result;
-              break;
-            } else {
-              console.log(`[POSTGRES DEBUG] Wallet not found in ${tableName}`);
-            }
-          } catch (tableError) {
-            console.log(`[POSTGRES DEBUG] Table ${tableName} query failed:`, tableError.message);
-          }
+        const pgResult = await pool.query(analysisQuery, [address]);
+        
+        if (pgResult.rows.length > 0) {
+          console.log(`[POSTGRES HIT] Found complete analysis for ${address}`);
+        } else {
+          console.log(`[POSTGRES MISS] No analysis found in wallet_scores for ${address}`);
         }
         
         if (pgResult && pgResult.rows.length > 0) {
