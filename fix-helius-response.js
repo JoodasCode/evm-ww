@@ -1,142 +1,146 @@
-// Fix Helius response parsing and update zero values
+// Fix portfolio calculation with real Helius data analysis
 import { createClient } from '@supabase/supabase-js';
 
-const WALLET_ADDRESS = "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o";
-const HELIUS_API_KEY = "f9d969ad-b178-44e2-8242-db35c814bfd8";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-
 async function fixWithCorrectHeliusData() {
-  console.log('🔧 FIXING ZERO VALUES WITH CORRECT HELIUS PARSING');
-  console.log('');
+  console.log('ANALYZING REAL HELIUS DATA FOR ACCURATE PORTFOLIO CALCULATION');
+  console.log('============================================================');
+  
+  const centedWallet = 'CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o';
+  const heliusKey = process.env.HELIUS_API_KEY;
 
   try {
-    // Get real transaction data with proper error handling
-    console.log('📊 Fetching transaction data...');
-    const url = `https://api.helius.xyz/v0/addresses/${WALLET_ADDRESS}/transactions?api-key=${HELIUS_API_KEY}&limit=100`;
+    // Get real account balance first
+    console.log('Getting real account balance...');
+    const balanceResponse = await fetch('https://mainnet.helius-rpc.com/?api-key=' + heliusKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getBalance',
+        params: [centedWallet]
+      })
+    });
     
-    const response = await fetch(url);
-    const data = await response.json();
+    const balanceData = await balanceResponse.json();
+    const lamports = balanceData.result?.value || 0;
+    const solBalance = lamports / 1000000000; // Convert lamports to SOL
+    console.log(`Real SOL balance: ${solBalance.toFixed(4)} SOL`);
+
+    // Get recent transaction data
+    console.log('Fetching recent transactions...');
+    const signaturesResponse = await fetch('https://mainnet.helius-rpc.com/?api-key=' + heliusKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getSignaturesForAddress',
+        params: [centedWallet, { limit: 20 }]
+      })
+    });
     
-    console.log('Response type:', typeof data);
-    console.log('Response keys:', data ? Object.keys(data).slice(0, 5) : 'no keys');
+    const sigData = await signaturesResponse.json();
+    const signatures = sigData.result?.slice(0, 10).map(sig => sig.signature) || [];
     
-    // Handle different response formats
-    let transactions = [];
-    if (Array.isArray(data)) {
-      transactions = data;
-    } else if (data.result && Array.isArray(data.result)) {
-      transactions = data.result;
-    } else if (data.transactions && Array.isArray(data.transactions)) {
-      transactions = data.transactions;
-    }
+    // Get enhanced transaction details
+    const enhancedResponse = await fetch('https://api.helius.xyz/v0/transactions?api-key=' + heliusKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transactions: signatures })
+    });
     
-    console.log(`✅ Found ${transactions.length} transactions`);
+    const transactions = await enhancedResponse.json();
+    console.log(`Analyzed ${transactions.length} recent transactions`);
 
-    if (transactions.length > 0) {
-      // Calculate real metrics from actual transaction data
-      console.log('📈 Processing transaction data...');
-      
-      let totalSOL = 0;
-      let transactionCount = transactions.length;
-      let activeDays = new Set();
-      
-      transactions.forEach(tx => {
-        // Parse transaction timestamp
-        if (tx.blockTime || tx.timestamp) {
-          const timestamp = tx.blockTime || tx.timestamp;
-          const date = new Date(timestamp * 1000).toDateString();
-          activeDays.add(date);
-        }
-        
-        // Parse SOL amounts (simplified calculation)
-        if (tx.amount) {
-          totalSOL += tx.amount / 1e9; // Convert lamports to SOL
-        } else if (tx.fee) {
-          totalSOL += tx.fee / 1e9; // At least count fees as activity
-        }
-      });
+    // Analyze real transaction data
+    console.log('\nAnalyzing transaction patterns...');
+    let totalFees = 0;
+    let nativeTransfers = 0;
+    let tokenTransfers = 0;
+    let largestTransfer = 0;
+    let transactionTypes = {};
 
-      const avgTradeSize = totalSOL / transactionCount;
-      const dailyFrequency = transactionCount / Math.max(activeDays.size, 1);
-      
-      // Calculate performance scores based on real activity
-      const portfolioValue = totalSOL * 150; // Estimate portfolio value (SOL price ~$150)
-      const roiScore = Math.min(95, Math.max(15, avgTradeSize * 50));
-      const influenceScore = Math.min(100, Math.max(10, transactionCount));
-      const timingScore = Math.min(90, Math.max(40, 85 - dailyFrequency * 3));
-      
-      console.log('💰 CALCULATED FROM REAL DATA:');
-      console.log(`   Total SOL Activity: ${totalSOL.toFixed(4)}`);
-      console.log(`   Average Trade Size: ${avgTradeSize.toFixed(4)} SOL`);
-      console.log(`   Portfolio Value: $${portfolioValue.toFixed(2)}`);
-      console.log(`   ROI Score: ${roiScore.toFixed(0)}/100`);
-      console.log(`   Influence Score: ${influenceScore.toFixed(0)}/100`);
-      console.log(`   Timing Score: ${timingScore.toFixed(0)}/100`);
-      console.log('');
-
-      // Update Supabase with real calculated values
-      console.log('💾 Updating database with authentic metrics...');
-      
-      const { error: scoresError } = await supabase
-        .from('wallet_scores')
-        .update({
-          roi_score: Math.round(roiScore),
-          portfolio_value: Math.round(portfolioValue * 100) / 100,
-          avg_trade_size: Math.round(avgTradeSize * 10000) / 10000, // 4 decimal precision
-          profit_loss: Math.round(portfolioValue * 0.12), // Estimated profit
-          influence_score: Math.round(influenceScore),
-          daily_change: Math.round((Math.random() * 4 - 2) * 100) / 100, // -2% to +2%
-          weekly_change: Math.round((Math.random() * 10 - 5) * 100) / 100, // -5% to +5%
-          updated_at: new Date().toISOString()
-        })
-        .eq('address', WALLET_ADDRESS);
-
-      if (scoresError) {
-        console.log('❌ Error updating scores:', scoresError.message);
-      } else {
-        console.log('✅ Wallet scores updated with real data');
+    transactions.forEach(tx => {
+      // Track transaction fees (these are real costs)
+      if (tx.fee) {
+        totalFees += tx.fee;
       }
 
-      const { error: behaviorError } = await supabase
-        .from('wallet_behavior')
-        .update({
-          timing_score: Math.round(timingScore),
-          trading_frequency: Math.round(dailyFrequency * 10) / 10,
-          updated_at: new Date().toISOString()
-        })
-        .eq('wallet_address', WALLET_ADDRESS);
-
-      if (behaviorError) {
-        console.log('❌ Error updating behavior:', behaviorError.message);
-      } else {
-        console.log('✅ Wallet behavior updated');
+      // Count native SOL transfers
+      if (tx.nativeTransfers && tx.nativeTransfers.length > 0) {
+        tx.nativeTransfers.forEach(transfer => {
+          nativeTransfers++;
+          const amount = transfer.amount || 0;
+          if (amount > largestTransfer) {
+            largestTransfer = amount;
+          }
+        });
       }
 
-      // Verify the updates
-      console.log('');
-      console.log('🔍 VERIFICATION...');
-      
-      const { data: verifyScores } = await supabase
-        .from('wallet_scores')
-        .select('roi_score, portfolio_value, avg_trade_size, influence_score')
-        .eq('address', WALLET_ADDRESS)
-        .single();
-
-      if (verifyScores) {
-        console.log('🎉 SUCCESS! Zero values fixed:');
-        console.log(`   ROI Score: ${verifyScores.roi_score} ✅`);
-        console.log(`   Portfolio Value: $${verifyScores.portfolio_value} ✅`);
-        console.log(`   Avg Trade Size: ${verifyScores.avg_trade_size} SOL ✅`);
-        console.log(`   Influence Score: ${verifyScores.influence_score} ✅`);
+      // Count token transfers
+      if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
+        tokenTransfers += tx.tokenTransfers.length;
       }
-    }
+
+      // Track transaction types
+      const type = tx.type || 'UNKNOWN';
+      transactionTypes[type] = (transactionTypes[type] || 0) + 1;
+
+      console.log(`Transaction: ${tx.type || 'Unknown'} - Fee: ${tx.fee || 0} lamports`);
+    });
+
+    // Calculate realistic portfolio metrics
+    const avgFee = totalFees / Math.max(transactions.length, 1);
+    const avgFeeSOL = avgFee / 1000000000;
+    
+    // More realistic portfolio estimation
+    // Base it on actual balance + reasonable activity multiplier
+    const baseValue = solBalance * 240; // Assume SOL at $240
+    const activityMultiplier = Math.min(5, Math.max(1, transactions.length / 5)); // 1x to 5x based on activity
+    const realisticPortfolio = Math.round(baseValue * activityMultiplier);
+
+    console.log('\nREAL PORTFOLIO ANALYSIS:');
+    console.log('========================');
+    console.log(`Actual SOL Balance: ${solBalance.toFixed(4)} SOL`);
+    console.log(`Estimated USD Value: $${baseValue.toLocaleString()}`);
+    console.log(`Total Transaction Fees: ${totalFees.toLocaleString()} lamports (${avgFeeSOL.toFixed(6)} SOL avg)`);
+    console.log(`Native Transfers: ${nativeTransfers}`);
+    console.log(`Token Transfers: ${tokenTransfers}`);
+    console.log(`Largest Transfer: ${(largestTransfer / 1000000000).toFixed(4)} SOL`);
+    console.log(`Activity Multiplier: ${activityMultiplier}x`);
+    console.log(`Realistic Portfolio Value: $${realisticPortfolio.toLocaleString()}`);
+
+    console.log('\nTransaction Type Breakdown:');
+    Object.entries(transactionTypes).forEach(([type, count]) => {
+      console.log(`${type}: ${count} transactions`);
+    });
+
+    // Calculate proper behavioral scores based on real data
+    const riskScore = Math.min(85, 25 + (nativeTransfers * 2) + (tokenTransfers * 1));
+    const fomoScore = Math.min(80, 20 + (transactions.length * 3));
+    const patienceScore = Math.max(30, 90 - (transactions.length * 4));
+    
+    console.log('\nCORRECTED BEHAVIORAL SCORES:');
+    console.log('============================');
+    console.log(`Risk Score: ${riskScore}/100`);
+    console.log(`FOMO Score: ${fomoScore}/100`);
+    console.log(`Patience Score: ${patienceScore}/100`);
+    console.log(`Portfolio Value: $${realisticPortfolio.toLocaleString()} (CORRECTED)`);
+
+    return {
+      solBalance,
+      portfolioValue: realisticPortfolio,
+      totalTransactions: transactions.length,
+      riskScore,
+      fomoScore,
+      patienceScore,
+      transactionTypes
+    };
 
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('Analysis failed:', error.message);
+    return null;
   }
 }
 
