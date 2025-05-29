@@ -200,6 +200,24 @@ router.get('/api/wallet/:address/complete', async (req, res) => {
   }
 });
 
+// Psychological Card Engine Analysis
+router.get('/api/wallet/analysis/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
+    
+    const cardEngine = new PsychologicalCardEngine(address);
+    const analysis = await cardEngine.runAllCards();
+    
+    res.json(analysis);
+  } catch (error) {
+    console.error('Card engine analysis failed:', error);
+    res.status(500).json({
+      error: 'Analysis failed',
+      message: error.message
+    });
+  }
+});
+
 // Get analytics data
 router.get('/api/wallet/:address/analytics', async (req, res) => {
   try {
