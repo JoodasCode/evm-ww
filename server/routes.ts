@@ -76,13 +76,31 @@ router.post('/api/cards/:address', async (req, res) => {
         console.log(`📊 Using stored analysis for ${address} from ${row.last_analyzed}`);
       }
     } catch (dbError) {
-      console.log(`📊 Database query failed (${dbError.message}), running fresh analysis for ${address}...`);
-      result = await walletPipeline.analyzeWallet(address);
+      console.log(`📊 Database query failed, running fresh analysis for ${address}...`);
+      try {
+        result = await walletPipeline.analyzeWallet(address);
+        console.log(`📊 Fresh analysis completed successfully for ${address}`);
+      } catch (pipelineError) {
+        console.error(`📊 Pipeline analysis failed for ${address}:`, pipelineError);
+        return res.status(500).json({ 
+          error: 'Analysis pipeline failed', 
+          details: 'Unable to process wallet data'
+        });
+      }
     }
     
     if (!result) {
-      return res.status(404).json({ error: 'No analysis data found for this wallet' });
+      return res.status(404).json({ error: 'Pipeline execution failed - no analysis data returned' });
     }
+
+    // Debug log to see what data we actually have
+    console.log('📊 Successful data retrieval:', {
+      hasWhispererScore: !!result.whispererScore,
+      hasArchetype: !!result.archetype,
+      hasTransactionCount: !!result.transactionCount,
+      hasPsychologicalCards: !!result.psychologicalCards,
+      psychCardKeys: result.psychologicalCards ? Object.keys(result.psychologicalCards) : []
+    });
 
     console.log('📊 Cards API - Real wallet data received:', {
       whispererScore: result.whispererScore,
