@@ -700,7 +700,7 @@ export class WalletDataConsumer {
       
       if (result.rows.length > 0) {
         // Cache in Redis for 1 hour
-        await this.redis.setex(cacheKey, 3600, JSON.stringify(result.rows[0]));
+        await this.redis.set(cacheKey, JSON.stringify(result.rows[0]), { ex: 3600 });
         return result.rows[0];
       }
       
