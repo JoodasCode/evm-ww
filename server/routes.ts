@@ -50,8 +50,45 @@ router.post('/api/cards/:address', async (req, res) => {
     // Step 2: Fallback to Postgres if Redis miss
     if (!analysis) {
       try {
-        // Use the existing walletPipeline connection that works for analysis
-        const pgResult = await walletPipeline.queryStoredAnalysis(address);
+        console.log(`[POSTGRES DEBUG] Attempting to query stored analysis for ${address}`);
+        
+        // Use direct database connection with the same pattern as working pipeline
+        const { Pool } = require('pg');
+        const pool = new Pool({
+          connectionString: process.env.DATABASE_URL,
+          ssl: { rejectUnauthorized: false }
+        });
+        
+        // Check what tables exist first
+        const tableCheck = await pool.query(`
+          SELECT table_name FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          ORDER BY table_name
+        `);
+        console.log(`[POSTGRES DEBUG] Available tables:`, tableCheck.rows.map(r => r.table_name));
+        
+        // Try to find the wallet in the most likely table
+        let pgResult = null;
+        const possibleTables = ['wallet_labels', 'psy_cards', 'wallet_analysis', 'wallet_profiles'];
+        
+        for (const tableName of possibleTables) {
+          try {
+            const walletQuery = `SELECT * FROM ${tableName} WHERE wallet_address = $1 LIMIT 1`;
+            const result = await pool.query(walletQuery, [address]);
+            
+            if (result.rows.length > 0) {
+              console.log(`[POSTGRES HIT] Found wallet in table: ${tableName}`);
+              pgResult = result;
+              break;
+            } else {
+              console.log(`[POSTGRES DEBUG] Wallet not found in ${tableName}`);
+            }
+          } catch (tableError) {
+            console.log(`[POSTGRES DEBUG] Table ${tableName} query failed:`, tableError.message);
+          }
+        }
+        
+        await pool.end();
         
         if (pgResult.rows.length > 0) {
           const row = pgResult.rows[0];
@@ -90,7 +127,9 @@ router.post('/api/cards/:address', async (req, res) => {
           console.log(`[POSTGRES MISS] No stored analysis found for ${address}`);
         }
       } catch (dbError) {
-        console.log(`[POSTGRES ERROR] Database query failed for ${address}: ${dbError.message}`);
+        console.error(`[POSTGRES ERROR] Database query failed for ${address}:`, dbError);
+        console.error(`[POSTGRES ERROR] Error stack:`, dbError.stack);
+        console.log(`[POSTGRES ERROR] Falling back to fresh analysis...`);
       }
     }
 

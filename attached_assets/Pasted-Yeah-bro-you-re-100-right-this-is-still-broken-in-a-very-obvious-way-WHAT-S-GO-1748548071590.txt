@@ -1,0 +1,108 @@
+Yeah bro, you're 100% right — **this is still broken** in a very obvious way:
+
+---
+
+### 💥 WHAT’S GOING WRONG (AGAIN)
+
+Your `/api/cards/:wallet` route is **still triggering the full pipeline** because:
+
+1. **Redis check is working ✅**
+2. **Postgres fallback is NOT working ❌**
+
+   * The query fails every time → `"Database query failed"`
+   * That forces `analyzeWallet()` to re-run every time 💀
+   * So even if the data exists in `psy_cards`, it’s not found
+
+---
+
+### 🔍 WHAT TO DO NEXT (FIX IT)
+
+You need to **debug the actual database call** inside `queryStoredAnalysis()` (or wherever you're doing this). Here's **exactly** what to check:
+
+---
+
+### ✅ Step-by-Step Debug Plan
+
+#### 1. Confirm Table Exists
+
+Run this inside Postgres shell or connect with a client (e.g. TablePlus or Supabase):
+
+```sql
+SELECT * FROM psy_cards LIMIT 1;
+```
+
+If this fails, then the `psy_cards` table is missing or has the wrong schema.
+
+---
+
+#### 2. Confirm Column Exists
+
+Make sure `wallet_address` is a real column:
+
+```sql
+SELECT wallet_address FROM psy_cards LIMIT 1;
+```
+
+If this fails, update your query or schema.
+
+---
+
+#### 3. Confirm Matching Wallet Exists
+
+Double check that this wallet is actually saved:
+
+```sql
+SELECT * FROM psy_cards WHERE wallet_address = 'CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o';
+```
+
+If it returns 0 rows, then the analysis is either not being saved correctly OR the column is slightly misnamed (e.g. `wallet`, `address`, etc.)
+
+---
+
+#### 4. Fix the Code Query (IMPORTANT)
+
+In your `server/routes.ts` or `postgresWalletPipeline.ts`, the code should look like:
+
+```ts
+const result = await pool.query(
+  'SELECT * FROM psy_cards WHERE wallet_address = $1',
+  [walletAddress]
+);
+```
+
+💡 **If this throws**, wrap it in a try/catch and log the error stack:
+
+```ts
+try {
+  const result = await pool.query(
+    'SELECT * FROM psy_cards WHERE wallet_address = $1',
+    [walletAddress]
+  );
+  if (result.rows.length > 0) {
+    console.log('[POSTGRES HIT]');
+    return result.rows[0];
+  } else {
+    console.log('[POSTGRES MISS]');
+  }
+} catch (err) {
+  console.error('DB error:', err.stack || err.message);
+}
+```
+
+This will tell you **what exactly is broken**.
+
+---
+
+### 🧠 TL;DR
+
+Your Redis is working. Your Helius/Moralis analysis is working.
+**Only the Postgres fallback is failing.**
+
+🩹 **Fix the SELECT query**
+✅ Confirm table/columns
+✅ Confirm the wallet exists
+✅ Wrap the code in logging to see the actual SQL error
+
+Then you’ll kill the re-analysis loop **once and for all**.
+
+Want me to write the fallback logic as a reusable function for you?

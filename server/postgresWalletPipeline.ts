@@ -46,19 +46,50 @@ class PostgresWalletPipeline {
    * Query stored analysis from database
    */
   async queryStoredAnalysis(walletAddress: string) {
-    const query = `
-      SELECT wallet_address, archetype, confidence, emotional_states, behavioral_traits,
-             whisperer_score, degen_score, risk_score, fomo_score, 
-             patience_score, conviction_score, influence_score, roi_score,
-             trading_frequency, transaction_count, portfolio_value,
-             psychological_cards, last_analyzed
-      FROM wallet_labels
-      WHERE wallet_address = $1
-      ORDER BY last_analyzed DESC
-      LIMIT 1
-    `;
-    
-    return await this.pool.query(query, [walletAddress]);
+    try {
+      console.log(`[POSTGRES DEBUG] Querying for wallet: ${walletAddress}`);
+      
+      // First, let's check what tables exist
+      const tableCheck = await this.pool.query(`
+        SELECT table_name FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        ORDER BY table_name
+      `);
+      console.log(`[POSTGRES DEBUG] Available tables:`, tableCheck.rows.map(r => r.table_name));
+      
+      // Try different possible table names
+      const possibleTables = ['wallet_labels', 'psy_cards', 'wallet_analysis', 'wallet_profiles'];
+      
+      for (const tableName of possibleTables) {
+        try {
+          const testQuery = `SELECT COUNT(*) FROM ${tableName}`;
+          const countResult = await this.pool.query(testQuery);
+          console.log(`[POSTGRES DEBUG] Table ${tableName} has ${countResult.rows[0].count} rows`);
+          
+          // If table exists and has data, try to find our wallet
+          if (parseInt(countResult.rows[0].count) > 0) {
+            const walletQuery = `SELECT * FROM ${tableName} WHERE wallet_address = $1 LIMIT 1`;
+            const walletResult = await this.pool.query(walletQuery, [walletAddress]);
+            
+            if (walletResult.rows.length > 0) {
+              console.log(`[POSTGRES HIT] Found wallet in table: ${tableName}`);
+              return walletResult;
+            } else {
+              console.log(`[POSTGRES DEBUG] Wallet not found in ${tableName}`);
+            }
+          }
+        } catch (tableError) {
+          console.log(`[POSTGRES DEBUG] Table ${tableName} does not exist or error:`, tableError.message);
+        }
+      }
+      
+      console.log(`[POSTGRES MISS] Wallet ${walletAddress} not found in any table`);
+      return { rows: [] };
+      
+    } catch (error) {
+      console.error(`[POSTGRES ERROR] Database query failed:`, error.stack || error.message);
+      return { rows: [] };
+    }
   }
 
   /**
