@@ -1,0 +1,274 @@
+# getMultipleAccounts
+
+> Returns the account information for a list of Pubkeys.
+
+## OpenAPI
+
+````yaml openapi/rpc-http/getMultipleAccounts.yaml post /
+paths:
+  path: /
+  method: post
+  servers:
+    - url: https://mainnet.helius-rpc.com
+      description: Mainnet RPC endpoint
+    - url: https://devnet.helius-rpc.com
+      description: Devnet RPC endpoint
+  request:
+    security:
+      - title: ApiKeyQuery
+        parameters:
+          query:
+            api-key:
+              type: apiKey
+              description: >-
+                Your Helius API key. You can get one for free in the
+                [dashboard](https://dashboard.helius.dev/api-keys).
+          header: {}
+          cookie: {}
+    parameters:
+      path: {}
+      query: {}
+      header: {}
+      cookie: {}
+    body:
+      application/json:
+        schemaArray:
+          - type: object
+            properties:
+              jsonrpc:
+                allOf:
+                  - type: string
+                    description: The JSON-RPC protocol version.
+                    enum:
+                      - '2.0'
+                    example: '2.0'
+                    default: '2.0'
+              id:
+                allOf:
+                  - type: string
+                    description: A unique identifier for the request.
+                    example: '1'
+                    default: '1'
+              method:
+                allOf:
+                  - type: string
+                    description: The name of the RPC method to invoke.
+                    enum:
+                      - getMultipleAccounts
+                    example: getMultipleAccounts
+                    default: getMultipleAccounts
+              params:
+                allOf:
+                  - type: array
+                    description: Parameters for the method.
+                    default:
+                      - - vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg
+                        - 4fYNw3dojWmQ4dXtSGE9epjRGy9pFSx62YypT7avPYvA
+                    items:
+                      oneOf:
+                        - type: array
+                          description: >-
+                            Array of Solana account addresses (up to 100) to
+                            fetch in a single optimized batch request.
+                          items:
+                            type: string
+                          example:
+                            - vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg
+                            - 4fYNw3dojWmQ4dXtSGE9epjRGy9pFSx62YypT7avPYvA
+                        - type: object
+                          description: >-
+                            Advanced configuration options for customizing the
+                            batch account data retrieval.
+                          properties:
+                            commitment:
+                              type: string
+                              description: The commitment level for the request.
+                              enum:
+                                - confirmed
+                                - finalized
+                                - processed
+                              example: finalized
+                            minContextSlot:
+                              type: integer
+                              description: >-
+                                The minimum slot that the request can be
+                                evaluated at.
+                              example: 1000
+                            dataSlice:
+                              type: object
+                              description: Request a slice of the account's data.
+                              properties:
+                                length:
+                                  type: integer
+                                  description: Number of bytes to return.
+                                  example: 50
+                                offset:
+                                  type: integer
+                                  description: Byte offset from which to start reading.
+                                  example: 0
+                            encoding:
+                              type: string
+                              description: Encoding format for the returned account data.
+                              enum:
+                                - jsonParsed
+                                - base58
+                                - base64
+                                - base64+zstd
+                              example: base58
+            required: true
+            requiredProperties:
+              - jsonrpc
+              - id
+              - method
+              - params
+        examples:
+          example:
+            value:
+              jsonrpc: '2.0'
+              id: '1'
+              method: getMultipleAccounts
+              params:
+                - - vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg
+                  - 4fYNw3dojWmQ4dXtSGE9epjRGy9pFSx62YypT7avPYvA
+  response:
+    '200':
+      application/json:
+        schemaArray:
+          - type: object
+            properties:
+              jsonrpc:
+                allOf:
+                  - type: string
+                    description: The JSON-RPC protocol version.
+                    enum:
+                      - '2.0'
+                    example: '2.0'
+              id:
+                allOf:
+                  - type: string
+                    description: Identifier matching the request.
+                    example: '1'
+              result:
+                allOf:
+                  - type: object
+                    description: Accounts information with context.
+                    properties:
+                      context:
+                        type: object
+                        description: Context of the response.
+                        properties:
+                          apiVersion:
+                            type: string
+                            description: API version of the response.
+                            example: 2.0.15
+                          slot:
+                            type: integer
+                            description: The slot at which the data was fetched.
+                            example: 341197247
+                      value:
+                        type: array
+                        description: Array of account details.
+                        items:
+                          oneOf:
+                            - type: 'null'
+                              description: Null if the account doesn't exist.
+                            - type: object
+                              description: Account details.
+                              properties:
+                                lamports:
+                                  type: integer
+                                  description: Number of lamports assigned to the account.
+                                  example: 88849814690250
+                                owner:
+                                  type: string
+                                  description: >-
+                                    Base-58 encoded Pubkey of the program the
+                                    account is assigned to.
+                                  example: '11111111111111111111111111111111'
+                                data:
+                                  type: array
+                                  description: >-
+                                    Account data as encoded binary or JSON
+                                    format.
+                                  items:
+                                    type: string
+                                  example:
+                                    - ''
+                                    - base58
+                                executable:
+                                  type: boolean
+                                  description: Indicates if the account contains a program.
+                                  example: false
+                                rentEpoch:
+                                  type: integer
+                                  description: >-
+                                    Epoch at which this account will next owe
+                                    rent.
+                                  example: 18446744073709552000
+                                space:
+                                  type: integer
+                                  description: Data size of the account.
+                                  example: 0
+        examples:
+          example:
+            value:
+              jsonrpc: '2.0'
+              id: '1'
+              result:
+                context:
+                  apiVersion: 2.0.15
+                  slot: 341197247
+                value:
+                  - null
+        description: Successfully retrieved the account details.
+    '400':
+      application/json:
+        schemaArray:
+          - type: object
+            properties:
+              error:
+                allOf:
+                  - type: string
+                    description: Error message describing the issue.
+                    example: Invalid params
+        examples:
+          example:
+            value:
+              error: Invalid params
+        description: Invalid request.
+    '401':
+      application/json:
+        schemaArray:
+          - type: object
+            properties:
+              error:
+                allOf:
+                  - type: string
+                    description: Error message describing the issue.
+                    example: Unauthorized
+        examples:
+          example:
+            value:
+              error: Unauthorized
+        description: Unauthorized, invalid API key.
+    '500':
+      application/json:
+        schemaArray:
+          - type: object
+            properties:
+              error:
+                allOf:
+                  - type: string
+                    description: Error message describing the issue.
+                    example: Internal Server Error
+        examples:
+          example:
+            value:
+              error: Internal Server Error
+        description: Server error.
+  deprecated: false
+  type: path
+components:
+  schemas: {}
+
+````

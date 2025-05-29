@@ -1,103 +1,106 @@
-// Test different Helius API endpoints to find the correct one for transactions
-const WALLET_ADDRESS = "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o";
-
+// Test all the Helius endpoints you provided
 async function testHeliusEndpoints() {
-  console.log('🔍 Testing different Helius API endpoints...');
+  console.log('🔍 TESTING ALL HELIUS ENDPOINTS WITH CURRENT KEY');
+  console.log('================================================');
   
+  const testWallet = 'CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o'; // Cented wallet
   const apiKey = process.env.HELIUS_API_KEY;
-  if (!apiKey) {
-    console.error('❌ Helius API key missing');
-    return;
-  }
-
-  // Test different endpoint patterns based on Helius docs
-  const endpoints = [
-    // getSignaturesForAddress endpoint
+  
+  const tests = [
+    {
+      name: 'Enhanced Transactions API',
+      test: async () => {
+        const response = await fetch('https://api.helius.xyz/v0/transactions?api-key=' + apiKey, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            transactions: ['4jzQxVTaJ4Fe4Fct9y1aaT9hmVyEjpCqE2bL8JMnuLZbzHZwaL4kZZvNEZ6bEj6fGmiAdCPjmNQHCf8v994PAgDf']
+          })
+        });
+        return { status: response.status, data: response.ok ? await response.json() : await response.text() };
+      }
+    },
+    {
+      name: 'getAccountInfo RPC',
+      test: async () => {
+        const response = await fetch('https://mainnet.helius-rpc.com/?api-key=' + apiKey, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getAccountInfo',
+            params: [testWallet, { encoding: 'base58' }]
+          })
+        });
+        return { status: response.status, data: response.ok ? await response.json() : await response.text() };
+      }
+    },
     {
       name: 'getSignaturesForAddress',
-      url: `https://api.helius.xyz/v0/addresses/${WALLET_ADDRESS}/transactions?api-key=${apiKey}`,
-      method: 'GET'
-    },
-    // RPC endpoint for getSignaturesForAddress
-    {
-      name: 'RPC getSignaturesForAddress',
-      url: `https://rpc.helius.xyz/?api-key=${apiKey}`,
-      method: 'POST',
-      body: {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getSignaturesForAddress',
-        params: [WALLET_ADDRESS, { limit: 10 }]
+      test: async () => {
+        const response = await fetch('https://mainnet.helius-rpc.com/?api-key=' + apiKey, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getSignaturesForAddress',
+            params: [testWallet, { limit: 5 }]
+          })
+        });
+        return { status: response.status, data: response.ok ? await response.json() : await response.text() };
       }
     },
-    // Enhanced transactions endpoint
     {
-      name: 'Enhanced Transactions',
-      url: `https://api.helius.xyz/v0/transactions?api-key=${apiKey}`,
-      method: 'POST',
-      body: {
-        transactions: [WALLET_ADDRESS]
+      name: 'Direct Transaction Endpoint',
+      test: async () => {
+        const response = await fetch(`https://api.helius.xyz/v0/addresses/${testWallet}/transactions?api-key=${apiKey}&limit=5`);
+        return { status: response.status, data: response.ok ? await response.json() : await response.text() };
       }
     },
-    // Parsed transactions endpoint
     {
-      name: 'Parsed Transactions',
-      url: `https://api.helius.xyz/v0/transactions/parsed?api-key=${apiKey}`,
-      method: 'POST',
-      body: {
-        transactions: []
+      name: 'Webhook Create (Test)',
+      test: async () => {
+        const response = await fetch('https://api.helius.xyz/v0/webhooks?api-key=' + apiKey, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            webhookURL: 'https://test.example.com/webhook',
+            transactionTypes: ['SWAP'],
+            accountAddresses: [testWallet],
+            webhookType: 'enhanced'
+          })
+        });
+        return { status: response.status, data: response.ok ? await response.json() : await response.text() };
       }
     }
   ];
 
-  for (const endpoint of endpoints) {
-    console.log(`\n🔄 Testing ${endpoint.name}...`);
-    
+  for (const test of tests) {
+    console.log(`\n📡 Testing ${test.name}...`);
     try {
-      const options = {
-        method: endpoint.method,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-
-      if (endpoint.body) {
-        options.body = JSON.stringify(endpoint.body);
-      }
-
-      const response = await fetch(endpoint.url, options);
+      const result = await test.test();
+      console.log(`Status: ${result.status}`);
       
-      console.log(`Status: ${response.status} ${response.statusText}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log(`✅ Success! Response type:`, typeof data);
-        console.log(`Response keys:`, Object.keys(data));
-        
-        if (Array.isArray(data)) {
-          console.log(`Array length: ${data.length}`);
-          if (data.length > 0) {
-            console.log(`First item keys:`, Object.keys(data[0]));
-          }
+      if (result.status === 200) {
+        console.log('✅ SUCCESS');
+        if (typeof result.data === 'object') {
+          console.log('Response keys:', Object.keys(result.data));
         }
-        
-        // If this is the RPC response, check for result
-        if (data.result) {
-          console.log(`RPC result type:`, typeof data.result);
-          if (Array.isArray(data.result)) {
-            console.log(`RPC result length: ${data.result.length}`);
-          }
-        }
-        
-        return { endpoint: endpoint.name, data };
+      } else if (result.status === 401) {
+        console.log('❌ AUTHENTICATION FAILED');
+        console.log('Error:', result.data);
       } else {
-        const errorText = await response.text();
-        console.log(`❌ Failed: ${errorText}`);
+        console.log('⚠️ UNEXPECTED RESPONSE');
+        console.log('Response:', result.data);
       }
     } catch (error) {
-      console.log(`❌ Error: ${error.message}`);
+      console.log('❌ CONNECTION ERROR:', error.message);
     }
   }
+
+  console.log('\n🎯 TESTING COMPLETE');
 }
 
 testHeliusEndpoints();
