@@ -427,29 +427,18 @@ export class CentralDataPipeline {
     console.log(`📡 Fetching Helius data for ${walletAddress}`);
     
     try {
-      // Get account signatures
-      const signaturesResponse = await fetch(`https://api.helius.xyz/v0/addresses/${walletAddress}/transactions?api-key=${this.heliusApiKey}&limit=1000`);
-      
-      if (!signaturesResponse.ok) {
-        throw new Error(`Helius signatures API error: ${signaturesResponse.status}`);
-      }
-      
-      const signatures = await signaturesResponse.json();
-      
-      // Get parsed transactions
-      const parsedResponse = await fetch(`https://api.helius.xyz/v0/transactions/?api-key=${this.heliusApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          transactions: signatures.slice(0, 100).map((tx: any) => tx.signature)
-        })
+      // Get enhanced transactions directly
+      const transactionsResponse = await fetch(`https://api.helius.xyz/v0/addresses/${walletAddress}/transactions?api-key=${this.heliusApiKey}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
       });
       
-      if (!parsedResponse.ok) {
-        throw new Error(`Helius parsed transactions API error: ${parsedResponse.status}`);
+      if (!transactionsResponse.ok) {
+        const errorText = await transactionsResponse.text();
+        throw new Error(`Helius transactions API error ${transactionsResponse.status}: ${errorText}`);
       }
       
-      const transactions = await parsedResponse.json();
+      const transactions = await transactionsResponse.json();
       
       // Get wallet balance
       const balanceResponse = await fetch(`https://api.helius.xyz/v1/accounts/${walletAddress}?api-key=${this.heliusApiKey}`);
@@ -467,7 +456,7 @@ export class CentralDataPipeline {
       
       return {
         transactions,
-        signatures: signatures.map((s: any) => s.signature),
+        signatures: transactions.map((tx: any) => tx.signature),
         balance: balanceData.lamports / 1000000000, // Convert to SOL
         tokens: Array.from(tokens)
       };
