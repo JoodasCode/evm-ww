@@ -53,7 +53,8 @@ router.post('/api/cards/:address', async (req, res) => {
 
     let analysis = null;
 
-    // Step 1: Check Redis first
+    // Step 1: Check Redis first for cached analysis data
+    // This implements the primary caching layer to avoid expensive re-analysis
     try {
       const { Redis } = require('@upstash/redis');
       const redis = Redis.fromEnv();
@@ -68,7 +69,8 @@ router.post('/api/cards/:address', async (req, res) => {
       console.log(`[REDIS ERROR] Redis query failed: ${redisError.message}, checking Postgres...`);
     }
 
-    // Step 2: Fallback to Postgres if Redis miss
+    // Step 2: Fallback to Postgres using shared database connection
+    // This prevents re-analysis loop by accessing stored analysis data directly
     if (!analysis) {
       try {
         console.log(`[POSTGRES DEBUG] Attempting to query stored analysis for ${address}`);
@@ -81,7 +83,8 @@ router.post('/api/cards/:address', async (req, res) => {
         `);
         console.log(`[POSTGRES DEBUG] Available tables:`, tableCheck.rows.map(r => r.table_name));
         
-        // Query only existing columns to avoid schema mismatches
+        // Query stored analysis from wallet_scores and wallet_behavior tables
+        // These contain processed data from the analysis pipeline, avoiding re-analysis
         const analysisQuery = `
           SELECT 
             ws.wallet_address,
