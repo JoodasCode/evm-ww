@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoIcon, Brain, Zap, Target, Shield, User, TrendingUp, Star } from "lucide-react";
+import { InfoIcon, Brain, Zap, Target, Shield, User, TrendingUp, Star, TrendingDown } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
@@ -408,47 +408,57 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           </CardContent>
         </Card>
 
-        {/* Confidence Footprint */}
+        {/* Conviction Collapse Detector */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
-                  <TrendingUp className="h-5 w-5 text-blue-400" />
+                <div className="p-2.5 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/20">
+                  <TrendingDown className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Confidence Footprint</CardTitle>
-                  <CardDescription>Signals confidence vs hesitation in decision-making</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Conviction Collapse Detector</CardTitle>
+                  <CardDescription>When did you lose trust in yourself?</CardDescription>
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Confidence level</span>
-              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
-                High confidence
-              </Badge>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span>Average position size</span>
-                <span className="text-blue-400">8.7M lamports</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Hold time commitment</span>
-                <span className="text-blue-400">3.2 days avg</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Fee aggression</span>
-                <span className="text-blue-400">Premium tier</span>
+            <div className="text-center p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+              <div className="text-sm font-medium text-green-400">Conviction Status</div>
+              <div className="text-lg font-bold text-green-400 mt-1">Stable</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                No collapse detected in last 60 days
               </div>
             </div>
             
-            <div className="text-center p-3 bg-blue-500/10 rounded-lg">
-              <div className="text-sm font-medium text-blue-400">Confidence Score</div>
-              <div className="text-2xl font-bold text-blue-400 mt-1">87/100</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium text-foreground">Position Sizing</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  8.7M lamports avg *(≈ 0.0087 SOL / $1.60)*
+                </div>
+                <Badge variant="secondary" className="mt-2 text-xs bg-green-500/10 text-green-400">
+                  Consistent
+                </Badge>
+              </div>
+              
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium text-foreground">Trade Frequency</div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  1.2 trades/day variance: 23%
+                </div>
+                <Badge variant="secondary" className="mt-2 text-xs bg-green-500/10 text-green-400">
+                  Disciplined
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <div className="text-sm font-medium text-blue-400">Last Major Decision</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Dec 15: Increased SOL position by 67% after 3-day analysis period
+              </div>
             </div>
           </CardContent>
         </Card>

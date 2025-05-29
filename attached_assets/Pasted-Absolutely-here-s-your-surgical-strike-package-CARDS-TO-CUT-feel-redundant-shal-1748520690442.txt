@@ -1,0 +1,113 @@
+Absolutely — here’s your surgical strike package:
+
+---
+
+## 🔥 CARDS TO **CUT** (feel redundant, shallow, or score-heavy)
+
+| ❌ Card                               | Why Cut It                                                                                                                                                        |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Confidence Score (87/100)**        | Feels arbitrary. It's a composite without showing its math. Confidence should emerge from **position sizing + conviction depth**, not a badge.                    |
+| **Impulse Control Score**            | “8% quick exits” is good, but this can be **absorbed into Exit Timing Accuracy** or “Trade Discipline.” Doesn’t need its own card.                                |
+| **Gas Fee Personality (89/100)**     | Instead of scoring, just show comparative behavior. “You pay 3x avg” is more actionable than a stylized number.                                                   |
+| **Behavioral Tags**                  | They’re amazing — just not as a static text block. Convert into **interactive Shadcn badges** with descriptions/tooltips, or embed into the **Archetype Engine**. |
+| **Sizing Discipline Score (92/100)** | This can be folded into **Position Sizing Psychology** — the breakdown is stronger than the score itself.                                                         |
+
+---
+
+## 🔁 CARDS TO **MERGE**
+
+| 🔄 Merge Into                     | Combine Cards                                                           |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| **Position Sizing Psychology**    | Absorb Sizing Discipline + Confidence Score                             |
+| **Psycho-Trading Timeline** (new) | Merge Mood Oscillation + Conviction Collapse                            |
+| **Archetype Engine**              | Fold in Behavioral Tags + Personality Archetype into one unified engine |
+| **Exit Pattern Analyzer**         | Combine Regret Index + Regret Pattern Analysis + Hope Syndrome Tracker  |
+
+---
+
+## 🧨 5 NEW **KILLER CARDS** FOR PSYCHO-EDGE
+
+---
+
+### 1. 🧠 **Narrative Loyalty Map**
+
+> *“How long do you stay true to a thesis?”*
+
+* Tracks:
+
+  * Time spent in each **token category** (Meme, Infra, NFT, etc.)
+  * Shifts in conviction over months
+* Output:
+
+  * “You rotated out of Infra after 2 weeks in March”
+  * “You’ve stayed loyal to meme tokens for 4 months — might be narrative anchoring”
+
+---
+
+### 2. ⛓ **Conviction Collapse Detector**
+
+> *“When did you lose trust in yourself?”*
+
+* Detects:
+
+  * Going from large, long-term trades → scattered micro-trades
+  * Frequency spikes + size drops = psychological spiral
+* Output:
+
+  * “On April 14th, after 2 big losses, you stopped sizing up and increased token count by 3x.”
+
+---
+
+### 3. 🌀 **Post-Rug Behavior Tracker**
+
+> *“How do you cope with loss?”*
+
+* Looks at:
+
+  * Tokens bought after exiting a -90% position
+  * Time between rug and next buy
+* Output:
+
+  * “After rugging on \$SNEK, you made 3 new buys within 1.2 hours — signs of revenge trading.”
+
+---
+
+### 4. 🧬 **Risk Mutation Analyzer**
+
+> *“How is your risk appetite evolving over time?”*
+
+* Charts:
+
+  * Avg. fee size over weeks
+  * Trade size variance
+  * Token category risk levels (e.g. memes = high, infra = low)
+* Output:
+
+  * “You’re becoming more conservative — avg position size dropped 48% over 3 weeks.”
+
+---
+
+### 5. 🎭 **False Conviction Detector**
+
+> *“Are you acting confident… or pretending to be?”*
+
+* Detects:
+
+  * High fee usage + quick exits
+  * Big positions that are sold fast = performative conviction
+* Output:
+
+  * “You paid premium MEV protection but exited in 8 hours. High fee ≠ real conviction.”
+
+---
+
+## ✅ What This Gets You
+
+* Cards that **reveal motive and trauma**, not just behavior
+* Language that **resonates with traders** and mirrors their inner thoughts
+* Tools that feel like a **mirror, not a dashboard**
+* True **category ownership**: no one else in crypto is framing analytics this way
+
+---
+
+Let me know if you want me to generate the JSON structure or wireframe layout for any of the new cards. I can also help draft the tooltip text or build the component logic with mock data.

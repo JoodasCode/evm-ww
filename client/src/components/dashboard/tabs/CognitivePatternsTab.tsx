@@ -579,15 +579,76 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               </div>
             </div>
             
-            <div className="text-center p-3 bg-amber-500/10 rounded-lg">
-              <div className="text-sm font-medium text-amber-400">Sizing Discipline</div>
-              <div className="text-2xl font-bold text-amber-400 mt-1">92/100</div>
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <div className="text-sm font-medium text-blue-400">Sizing Psychology</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                You allocate based on thesis strength: high conviction = big bets, speculation = small bets
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Gamified Badges Row */}
+      {/* Post-Rug Behavior Tracker */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                <Activity className="h-5 w-5 text-red-400" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-semibold">Post-Rug Behavior Tracker</CardTitle>
+                <CardDescription>How do you cope with loss?</CardDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+              Resilient
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+            <div className="text-sm font-medium text-green-400">Recovery Pattern</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              No major losses detected in last 60 days. Last recovery: 4.2 hours after -23% loss
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-3 bg-muted/30 rounded-lg">
+              <div className="text-sm font-medium text-foreground">Recovery Time</div>
+              <div className="text-lg font-bold text-blue-400 mt-1">4.2h</div>
+              <div className="text-xs text-muted-foreground">Average time to next buy</div>
+            </div>
+            
+            <div className="p-3 bg-muted/30 rounded-lg">
+              <div className="text-sm font-medium text-foreground">Revenge Trading</div>
+              <div className="text-lg font-bold text-green-400 mt-1">Low</div>
+              <div className="text-xs text-muted-foreground">Thoughtful reentry</div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span>Similar token rebuy rate</span>
+              <span className="text-green-400">12% (healthy)</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span>Post-loss position sizing</span>
+              <span className="text-blue-400">Consistent (-8%)</span>
+            </div>
+          </div>
+          
+          <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+            <div className="text-xs text-muted-foreground">
+              "You process losses maturely and don't let emotions drive your next decisions"
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Interactive Behavioral Badges */}
       <Card className="border border-border/50 bg-gradient-to-r from-purple-500/5 to-blue-500/5 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center space-x-3">
@@ -595,33 +656,78 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               <Activity className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <CardTitle className="text-lg font-semibold">Trading Personality Badges</CardTitle>
-              <CardDescription>Your behavioral achievement unlocks</CardDescription>
+              <CardTitle className="text-lg font-semibold">Behavioral Profile Tags</CardTitle>
+              <CardDescription>Your psychological trading fingerprint</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-card/50 rounded-lg border border-border/50">
-              <div className="text-2xl mb-2">🏆</div>
-              <div className="font-medium text-sm">Whale Premium Strategist</div>
-              <div className="text-xs text-muted-foreground mt-1">Elite fee strategy</div>
-            </div>
-            <div className="text-center p-4 bg-card/50 rounded-lg border border-border/50">
-              <div className="text-2xl mb-2">🛡️</div>
-              <div className="font-medium text-sm">MEV Sniper</div>
-              <div className="text-xs text-muted-foreground mt-1">Premium protection</div>
-            </div>
-            <div className="text-center p-4 bg-card/50 rounded-lg border border-border/50">
-              <div className="text-2xl mb-2">🎯</div>
-              <div className="font-medium text-sm">Focused Executor</div>
-              <div className="text-xs text-muted-foreground mt-1">Low complexity master</div>
-            </div>
-            <div className="text-center p-4 bg-card/50 rounded-lg border border-border/50">
-              <div className="text-2xl mb-2">⏱️</div>
-              <div className="font-medium text-sm">Patient Hunter</div>
-              <div className="text-xs text-muted-foreground mt-1">High impulse threshold</div>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-help">
+                  Whale Premium Strategist
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Pays 3x median fees for optimal execution timing</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20 transition-colors cursor-help">
+                  MEV Sniper
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Premium MEV protection indicates sophisticated trading</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-help">
+                  Focused Executor
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Low token diversity shows deliberate, focused strategy</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-help">
+                  Patient Hunter
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>High impulse threshold: only 8% quick exits under 2 hours</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20 transition-colors cursor-help">
+                  Speed Obsessed
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Time sensitivity: willing to pay premium for faster execution</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant="outline" className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-help">
+                  Risk Calibrated
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Position sizing correlates with token category risk levels</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </CardContent>
       </Card>

@@ -353,7 +353,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
           </CardContent>
         </Card>
 
-        {/* Gas Fee Personality */}
+        {/* Speed Psychology */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -362,42 +362,43 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
                   <Fuel className="h-5 w-5 text-orange-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold">Gas Fee Personality</CardTitle>
-                  <CardDescription>Premium vs standard fee strategy with success correlation</CardDescription>
+                  <CardTitle className="text-lg font-semibold">Speed Psychology</CardTitle>
+                  <CardDescription>Your relationship with time and urgency</CardDescription>
                 </div>
               </div>
+              <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">
+                Speed Obsessed
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-400 mb-1">Speed Obsessed</div>
-              <div className="text-sm text-muted-foreground">
-                Pays 8.7M lamports avg = strategist level
+            <div className="p-3 bg-orange-500/5 rounded-lg border border-orange-500/20">
+              <div className="text-sm font-medium text-orange-400">Fee Analysis</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                You pay 8.7M lamports *(≈ 0.0087 SOL / $1.60)* — 3x median fee
               </div>
             </div>
             
             <div className="space-y-3">
-              <div className="p-3 bg-orange-500/5 rounded-lg border border-orange-500/20">
-                <div className="text-sm font-medium text-orange-400">Fee Strategy</div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  Premium tier: 87% faster execution, +12% success rate
-                </div>
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <span className="text-sm font-medium">Speed priority</span>
+                <Badge variant="secondary" className="text-xs bg-orange-500/10 text-orange-400">
+                  87% faster execution
+                </Badge>
               </div>
               
-              <div className="flex items-center justify-between text-sm">
-                <span>Average gas payment</span>
-                <span className="text-orange-400">8.7M lamports</span>
-              </div>
-              
-              <div className="flex items-center justify-between text-sm">
-                <span>Success correlation</span>
-                <span className="text-green-400">+12% vs standard</span>
+              <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                <span className="text-sm font-medium">Success impact</span>
+                <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-400">
+                  +12% vs standard fees
+                </Badge>
               </div>
             </div>
             
-            <div className="text-center p-3 bg-orange-500/10 rounded-lg">
-              <div className="text-sm font-medium text-orange-400">Fee Efficiency</div>
-              <div className="text-2xl font-bold text-orange-400 mt-1">89/100</div>
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <div className="text-xs text-muted-foreground">
+                "I pay premium because my time and execution quality are worth it"
+              </div>
             </div>
           </CardContent>
         </Card>
