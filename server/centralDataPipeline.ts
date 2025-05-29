@@ -80,7 +80,7 @@ export class CentralDataPipeline {
     
     if (cached) {
       console.log(`✅ Found cached data for ${walletAddress}`);
-      return JSON.parse(cached);
+      return typeof cached === 'string' ? JSON.parse(cached) : cached;
     }
     
     // Helius: Get transaction signatures and parsed transactions
