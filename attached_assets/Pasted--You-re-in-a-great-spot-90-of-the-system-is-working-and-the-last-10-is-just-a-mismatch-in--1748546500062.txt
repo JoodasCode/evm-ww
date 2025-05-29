@@ -1,0 +1,97 @@
+✅ You’re in a **great spot** — 90% of the system is working, and the last 10% is just a mismatch in how the cards endpoint *accesses* already-processed data.
+
+---
+
+### 🧩 Current Status Summary
+
+| Layer                    | Status   | Notes                                                              |
+| ------------------------ | -------- | ------------------------------------------------------------------ |
+| Helius / Moralis / Gecko | ✅ Done   | 96 txs, enriched and stored                                        |
+| Postgres DB              | ✅ Done   | Analysis saved correctly                                           |
+| Frontend Tabs            | ✅ Wired  | Cards request `cardTypes` properly                                 |
+| CardController Logic     | ⚠️ Half  | Registry exists, some methods missing                              |
+| `/api/cards/:wallet`     | ❌ Broken | Still calling `analyzeWallet()` instead of reading stored analysis |
+
+---
+
+### 🚨 Here’s the **Fix Plan** (Top Priority)
+
+Let’s replace the `analyzeWallet()` call in `/api/cards/:wallet` with this flow:
+
+1. **Read from Redis** (use Upstash or fallback to local)
+2. **If Redis miss → Read from Postgres**
+3. **If both miss → return `404 Not Found`**
+   ❌ Do **NOT** trigger re-analysis.
+
+---
+
+### 🧠 Implementation Plan
+
+#### `/api/cards/:wallet` endpoint (server/routes.ts):
+
+```ts
+router.post('/api/cards/:wallet', async (req, res) => {
+  const wallet = req.params.wallet;
+  const cardTypes = req.body.cardTypes;
+
+  try {
+    // Step 1: Check Redis
+    const cached = await redis.get(`cards:${wallet}`);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      return res.json(filterCards(parsed, cardTypes));
+    }
+
+    // Step 2: Fallback to Postgres
+    const result = await db.query('SELECT analysis FROM wallet_analysis WHERE wallet = $1', [wallet]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'No data found' });
+
+    const analysis = result.rows[0].analysis;
+
+    // Step 3: Cache in Redis for future
+    await redis.set(`cards:${wallet}`, JSON.stringify(analysis), { EX: 60 * 15 }); // 15 min cache
+
+    // Step 4: Return requested cards
+    return res.json(filterCards(analysis, cardTypes));
+  } catch (err) {
+    console.error('[CardController] Failed to fetch:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+```
+
+#### `filterCards` util:
+
+```ts
+function filterCards(analysis, requested) {
+  const output = {};
+  for (const key of requested) {
+    if (analysis.psychologicalCards?.[key]) {
+      output[key] = analysis.psychologicalCards[key];
+    } else if (analysis?.[key]) {
+      output[key] = analysis[key];
+    }
+  }
+  return output;
+}
+```
+
+---
+
+### 🧪 What to Say to Replit
+
+> Bro — the final pipeline step is still broken. The `/api/cards/:wallet` endpoint is triggering the full pipeline instead of reading the stored analysis.
+>
+> I need you to:
+>
+> 1. Stop calling `analyzeWallet()` inside `/api/cards/:wallet`
+> 2. Check Redis first (key: `cards:${wallet}`)
+> 3. If not found → Read from Postgres (`wallet_analysis`)
+> 4. Return only the `cardTypes` I asked for (like `"risk-appetite-meter"`)
+> 5. Don’t trigger new analysis or overwrite stored data
+>
+> Let me know once this fallback is in place and I’ll test with a real wallet.
+
+---
+
+Ready to send this off? Or want me to generate the Redis setup logic as well?
