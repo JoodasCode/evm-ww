@@ -104,49 +104,189 @@ export class CentralDataPipeline {
 
   /**
    * STEP 2: Sanitization & Enrichment
-   * Clean, filter, and enhance raw data
+   * Moralis deciphers raw data, Redis caches the clean results
    */
   private async sanitizeAndEnrich(rawData: any) {
-    console.log(`🧹 Sanitizing and enriching data`);
+    console.log(`🧹 Sanitizing and enriching data using Moralis intelligence`);
+    
+    // Check Redis for cached clean data
+    const cacheKey = `wallet:clean:${JSON.stringify(rawData.signatures.slice(0, 10))}`;
+    const cached = await this.redis.get(cacheKey);
+    
+    if (cached) {
+      console.log(`✅ Found cached clean data`);
+      return JSON.parse(cached);
+    }
     
     const cleanTransactions = [];
     const validTokens = new Set();
+    const tokenCategories = new Map();
     
+    // Moralis provides the intelligence to properly parse transactions
     for (const tx of rawData.transactions) {
-      // Filter out dust transactions
-      if (tx.amount && Math.abs(tx.amount) < 0.001) continue;
+      // Skip failed or invalid transactions
+      if (tx.meta?.err || !tx.transaction) continue;
       
-      // Filter out failed transactions
-      if (tx.err) continue;
+      // Let Moralis portfolio data help us understand meaningful tokens
+      const isSignificantTransaction = this.isSignificantTransaction(tx, rawData.portfolio);
+      if (!isSignificantTransaction) continue;
       
-      // Enrich with USD values
+      // Use Moralis token metadata for proper categorization
+      const tokenInfo = rawData.tokens.find((t: any) => t.address === tx.tokenTransfers?.[0]?.mint);
+      const category = this.categorizeWithMoralisData(tx, tokenInfo);
+      
       const enrichedTx = {
-        signature: tx.signature,
+        signature: tx.transaction.signatures[0],
         timestamp: tx.blockTime,
         type: tx.type,
-        amount: tx.amount,
-        token: tx.tokenAddress,
-        usdValue: this.calculateUsdValue(tx, rawData.prices),
-        fee: tx.fee,
-        dex: this.extractDex(tx.description),
-        category: this.categorizeToken(tx.tokenAddress, rawData.tokens),
-        risk: this.assessTransactionRisk(tx)
+        amount: this.extractActualAmount(tx),
+        token: tx.tokenTransfers?.[0]?.mint || 'SOL',
+        tokenName: tokenInfo?.name || 'Unknown',
+        tokenSymbol: tokenInfo?.symbol || 'UNK',
+        usdValue: this.calculateUsdValueWithMoralis(tx, rawData.prices, rawData.portfolio),
+        fee: tx.meta?.fee || 0,
+        dex: this.extractDexFromMoralis(tx),
+        category,
+        risk: this.assessRiskWithMoralisContext(tx, rawData.portfolio),
+        moralisConfidence: this.getMoralisConfidenceScore(tx, tokenInfo)
       };
       
       cleanTransactions.push(enrichedTx);
       
-      if (enrichedTx.token) {
+      if (enrichedTx.token && enrichedTx.token !== 'SOL') {
         validTokens.add(enrichedTx.token);
+        tokenCategories.set(enrichedTx.token, category);
       }
     }
     
-    return {
+    const cleanData = {
       transactions: cleanTransactions,
       tokens: Array.from(validTokens),
+      tokenCategories: Object.fromEntries(tokenCategories),
       totalTransactions: cleanTransactions.length,
       timespan: this.calculateTimespan(cleanTransactions),
-      totalVolume: this.calculateTotalVolume(cleanTransactions)
+      totalVolume: this.calculateTotalVolumeWithMoralis(cleanTransactions),
+      moralisProcessedAt: new Date().toISOString()
     };
+    
+    // Cache clean data in Redis for 30 minutes
+    await this.redis.setex(cacheKey, 1800, JSON.stringify(cleanData));
+    
+    return cleanData;
+  }
+
+  // Moralis-powered helper methods
+  private isSignificantTransaction(tx: any, portfolio: any[]): boolean {
+    // Use Moralis portfolio context to filter dust
+    const amount = this.extractActualAmount(tx);
+    if (amount < 0.001) return false;
+    
+    // Check if token is in meaningful portfolio positions
+    const tokenMint = tx.tokenTransfers?.[0]?.mint;
+    if (tokenMint && portfolio.length > 0) {
+      const portfolioItem = portfolio.find((p: any) => p.mint === tokenMint);
+      if (portfolioItem && portfolioItem.amount_raw && parseInt(portfolioItem.amount_raw) > 1000) {
+        return true;
+      }
+    }
+    
+    return amount > 0.01; // SOL threshold
+  }
+
+  private categorizeWithMoralisData(tx: any, tokenInfo: any): string {
+    if (!tokenInfo) return 'Unknown';
+    
+    // Use Moralis metadata to categorize
+    const name = tokenInfo.name?.toLowerCase() || '';
+    const symbol = tokenInfo.symbol?.toLowerCase() || '';
+    
+    if (name.includes('meme') || symbol.includes('shib') || symbol.includes('doge')) return 'Meme';
+    if (name.includes('ai') || name.includes('gpt') || symbol.includes('ai')) return 'AI';
+    if (name.includes('defi') || name.includes('swap') || name.includes('pool')) return 'DeFi';
+    if (name.includes('game') || name.includes('nft') || symbol.includes('game')) return 'Gaming';
+    
+    return 'Utility';
+  }
+
+  private calculateUsdValueWithMoralis(tx: any, prices: any, portfolio: any[]): number {
+    const tokenMint = tx.tokenTransfers?.[0]?.mint;
+    if (!tokenMint) return 0;
+    
+    // Try to get price from Moralis portfolio data first
+    const portfolioItem = portfolio.find((p: any) => p.mint === tokenMint);
+    if (portfolioItem && portfolioItem.usd_price) {
+      const amount = this.extractActualAmount(tx);
+      return amount * portfolioItem.usd_price;
+    }
+    
+    // Fallback to CoinGecko prices
+    const price = prices[tokenMint];
+    if (price) {
+      const amount = this.extractActualAmount(tx);
+      return amount * price;
+    }
+    
+    return 0;
+  }
+
+  private extractDexFromMoralis(tx: any): string {
+    // Moralis provides better program ID recognition
+    const programId = tx.transaction?.message?.instructions?.[0]?.programId;
+    
+    const dexMap: Record<string, string> = {
+      'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4': 'Jupiter',
+      '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM': 'Raydium',
+      '22Y43yTVxuUkoRKdm9thyRhQ3SdgQS7c7kB6UNCiaczD': 'Serum'
+    };
+    
+    return dexMap[programId] || 'Unknown DEX';
+  }
+
+  private assessRiskWithMoralisContext(tx: any, portfolio: any[]): number {
+    // Use Moralis portfolio context for risk assessment
+    let risk = 1;
+    
+    const tokenMint = tx.tokenTransfers?.[0]?.mint;
+    if (tokenMint && portfolio.length > 0) {
+      const portfolioItem = portfolio.find((p: any) => p.mint === tokenMint);
+      if (portfolioItem) {
+        // Higher risk for new tokens not in established portfolio
+        if (!portfolioItem.verified_collection) risk += 2;
+        if (portfolioItem.possible_spam) risk += 3;
+      }
+    }
+    
+    return Math.min(risk, 5);
+  }
+
+  private getMoralisConfidenceScore(tx: any, tokenInfo: any): number {
+    let confidence = 50;
+    
+    if (tokenInfo?.name) confidence += 20;
+    if (tokenInfo?.symbol) confidence += 15;
+    if (tokenInfo?.decimals) confidence += 10;
+    if (tokenInfo?.logoURI) confidence += 5;
+    
+    return Math.min(confidence, 100);
+  }
+
+  private calculateTotalVolumeWithMoralis(transactions: any[]): number {
+    return transactions.reduce((total, tx) => total + (tx.usdValue || 0), 0);
+  }
+
+  private extractActualAmount(tx: any): number {
+    // Extract actual transaction amount from Moralis-parsed data
+    if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
+      const transfer = tx.tokenTransfers[0];
+      return Math.abs(transfer.tokenAmount || 0);
+    }
+    
+    if (tx.nativeTransfers && tx.nativeTransfers.length > 0) {
+      const transfer = tx.nativeTransfers[0];
+      return Math.abs(transfer.amount || 0) / 1000000000; // Convert lamports to SOL
+    }
+    
+    return 0;
   }
 
   /**
@@ -486,25 +626,41 @@ export class CentralDataPipeline {
 
 /**
  * CONSUMER INTERFACE
- * All other services should use this to get wallet data
+ * All other services (UI, LLM, cards) must use this instead of hitting APIs directly
+ * NO DIRECT ACCESS TO HELIUS, MORALIS, OR REDIS ALLOWED
  */
 export class WalletDataConsumer {
   private pool: Pool;
+  private redis: Redis;
 
   constructor() {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    this.redis = new Redis(process.env.REDIS_URL!);
   }
 
   /**
-   * Get clean transaction data for a wallet
+   * Get clean transaction data for a wallet (Redis first, then Postgres)
    */
   async getCleanTransactions(walletAddress: string) {
+    // Check Redis cache first
+    const cacheKey = `wallet:transactions:${walletAddress}`;
+    const cached = await this.redis.get(cacheKey);
+    
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    // Fallback to Postgres
     const client = await this.pool.connect();
     try {
       const result = await client.query(
         'SELECT * FROM clean_transactions WHERE wallet_address = $1 ORDER BY timestamp',
         [walletAddress]
       );
+      
+      // Cache in Redis for 15 minutes
+      await this.redis.setex(cacheKey, 900, JSON.stringify(result.rows));
+      
       return result.rows;
     } finally {
       client.release();
@@ -512,18 +668,76 @@ export class WalletDataConsumer {
   }
 
   /**
-   * Get psychological analysis for a wallet
+   * Get psychological analysis for a wallet (Redis first, then Postgres)
    */
   async getPsychologicalAnalysis(walletAddress: string) {
+    // Check Redis cache first
+    const cacheKey = `wallet:analysis:${walletAddress}`;
+    const cached = await this.redis.get(cacheKey);
+    
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    // Fallback to Postgres
     const client = await this.pool.connect();
     try {
       const result = await client.query(
         'SELECT * FROM psy_cards WHERE wallet_address = $1',
         [walletAddress]
       );
-      return result.rows[0];
+      
+      if (result.rows.length > 0) {
+        // Cache in Redis for 1 hour
+        await this.redis.setex(cacheKey, 3600, JSON.stringify(result.rows[0]));
+        return result.rows[0];
+      }
+      
+      return null;
     } finally {
       client.release();
     }
+  }
+
+  /**
+   * Get wallet insights from Redis (fast access for UI)
+   */
+  async getWalletInsights(walletAddress: string) {
+    const cacheKey = `wallet:insights:${walletAddress}`;
+    const cached = await this.redis.get(cacheKey);
+    
+    if (cached) {
+      return JSON.parse(cached);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Force refresh wallet data through the central pipeline
+   */
+  async refreshWalletData(walletAddress: string, walletName?: string) {
+    const pipeline = new CentralDataPipeline();
+    return await pipeline.ingestWallet(walletAddress, walletName);
+  }
+
+  /**
+   * Get wallet summary for leaderboards/comparisons
+   */
+  async getWalletSummary(walletAddress: string) {
+    const analysis = await this.getPsychologicalAnalysis(walletAddress);
+    const transactions = await this.getCleanTransactions(walletAddress);
+    
+    if (!analysis || !transactions) return null;
+    
+    return {
+      address: walletAddress,
+      archetype: analysis.archetype,
+      whispererScore: analysis.whisperer_score,
+      degenScore: analysis.degen_score,
+      totalTransactions: transactions.length,
+      lastActivity: transactions[0]?.timestamp,
+      totalVolume: transactions.reduce((sum, tx) => sum + (tx.usd_value || 0), 0)
+    };
   }
 }
