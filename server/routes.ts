@@ -5,6 +5,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import { walletPipeline } from './postgresWalletPipeline';
+import { PsychologicalCardEngine } from './psychologicalCardEngine';
 import config from './config';
 
 const router = express.Router();
