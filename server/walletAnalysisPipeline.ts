@@ -65,12 +65,12 @@ class WalletAnalysisPipeline {
 
       // Step 4: Run Label Engine classification
       console.log('🏷️ Running archetype classification...');
-      const classification = await this.classifyArchetype(behavioralScores, transactions);
+      const classification = await this.classifyArchetype(behavioralScores, completeData.transactions);
 
       // Step 5: Compile complete analysis
       const analysis = await this.compileAnalysis(
         walletAddress,
-        transactions,
+        completeData.transactions,
         behavioralScores,
         classification
       );
@@ -81,7 +81,7 @@ class WalletAnalysisPipeline {
       
       // Step 7: Store detailed transaction data for future use
       console.log('📊 Storing enriched transaction data...');
-      await this.storeTransactionData(walletAddress, transactions);
+      await this.storeTransactionData(walletAddress, completeData.transactions || []);
 
       console.log('✅ Complete data enrichment and analysis finished!');
       return analysis;
