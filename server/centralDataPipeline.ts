@@ -18,13 +18,14 @@ export class CentralDataPipeline {
   private coingeckoApiKey: string;
 
   constructor() {
-    // Use PostgreSQL environment variables instead of DATABASE_URL
+    // Use PostgreSQL environment variables with SSL
     this.pool = new Pool({
       host: process.env.PGHOST,
       port: parseInt(process.env.PGPORT || '5432'),
       user: process.env.PGUSER,
       password: process.env.PGPASSWORD,
       database: process.env.PGDATABASE,
+      ssl: { rejectUnauthorized: false }
     });
     
     // Configure Upstash Redis
@@ -636,19 +637,20 @@ export class WalletDataConsumer {
   private redis: Redis;
 
   constructor() {
-    // Use PostgreSQL environment variables instead of DATABASE_URL
+    // Use PostgreSQL environment variables with SSL
     this.pool = new Pool({
       host: process.env.PGHOST,
       port: parseInt(process.env.PGPORT || '5432'),
       user: process.env.PGUSER,
       password: process.env.PGPASSWORD,
       database: process.env.PGDATABASE,
+      ssl: { rejectUnauthorized: false }
     });
     
     // Configure Upstash Redis
     this.redis = new Redis({
       url: 'https://tender-cougar-30690.upstash.io',
-      token: 'AXfiAAIjcDEzN2NmM2Y0YTk4NGI0ZDY5YTg3MmI1MjhmOTkxZjYzYXAxMA',
+      token: 'AXfiAAIjcDEzN2NmM2Y0YTk3MmI1MjhmOTkxZjYzYXAxMA',
     });
   }
 
