@@ -350,11 +350,11 @@ export class CentralDataPipeline {
       
       // Update wallet metadata
       await client.query(`
-        INSERT INTO wallet_metadata (address, name, last_updated, total_transactions, timespan_days)
-        VALUES ($1, $2, NOW(), $3, $4)
-        ON CONFLICT (address) DO UPDATE SET
-          name = $2, last_updated = NOW(), total_transactions = $3, timespan_days = $4
-      `, [walletAddress, walletName, cleanData.totalTransactions, cleanData.timespan]);
+        INSERT INTO wallet_metadata (wallet_address, wallet_name, last_updated, analysis_count)
+        VALUES ($1, $2, NOW(), 1)
+        ON CONFLICT (wallet_address) DO UPDATE SET
+          wallet_name = $2, last_updated = NOW(), analysis_count = wallet_metadata.analysis_count + 1
+      `, [walletAddress, walletName]);
       
       await client.query('COMMIT');
       
