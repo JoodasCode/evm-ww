@@ -887,37 +887,7 @@ class PostgresWalletPipeline {
     }
   }
 
-  // Remove old PostgreSQL code
-  private async oldStoreMethod() {
-    /*
-      // Store wallet scores
-      await client.query(`
-        INSERT INTO wallet_scores (
-          wallet_address, whisperer_score, degen_score, roi_score, 
-          influence_score, timing_score, portfolio_value, total_transactions,
-          enriched_data_points, last_analyzed_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
-        ON CONFLICT (wallet_address) DO UPDATE SET
-          whisperer_score = EXCLUDED.whisperer_score,
-          degen_score = EXCLUDED.degen_score,
-          roi_score = EXCLUDED.roi_score,
-          influence_score = EXCLUDED.influence_score,
-          timing_score = EXCLUDED.timing_score,
-          portfolio_value = EXCLUDED.portfolio_value,
-          total_transactions = EXCLUDED.total_transactions,
-          enriched_data_points = EXCLUDED.enriched_data_points,
-          last_analyzed_at = NOW(),
-          updated_at = NOW()
-      `, [
-        walletAddress,
-        scores.whispererScore,
-        scores.degenScore,
-        scores.roiScore,
-        scores.influenceScore,
-        100 - scores.fomoScore, // timing_score
-        enrichedData.portfolioValue,
-        enrichedData.transactions.length,
-        enrichedData.totalDataPoints
+  // PostgreSQL migration completed - all storage now uses Supabase
       ]);
 
       // Store behavioral data
