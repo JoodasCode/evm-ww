@@ -11,10 +11,10 @@ async function testDirectSupabaseAnalysis() {
   try {
     console.log('\n🔍 Testing direct Supabase connection...');
     
-    // Initialize Supabase client
+    // Initialize Supabase client with correct credentials
     const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY
+      'https://ncqecpowuzvkgjfgrphz.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jcWVjcG93dXp2a2dqZmdycGh6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzYxMjY1NCwiZXhwIjoyMDYzMTg4NjU0fQ.LVTzTREeNN9yONGjwg_ed6LeiOemDYc5LSnpNtHzMCA'
     );
     
     // Test 1: Check if we can read existing data
