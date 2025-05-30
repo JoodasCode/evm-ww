@@ -3,9 +3,7 @@
  * Complete conversion from Supabase to direct PostgreSQL
  */
 
-import pkg from 'pg';
-const { Pool } = pkg;
-import { pool } from './db';
+import { supabase } from './db.js';
 import { categorizeToken, analyzeTradingNarratives, TokenMetadata } from '../shared/tokenCategorization';
 import { whispererEngine } from './whispererEngine';
 
@@ -841,13 +839,10 @@ class PostgresWalletPipeline {
   }
 
   /**
-   * Store complete analysis in PostgreSQL
+   * Store complete analysis in Supabase
    */
   private async storeCompleteAnalysis(walletAddress: string, enrichedData: any, scores: any, archetype: any) {
-    const client = await this.pool.connect();
-    
     try {
-      await client.query('BEGIN');
 
       // Store wallet scores
       await client.query(`

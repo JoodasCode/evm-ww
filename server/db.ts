@@ -17,17 +17,13 @@ import { createClient } from '@supabase/supabase-js';
 // Single shared Supabase client used throughout the application
 export const supabase = createClient(
   'https://ncqecpowuzvkgjfgrphz.supabase.co',
-  process.env.SUPABASE_SERVICE_KEY!
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jcWVjcG93dXp2a2dqZmdycGh6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzYxMjY1NCwiZXhwIjoyMDYzMTg4NjU0fQ.LVTzTREeNN9yONGjwg_ed6LeiOemDYc5LSnpNtHzMCA'
 );
 
-// PostgreSQL connection using local database
+// PostgreSQL connection using Supabase database
 import { Pool } from 'pg';
 export const pool = new Pool({
-  host: process.env.PGHOST,
-  port: parseInt(process.env.PGPORT || '5432'),
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
+  connectionString: 'postgresql://postgres:p78z9WNgIJt8MbrW@db.ncqecpowuzvkgjfgrphz.supabase.co:5432/postgres',
   ssl: {
     rejectUnauthorized: false,
   },
