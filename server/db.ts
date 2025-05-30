@@ -1,27 +1,31 @@
 /**
  * Shared Database Connection Module
  * 
- * This module provides a single, consistent database connection pool for the entire application.
- * It prevents the re-analysis loop issue by ensuring both the analysis pipeline and cards endpoint
- * use identical database connections, allowing proper access to stored analysis data.
+ * This module provides a single, consistent database connection for the entire application.
+ * Now using Supabase for enhanced performance and real-time capabilities while maintaining
+ * all existing wallet analysis data and behavioral profiles.
  * 
  * Key benefits:
  * - Single source of truth for database connections
  * - Prevents connection mismatches between analysis storage and retrieval
- * - Enables efficient caching behavior with Redis/Postgres fallback
+ * - Enables efficient caching behavior with Redis/Supabase fallback
+ * - Real-time subscriptions and automatic API generation
  */
 
-import { Pool } from 'pg';
+import { createClient } from '@supabase/supabase-js';
 
-// Single shared connection pool used throughout the application
+// Single shared Supabase client used throughout the application
+export const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
+);
+
+// Legacy PostgreSQL compatibility layer for existing code
+import { Pool } from 'pg';
 export const pool = new Pool({
-  host: process.env.PGHOST,
-  port: parseInt(process.env.PGPORT || '5432'),
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
+  connectionString: `postgresql://postgres.ncqecpowuzvkgjfgrphz:${process.env.SUPABASE_DB_PASSWORD}@aws-0-us-east-1.pooler.supabase.com:6543/postgres`,
   ssl: {
-    rejectUnauthorized: false, // required for hosted databases
+    rejectUnauthorized: false,
   },
 });
 
