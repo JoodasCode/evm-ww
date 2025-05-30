@@ -56,15 +56,18 @@ router.post('/api/cards/:address', async (req, res) => {
     // Step 1: Check Redis first for cached analysis data
     // This implements the primary caching layer to avoid expensive re-analysis
     try {
-      const { Redis } = require('@upstash/redis');
-      const redis = Redis.fromEnv();
-      const cached = await redis.get(`cards:${address}`);
+      const redis = require('redis');
+      const client = redis.createClient({ url: process.env.REDIS_URL });
+      await client.connect();
+      
+      const cached = await client.get(`cards:${address}`);
       if (cached) {
-        analysis = typeof cached === 'string' ? JSON.parse(cached) : cached;
+        analysis = JSON.parse(cached);
         console.log(`[REDIS HIT] Found cached analysis for ${address}`);
       } else {
         console.log(`[REDIS MISS] No cached data found for ${address}`);
       }
+      await client.disconnect();
     } catch (redisError) {
       console.log(`[REDIS ERROR] Redis query failed: ${redisError.message}, checking Postgres...`);
     }
