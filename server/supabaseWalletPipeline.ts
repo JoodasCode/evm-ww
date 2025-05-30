@@ -350,35 +350,56 @@ class SupabaseWalletPipeline {
    */
   private async storeCompleteAnalysis(walletAddress: string, enrichedData: any, scores: any, archetype: any) {
     try {
-      // Store wallet scores using Supabase with correct column names
+      // Store wallet scores using Supabase (simplified to avoid cache issues)
       const { error: scoresError } = await supabase
         .from('wallet_scores')
         .upsert({
           wallet_address: walletAddress,
           whisperer_score: scores.whispererScore,
-          portfolio_value: enrichedData.portfolioValue || 0,
+          degen_score: scores.degenScore,
+          roi_score: scores.roiScore,
+          influence_score: scores.influenceScore,
+          timing_score: scores.patienceScore,
           total_transactions: enrichedData.transactions?.length || 0,
           last_analyzed_at: new Date().toISOString()
         });
 
       if (scoresError) throw scoresError;
 
-      // Store basic wallet analysis data
-      const { error: analysisError } = await supabase
-        .from('wallet_analysis')
+      // Store behavioral analysis
+      const { error: behaviorError } = await supabase
+        .from('wallet_behavior')
+        .upsert({
+          wallet_address: walletAddress,
+          risk_score: scores.riskScore,
+          fomo_score: scores.fomoScore,
+          patience_score: scores.patienceScore,
+          conviction_score: scores.convictionScore,
+          impulse_control_score: scores.influenceScore,
+          archetype: archetype.type,
+          confidence: archetype.confidence,
+          emotional_states: archetype.emotionalStates,
+          behavioral_traits: archetype.traits,
+          trading_style: 'Automated Analysis'
+        });
+
+      if (behaviorError) throw behaviorError;
+
+      // Store psychological cards
+      const { error: psyError } = await supabase
+        .from('psy_cards')
         .upsert({
           wallet_address: walletAddress,
           archetype: archetype.type,
-          confidence: archetype.confidence,
-          behavioral_traits: JSON.stringify(archetype.traits),
-          emotional_states: JSON.stringify(archetype.emotionalStates),
-          created_at: new Date().toISOString()
+          whisperer_score: scores.whispererScore,
+          degen_score: scores.degenScore,
+          position_sizing: scores.psychologicalCards.positionSizing,
+          conviction_collapse: scores.psychologicalCards.convictionCollapse,
+          diversification: scores.psychologicalCards.diversificationPsychology,
+          gas_strategy: scores.psychologicalCards.gasFeePersonality
         });
 
-      if (analysisError) {
-        console.log('Analysis storage info:', analysisError);
-        // Continue even if this fails
-      }
+      if (psyError) throw psyError;
 
       console.log(`✅ Analysis stored for ${walletAddress} in Supabase`);
       

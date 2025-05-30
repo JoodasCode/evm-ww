@@ -25,8 +25,8 @@ router.get('/api/health', (req, res) => {
 
 // Wallet analysis endpoint
 router.post('/api/wallet/:address/analyze', async (req, res) => {
+  const { address } = req.params;
   try {
-    const { address } = req.params;
     console.log(`🚀 Starting analysis for wallet: ${address}`);
     
     const analysis = await walletPipeline.analyzeWallet(address);
