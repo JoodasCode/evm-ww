@@ -20,7 +20,7 @@ export const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 );
 
-// Legacy PostgreSQL compatibility layer for existing code
+// PostgreSQL connection using local database
 import { Pool } from 'pg';
 export const pool = new Pool({
   host: process.env.PGHOST,

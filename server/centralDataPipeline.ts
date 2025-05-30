@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { supabase, pool } from './db.js';
 import fetch from 'node-fetch';
 import { Redis } from '@upstash/redis';
 import Bottleneck from 'bottleneck';
@@ -9,10 +9,10 @@ import Bottleneck from 'bottleneck';
  * Single source of truth for all wallet data ingestion, sanitization, and storage.
  * No other service should hit Helius/Moralis/Redis directly.
  * 
- * Flow: [Helius + Moralis] → [Sanitizer] → [Redis Cache + Postgres] → [All Consumers]
+ * Flow: [Helius + Moralis] → [Sanitizer] → [Redis Cache + Supabase] → [All Consumers]
  */
 export class CentralDataPipeline {
-  private pool: Pool;
+  private pool = pool; // Use shared Supabase connection
   private redis: Redis;
   private heliusApiKey: string;
   private moralisApiKey: string;
@@ -20,15 +20,7 @@ export class CentralDataPipeline {
   private heliusLimiter: Bottleneck;
 
   constructor() {
-    // Use PostgreSQL environment variables with SSL
-    this.pool = new Pool({
-      host: process.env.PGHOST,
-      port: parseInt(process.env.PGPORT || '5432'),
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE,
-      ssl: { rejectUnauthorized: false }
-    });
+    // Pool is now imported from shared db.ts
     
     // Configure Upstash Redis
     this.redis = new Redis({
