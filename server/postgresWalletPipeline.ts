@@ -843,7 +843,53 @@ class PostgresWalletPipeline {
    */
   private async storeCompleteAnalysis(walletAddress: string, enrichedData: any, scores: any, archetype: any) {
     try {
+      // Store wallet scores using Supabase
+      const { error: scoresError } = await supabase
+        .from('wallet_scores')
+        .upsert({
+          wallet_address: walletAddress,
+          whisperer_score: scores.whispererScore,
+          degen_score: scores.degenScore,
+          roi_score: scores.roiScore,
+          influence_score: scores.influenceScore,
+          timing_score: scores.timingScore,
+          portfolio_value: enrichedData.balance?.usd || 0,
+          total_transactions: enrichedData.signatures?.length || 0,
+          last_analyzed_at: new Date().toISOString()
+        });
 
+      if (scoresError) throw scoresError;
+
+      // Store behavioral analysis using Supabase
+      const { error: behaviorError } = await supabase
+        .from('wallet_behavior')
+        .upsert({
+          wallet_address: walletAddress,
+          risk_score: scores.riskScore,
+          fomo_score: scores.fomoScore,
+          patience_score: scores.patienceScore,
+          conviction_score: scores.convictionScore,
+          archetype: archetype.archetype,
+          confidence: archetype.confidence,
+          emotional_states: archetype.emotionalStates,
+          behavioral_traits: archetype.behavioralTraits,
+          trading_frequency: archetype.tradingFrequency || 'Unknown',
+          avg_transaction_value: enrichedData.averageTransactionValue || 0
+        });
+
+      if (behaviorError) throw behaviorError;
+
+      console.log(`✅ Analysis stored for ${walletAddress} in Supabase`);
+      
+    } catch (error) {
+      console.error('❌ Supabase storage failed:', error);
+      throw error;
+    }
+  }
+
+  // Remove old PostgreSQL code
+  private async oldStoreMethod() {
+    /*
       // Store wallet scores
       await client.query(`
         INSERT INTO wallet_scores (
@@ -962,29 +1008,6 @@ class PostgresWalletPipeline {
         ON CONFLICT (wallet_address) DO UPDATE SET
           dominant_narrative = EXCLUDED.dominant_narrative,
           narrative_diversity = EXCLUDED.narrative_diversity,
-          narrative_loyalty = EXCLUDED.narrative_loyalty,
-          category_stats = EXCLUDED.category_stats,
-          analyzed_transactions = EXCLUDED.analyzed_transactions,
-          updated_at = NOW()
-      `, [
-        walletAddress,
-        narrativeAnalysis.dominantNarrative,
-        narrativeAnalysis.narrativeDiversity,
-        JSON.stringify(narrativeAnalysis.narrativeLoyalty),
-        JSON.stringify(narrativeAnalysis.categoryStats),
-        enrichedData.transactions.length
-      ]);
-
-      await client.query('COMMIT');
-      console.log('💾 Analysis stored successfully');
-      
-    } catch (error) {
-      await client.query('ROLLBACK');
-      console.error('❌ Storage failed:', error);
-      throw error;
-    } finally {
-      client.release();
-    }
   }
 
   /**
