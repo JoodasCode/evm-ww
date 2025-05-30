@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { createServer } from 'http';
-import { walletPipeline } from './postgresWalletPipeline';
+import { walletPipeline } from './supabaseWalletPipeline';
 import { pool } from './db';
 import config from './config';
 
