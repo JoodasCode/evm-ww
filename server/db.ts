@@ -23,7 +23,11 @@ export const supabase = createClient(
 // Legacy PostgreSQL compatibility layer for existing code
 import { Pool } from 'pg';
 export const pool = new Pool({
-  connectionString: `postgresql://postgres.ncqecpowuzvkgjfgrphz:${process.env.SUPABASE_DB_PASSWORD}@aws-0-us-east-1.pooler.supabase.com:6543/postgres`,
+  host: process.env.PGHOST,
+  port: parseInt(process.env.PGPORT || '5432'),
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
   ssl: {
     rejectUnauthorized: false,
   },
