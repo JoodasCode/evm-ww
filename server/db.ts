@@ -16,7 +16,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Single shared Supabase client used throughout the application
 export const supabase = createClient(
-  process.env.SUPABASE_URL!,
+  'https://ncqecpowuzvkgjfgrphz.supabase.co',
   process.env.SUPABASE_SERVICE_KEY!
 );
 
