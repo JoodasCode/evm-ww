@@ -10,14 +10,14 @@ export function BehaviorTab() {
       <div className="space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2].map((i) => (
-            <Card key={i} className="bg-whisper-card border-whisper-border">
+            <Card key={i} className="bg-card border-border">
               <CardContent className="p-6">
                 <div className="animate-pulse space-y-4">
-                  <div className="h-6 bg-whisper-accent rounded w-1/3"></div>
+                  <div className="h-6 bg-primary rounded w-1/3"></div>
                   <div className="space-y-3">
-                    <div className="h-4 bg-whisper-accent rounded"></div>
-                    <div className="h-4 bg-whisper-accent rounded"></div>
-                    <div className="h-4 bg-whisper-accent rounded"></div>
+                    <div className="h-4 bg-primary rounded"></div>
+                    <div className="h-4 bg-primary rounded"></div>
+                    <div className="h-4 bg-primary rounded"></div>
                   </div>
                 </div>
               </CardContent>
@@ -42,42 +42,42 @@ export function BehaviorTab() {
       {/* Risk Appetite and Trading Patterns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Risk Appetite */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-6">Risk Appetite</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-6">Risk Appetite</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm text-whisper-subtext">Volatility Tolerance</span>
-                  <span className="text-sm text-whisper-text">{volatilityTolerance}%</span>
+                  <span className="text-sm text-muted-foreground">Volatility Tolerance</span>
+                  <span className="text-sm text-foreground">{volatilityTolerance}%</span>
                 </div>
-                <div className="w-full bg-whisper-bg rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div 
-                    className="bg-whisper-accent h-2 rounded-full transition-all duration-500" 
+                    className="bg-primary h-2 rounded-full transition-all duration-500" 
                     style={{ width: `${volatilityTolerance}%` }}
                   />
                 </div>
               </div>
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm text-whisper-subtext">Position Sizing</span>
-                  <span className="text-sm text-whisper-text">{positionSizing}%</span>
+                  <span className="text-sm text-muted-foreground">Position Sizing</span>
+                  <span className="text-sm text-foreground">{positionSizing}%</span>
                 </div>
-                <div className="w-full bg-whisper-bg rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div 
-                    className="bg-whisper-accent h-2 rounded-full transition-all duration-500" 
+                    className="bg-primary h-2 rounded-full transition-all duration-500" 
                     style={{ width: `${positionSizing}%` }}
                   />
                 </div>
               </div>
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm text-whisper-subtext">FOMO Resistance</span>
-                  <span className="text-sm text-whisper-text">{fomoResistance}%</span>
+                  <span className="text-sm text-muted-foreground">FOMO Resistance</span>
+                  <span className="text-sm text-foreground">{fomoResistance}%</span>
                 </div>
-                <div className="w-full bg-whisper-bg rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div 
-                    className="bg-whisper-accent h-2 rounded-full transition-all duration-500" 
+                    className="bg-primary h-2 rounded-full transition-all duration-500" 
                     style={{ width: `${fomoResistance}%` }}
                   />
                 </div>
@@ -87,30 +87,30 @@ export function BehaviorTab() {
         </Card>
 
         {/* Trading Patterns */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-6">Trading Patterns</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-6">Trading Patterns</h3>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-whisper-bg rounded-lg">
-                  <p className="text-2xl font-bold text-whisper-text">{dailyTrades * 7}</p>
-                  <p className="text-sm text-whisper-subtext">Trades/Week</p>
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-2xl font-bold text-foreground">{dailyTrades * 7}</p>
+                  <p className="text-sm text-muted-foreground">Trades/Week</p>
                 </div>
-                <div className="text-center p-4 bg-whisper-bg rounded-lg">
-                  <p className="text-2xl font-bold text-whisper-text">3.2</p>
-                  <p className="text-sm text-whisper-subtext">Avg Hold Days</p>
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-2xl font-bold text-foreground">3.2</p>
+                  <p className="text-sm text-muted-foreground">Avg Hold Days</p>
                 </div>
               </div>
-              <div className="pt-4 border-t border-whisper-border">
-                <p className="text-sm text-whisper-subtext mb-3">Peak Trading Hours</p>
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm text-muted-foreground mb-3">Peak Trading Hours</p>
                 <div className="flex items-center space-x-2">
-                  <Badge variant="secondary" className="bg-whisper-accent text-whisper-text">
+                  <Badge variant="secondary" className="bg-primary text-foreground">
                     9-11 AM
                   </Badge>
-                  <Badge variant="secondary" className="bg-whisper-accent text-whisper-text">
+                  <Badge variant="secondary" className="bg-primary text-foreground">
                     2-4 PM
                   </Badge>
-                  <Badge variant="secondary" className="bg-whisper-accent text-whisper-text">
+                  <Badge variant="secondary" className="bg-primary text-foreground">
                     8-10 PM
                   </Badge>
                 </div>
@@ -123,9 +123,9 @@ export function BehaviorTab() {
       {/* Detailed Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Overtrading Detector */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-4">Overtrading Analysis</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-4">Overtrading Analysis</h3>
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-4 relative">
                 <svg className="w-20 h-20 transform -rotate-90">
@@ -136,7 +136,7 @@ export function BehaviorTab() {
                     stroke="currentColor"
                     strokeWidth="6"
                     fill="none"
-                    className="text-whisper-border"
+                    className="text-muted-foreground"
                   />
                   <circle
                     cx="40"
@@ -147,14 +147,14 @@ export function BehaviorTab() {
                     fill="none"
                     strokeDasharray="220"
                     strokeDashoffset="110"
-                    className="text-whisper-text transition-all duration-500"
+                    className="text-foreground transition-all duration-500"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xl font-bold text-whisper-text">Low</span>
+                  <span className="text-xl font-bold text-foreground">Low</span>
                 </div>
               </div>
-              <p className="text-sm text-whisper-subtext">
+              <p className="text-sm text-muted-foreground">
                 Your trading frequency is within healthy bounds
               </p>
             </div>
@@ -162,38 +162,38 @@ export function BehaviorTab() {
         </Card>
 
         {/* Time Bias */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-4">Time of Day Bias</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-4">Time of Day Bias</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-whisper-subtext">Morning</span>
+                <span className="text-sm text-muted-foreground">Morning</span>
                 <div className="flex space-x-1">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="w-2 h-2 bg-whisper-accent rounded-full" />
+                    <div key={i} className="w-2 h-2 bg-primary rounded-full" />
                   ))}
                   {[1, 2].map((i) => (
-                    <div key={i} className="w-2 h-2 bg-whisper-border rounded-full" />
+                    <div key={i} className="w-2 h-2 bg-muted rounded-full" />
                   ))}
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-whisper-subtext">Afternoon</span>
+                <span className="text-sm text-muted-foreground">Afternoon</span>
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-2 h-2 bg-whisper-accent rounded-full" />
+                    <div key={i} className="w-2 h-2 bg-primary rounded-full" />
                   ))}
-                  <div className="w-2 h-2 bg-whisper-border rounded-full" />
+                  <div className="w-2 h-2 bg-muted rounded-full" />
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-whisper-subtext">Evening</span>
+                <span className="text-sm text-muted-foreground">Evening</span>
                 <div className="flex space-x-1">
                   {[1, 2].map((i) => (
-                    <div key={i} className="w-2 h-2 bg-whisper-accent rounded-full" />
+                    <div key={i} className="w-2 h-2 bg-primary rounded-full" />
                   ))}
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="w-2 h-2 bg-whisper-border rounded-full" />
+                    <div key={i} className="w-2 h-2 bg-muted rounded-full" />
                   ))}
                 </div>
               </div>
@@ -202,25 +202,25 @@ export function BehaviorTab() {
         </Card>
 
         {/* Token Category Breakdown */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-4">Investment Focus</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-4">Investment Focus</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-whisper-subtext">DeFi</span>
-                <span className="text-sm text-whisper-text">45%</span>
+                <span className="text-sm text-muted-foreground">DeFi</span>
+                <span className="text-sm text-foreground">45%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-whisper-subtext">Memecoins</span>
-                <span className="text-sm text-whisper-text">25%</span>
+                <span className="text-sm text-muted-foreground">Memecoins</span>
+                <span className="text-sm text-foreground">25%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-whisper-subtext">Gaming</span>
-                <span className="text-sm text-whisper-text">20%</span>
+                <span className="text-sm text-muted-foreground">Gaming</span>
+                <span className="text-sm text-foreground">20%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-whisper-subtext">Infrastructure</span>
-                <span className="text-sm text-whisper-text">10%</span>
+                <span className="text-sm text-muted-foreground">Infrastructure</span>
+                <span className="text-sm text-foreground">10%</span>
               </div>
             </div>
           </CardContent>

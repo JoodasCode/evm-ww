@@ -404,8 +404,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-violet-500/10 ring-1 ring-violet-500/20">
-                  <Star className="h-5 w-5 text-violet-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Star className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Protocol Alpha Score</CardTitle>
@@ -416,7 +416,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-violet-400 mb-1">Early Adopter</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-1">Early Adopter</div>
               <div className="text-sm text-muted-foreground">
                 Jupiter power user since month 2
               </div>
@@ -425,7 +425,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span>Jupiter early adoption</span>
-                <span className="text-violet-400">+89% volume boost</span>
+                <span className="text-muted-foreground">+89% volume boost</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Raydium usage timing</span>
@@ -433,13 +433,13 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Protocol diversity</span>
-                <span className="text-violet-400">7 platforms</span>
+                <span className="text-muted-foreground">7 platforms</span>
               </div>
             </div>
             
-            <div className="text-center p-3 bg-violet-500/10 rounded-lg">
-              <div className="text-sm font-medium text-violet-400">Alpha Score</div>
-              <div className="text-2xl font-bold text-violet-400 mt-1">85/100</div>
+            <div className="text-center p-3 bg-primary/10 rounded-lg">
+              <div className="text-sm font-medium text-muted-foreground">Alpha Score</div>
+              <div className="text-2xl font-bold text-muted-foreground mt-1">85/100</div>
             </div>
           </CardContent>
         </Card>
@@ -449,8 +449,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/20">
-                  <TrendingDown className="h-5 w-5 text-amber-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <TrendingDown className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Conviction Collapse Detector</CardTitle>

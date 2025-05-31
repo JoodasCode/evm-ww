@@ -97,13 +97,13 @@ export function SettingsTab() {
     <div className="max-w-4xl space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Wallet Management */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-6">Wallet Management</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-6">Wallet Management</h3>
             <div className="space-y-4">
-              <div className="p-4 bg-whisper-bg rounded-lg">
+              <div className="p-4 bg-muted rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-whisper-text">Connected Wallet</span>
+                  <span className="text-sm font-medium text-foreground">Connected Wallet</span>
                   <div className="flex items-center space-x-2">
                     {connected && (
                       <Badge 
@@ -115,13 +115,13 @@ export function SettingsTab() {
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-whisper-subtext font-mono">
+                <p className="text-sm text-muted-foreground font-mono">
                   {connected && publicKey ? formatAddress(publicKey) : 'Not Connected'}
                 </p>
               </div>
               <div className="flex space-x-3">
                 <Button 
-                  className="flex-1 bg-whisper-accent hover:bg-whisper-accent/80 text-whisper-text"
+                  className="flex-1 bg-primary hover:bg-primary/80 text-foreground"
                   disabled={!connected}
                 >
                   Change Wallet
@@ -129,7 +129,7 @@ export function SettingsTab() {
                 <Button 
                   onClick={disconnect}
                   variant="outline"
-                  className="flex-1 border-whisper-border hover:bg-whisper-accent text-whisper-text"
+                  className="flex-1 border-border hover:bg-primary text-foreground"
                   disabled={!connected}
                 >
                   Disconnect
@@ -140,51 +140,51 @@ export function SettingsTab() {
         </Card>
 
         {/* Data Management */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-6">Data Management</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-6">Data Management</h3>
             <div className="space-y-4">
               <Button
                 onClick={handleRefreshData}
                 disabled={!connected || refreshAnalysisMutation.isPending}
-                className="w-full p-4 bg-whisper-bg hover:bg-whisper-accent rounded-lg text-left transition-colors"
+                className="w-full p-4 bg-muted hover:bg-primary rounded-lg text-left transition-colors"
                 variant="ghost"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-whisper-text">Refresh Analysis</p>
-                    <p className="text-sm text-whisper-subtext">Update all metrics and scores</p>
+                    <p className="font-medium text-foreground">Refresh Analysis</p>
+                    <p className="text-sm text-muted-foreground">Update all metrics and scores</p>
                   </div>
-                  <RefreshCw className={`text-whisper-subtext ${refreshAnalysisMutation.isPending ? 'animate-spin' : ''}`} size={20} />
+                  <RefreshCw className={`text-muted-foreground ${refreshAnalysisMutation.isPending ? 'animate-spin' : ''}`} size={20} />
                 </div>
               </Button>
               
               <Button
                 onClick={handleClearCache}
-                className="w-full p-4 bg-whisper-bg hover:bg-whisper-accent rounded-lg text-left transition-colors"
+                className="w-full p-4 bg-muted hover:bg-primary rounded-lg text-left transition-colors"
                 variant="ghost"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-whisper-text">Clear Cache</p>
-                    <p className="text-sm text-whisper-subtext">Reset all cached data</p>
+                    <p className="font-medium text-foreground">Clear Cache</p>
+                    <p className="text-sm text-muted-foreground">Reset all cached data</p>
                   </div>
-                  <Trash className="text-whisper-subtext" size={20} />
+                  <Trash className="text-muted-foreground" size={20} />
                 </div>
               </Button>
               
               <Button
                 onClick={handleExportData}
                 disabled={!connected}
-                className="w-full p-4 bg-whisper-bg hover:bg-whisper-accent rounded-lg text-left transition-colors"
+                className="w-full p-4 bg-muted hover:bg-primary rounded-lg text-left transition-colors"
                 variant="ghost"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-whisper-text">Export Data</p>
-                    <p className="text-sm text-whisper-subtext">Download analysis report</p>
+                    <p className="font-medium text-foreground">Export Data</p>
+                    <p className="text-sm text-muted-foreground">Download analysis report</p>
                   </div>
-                  <Download className="text-whisper-subtext" size={20} />
+                  <Download className="text-muted-foreground" size={20} />
                 </div>
               </Button>
             </div>
@@ -192,34 +192,34 @@ export function SettingsTab() {
         </Card>
 
         {/* Privacy Settings */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-6">Privacy Preferences</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-6">Privacy Preferences</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-whisper-bg rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div>
-                  <p className="font-medium text-whisper-text">Public Profile</p>
-                  <p className="text-sm text-whisper-subtext">Allow others to view your stats</p>
+                  <p className="font-medium text-foreground">Public Profile</p>
+                  <p className="text-sm text-muted-foreground">Allow others to view your stats</p>
                 </div>
                 <Switch
                   checked={publicProfile}
                   onCheckedChange={setPublicProfile}
                 />
               </div>
-              <div className="flex items-center justify-between p-3 bg-whisper-bg rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div>
-                  <p className="font-medium text-whisper-text">Analytics Tracking</p>
-                  <p className="text-sm text-whisper-subtext">Help improve our algorithms</p>
+                  <p className="font-medium text-foreground">Analytics Tracking</p>
+                  <p className="text-sm text-muted-foreground">Help improve our algorithms</p>
                 </div>
                 <Switch
                   checked={analyticsTracking}
                   onCheckedChange={setAnalyticsTracking}
                 />
               </div>
-              <div className="flex items-center justify-between p-3 bg-whisper-bg rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div>
-                  <p className="font-medium text-whisper-text">Data Sharing</p>
-                  <p className="text-sm text-whisper-subtext">Share anonymized data for research</p>
+                  <p className="font-medium text-foreground">Data Sharing</p>
+                  <p className="text-sm text-muted-foreground">Share anonymized data for research</p>
                 </div>
                 <Switch
                   checked={dataSharing}
@@ -231,28 +231,28 @@ export function SettingsTab() {
         </Card>
 
         {/* Simulation Mode */}
-        <Card className="bg-whisper-card border-whisper-border shadow-md">
+        <Card className="bg-card border-border shadow-md">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-whisper-text mb-6">Simulation Mode</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-6">Simulation Mode</h3>
             <div className="space-y-4">
-              <div className="p-4 bg-whisper-bg rounded-lg">
-                <p className="text-sm text-whisper-subtext mb-3">Test with any wallet address</p>
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground mb-3">Test with any wallet address</p>
                 <Input
                   type="text"
                   placeholder="Enter wallet address..."
                   value={simulationAddress}
                   onChange={(e) => setSimulationAddress(e.target.value)}
-                  className="w-full bg-whisper-card border-whisper-border text-whisper-text"
+                  className="w-full bg-card border-border text-foreground"
                 />
                 <Button
                   onClick={handleSimulateWallet}
-                  className="w-full mt-3 bg-whisper-accent hover:bg-whisper-accent/80 text-whisper-text"
+                  className="w-full mt-3 bg-primary hover:bg-primary/80 text-foreground"
                 >
                   Simulate Wallet
                 </Button>
               </div>
               <div className="text-center">
-                <p className="text-xs text-whisper-subtext">
+                <p className="text-xs text-muted-foreground">
                   Simulation mode allows analysis of any public wallet
                 </p>
               </div>
@@ -262,40 +262,40 @@ export function SettingsTab() {
       </div>
 
       {/* Support Section */}
-      <Card className="bg-whisper-card border-whisper-border shadow-md">
+      <Card className="bg-card border-border shadow-md">
         <CardContent className="p-6">
-          <h3 className="text-xl font-semibold text-whisper-text mb-6">Support & Information</h3>
+          <h3 className="text-xl font-semibold text-foreground mb-6">Support & Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button
-              className="p-4 bg-whisper-bg hover:bg-whisper-accent rounded-lg text-center transition-colors"
+              className="p-4 bg-muted hover:bg-primary rounded-lg text-center transition-colors"
               variant="ghost"
             >
               <div className="flex flex-col items-center space-y-2">
-                <HelpCircle className="text-whisper-subtext" size={32} />
-                <p className="font-medium text-whisper-text">Help Center</p>
-                <p className="text-sm text-whisper-subtext">Get support</p>
+                <HelpCircle className="text-muted-foreground" size={32} />
+                <p className="font-medium text-foreground">Help Center</p>
+                <p className="text-sm text-muted-foreground">Get support</p>
               </div>
             </Button>
             
             <Button
-              className="p-4 bg-whisper-bg hover:bg-whisper-accent rounded-lg text-center transition-colors"
+              className="p-4 bg-muted hover:bg-primary rounded-lg text-center transition-colors"
               variant="ghost"
             >
               <div className="flex flex-col items-center space-y-2">
-                <FileText className="text-whisper-subtext" size={32} />
-                <p className="font-medium text-whisper-text">Documentation</p>
-                <p className="text-sm text-whisper-subtext">API & guides</p>
+                <FileText className="text-muted-foreground" size={32} />
+                <p className="font-medium text-foreground">Documentation</p>
+                <p className="text-sm text-muted-foreground">API & guides</p>
               </div>
             </Button>
             
             <Button
-              className="p-4 bg-whisper-bg hover:bg-whisper-accent rounded-lg text-center transition-colors"
+              className="p-4 bg-muted hover:bg-primary rounded-lg text-center transition-colors"
               variant="ghost"
             >
               <div className="flex flex-col items-center space-y-2">
-                <MessageCircle className="text-whisper-subtext" size={32} />
-                <p className="font-medium text-whisper-text">Community</p>
-                <p className="text-sm text-whisper-subtext">Join Discord</p>
+                <MessageCircle className="text-muted-foreground" size={32} />
+                <p className="font-medium text-foreground">Community</p>
+                <p className="text-sm text-muted-foreground">Join Discord</p>
               </div>
             </Button>
           </div>

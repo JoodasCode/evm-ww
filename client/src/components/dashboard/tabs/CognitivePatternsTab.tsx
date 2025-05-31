@@ -542,8 +542,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/20">
-                  <Scale className="h-5 w-5 text-amber-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Scale className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Position Sizing Psychology</CardTitle>
@@ -554,15 +554,15 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-400 mb-1">Strategic Sizer</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-1">Strategic Sizer</div>
               <div className="text-sm text-muted-foreground">
                 Big bets on utility tokens, small bets on memes
               </div>
             </div>
             
             <div className="space-y-3">
-              <div className="p-3 bg-amber-500/5 rounded-lg border border-amber-500/20">
-                <div className="text-sm font-medium text-amber-400">Largest Position</div>
+              <div className="p-3 bg-primary/5 rounded-lg border border-border">
+                <div className="text-sm font-medium text-muted-foreground">Largest Position</div>
                 <div className="text-xs text-muted-foreground mt-1">
                   SOL: 15.2M lamports (67% of portfolio)
                 </div>
@@ -570,7 +570,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               
               <div className="flex items-center justify-between text-sm">
                 <span>Utility token sizing</span>
-                <span className="text-amber-400">8.7M avg</span>
+                <span className="text-muted-foreground">8.7M avg</span>
               </div>
               
               <div className="flex items-center justify-between text-sm">
@@ -653,8 +653,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-xl bg-indigo-500/10 ring-1 ring-indigo-500/20">
-                <Activity className="h-5 w-5 text-indigo-400" />
+              <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                <Activity className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
                 <CardTitle className="text-lg font-semibold">Narrative Loyalty Map</CardTitle>
@@ -718,8 +718,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               </div>
             </div>
             
-            <div className="p-3 bg-indigo-500/5 rounded-lg border border-indigo-500/20">
-              <div className="text-sm font-medium text-indigo-400">Narrative Shift Analysis</div>
+            <div className="p-3 bg-primary/5 rounded-lg border border-border">
+              <div className="text-sm font-medium text-muted-foreground">Narrative Shift Analysis</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Dec: Increased utility allocation by 23%. You're building core positions, not chasing trends.
               </div>
@@ -770,7 +770,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20 transition-colors cursor-help">
+                    <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border hover:bg-primary/20 transition-colors cursor-help">
                       Patient Hunter
                     </Badge>
                   </TooltipTrigger>
