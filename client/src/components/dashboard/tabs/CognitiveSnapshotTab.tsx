@@ -76,6 +76,18 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
       label: "Trades",
       color: "hsl(var(--chart-1))",
     },
+    riskTolerance: {
+      label: "Risk Tolerance",
+      color: "hsl(var(--chart-1))",
+    },
+    confidence: {
+      label: "Confidence", 
+      color: "hsl(var(--chart-2))",
+    },
+    activity: {
+      label: "Trading Activity",
+      color: "hsl(var(--chart-3))",
+    },
   };
 
   return (
@@ -190,9 +202,9 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 <PieChart margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
                   <Pie
                     data={[
-                      { name: 'Risk Tolerance', value: displayData.riskScore, color: '#8884d8' },
-                      { name: 'Confidence', value: displayData.confidence, color: '#82ca9d' },
-                      { name: 'Trading Activity', value: displayData.frequency === 'Low' ? 30 : 70, color: '#ffc658' }
+                      { name: 'Risk Tolerance', value: displayData.riskScore },
+                      { name: 'Confidence', value: displayData.confidence },
+                      { name: 'Trading Activity', value: displayData.frequency === 'Low' ? 30 : 70 }
                     ]}
                     cx="50%"
                     cy="50%"
@@ -201,9 +213,9 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                     dataKey="value"
                   >
                     {[
-                      { name: 'Risk Tolerance', value: displayData.riskScore, color: '#8884d8' },
-                      { name: 'Confidence', value: displayData.confidence, color: '#82ca9d' },
-                      { name: 'Trading Activity', value: displayData.frequency === 'Low' ? 30 : 70, color: '#ffc658' }
+                      { name: 'Risk Tolerance', color: 'var(--color-riskTolerance)' },
+                      { name: 'Confidence', color: 'var(--color-confidence)' },
+                      { name: 'Trading Activity', color: 'var(--color-activity)' }
                     ].map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
