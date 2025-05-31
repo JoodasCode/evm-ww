@@ -99,8 +99,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
-                  <Zap className="h-5 w-5 text-purple-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Zap className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Impulse Control</CardTitle>
