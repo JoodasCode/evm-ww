@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { CognitiveSnapshotTab } from "@/components/dashboard/tabs/CognitiveSnapshotTab";
 import { CognitivePatternsTab } from "@/components/dashboard/tabs/CognitivePatternsTab";
 import { InsightsTab } from "@/components/dashboard/tabs/InsightsTab";
@@ -95,6 +96,7 @@ export default function Dashboard() {
                   Simulated Wallet
                 </Badge>
               )}
+              <ThemeToggle />
               <Button onClick={refreshAll} variant="outline" size="sm" className="h-8 text-xs">
                 <RefreshCw className="w-3 h-3 mr-1.5" />
                 Refresh Data

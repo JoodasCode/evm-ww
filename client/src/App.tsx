@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WalletProvider, useWallet } from "@/hooks/use-wallet";
 import { WalletConnector } from "@/components/wallet-connector";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Dashboard from "@/pages/dashboard";
 import NotFound from "@/pages/not-found";
 
@@ -27,12 +28,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WalletProvider>
-          <div className="dark">
+        <ThemeProvider>
+          <WalletProvider>
             <Toaster />
             <AppRouter />
-          </div>
-        </WalletProvider>
+          </WalletProvider>
+        </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
