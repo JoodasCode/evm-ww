@@ -325,7 +325,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Trauma repetition risk</span>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Low repetition
               </Badge>
             </div>
@@ -336,7 +336,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
                 <span className="text-muted-foreground">15%</span>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '15%' }} />
+                <div className="h-full bg-primary transition-all duration-300" style={{ width: '15%' }} />
               </div>
             </div>
             
@@ -366,13 +366,13 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
                   <CardDescription>Your relationship with time and urgency</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-orange-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Speed Obsessed
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-3 bg-primary/5 rounded-lg border border-orange-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-sm font-medium text-muted-foreground">Fee Analysis</div>
               <div className="text-xs text-muted-foreground mt-1">
                 You pay 8.7M lamports *(≈ 0.0087 SOL / $1.60)* — 3x median fee
@@ -395,7 +395,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
               </div>
             </div>
             
-            <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-xs text-muted-foreground">
                 "I pay premium because my time and execution quality are worth it"
               </div>
@@ -421,7 +421,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Independent thinking</span>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Original strategy
               </Badge>
             </div>
@@ -477,9 +477,9 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
                   <div className="w-full bg-background rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full transition-all duration-500 ${
-                        tag.type === 'dominant' ? 'bg-gradient-to-r from-orange-500 to-orange-400' :
-                        tag.type === 'secondary' ? 'bg-gradient-to-r from-blue-500 to-blue-400' :
-                        'bg-gradient-to-r from-gray-500 to-gray-400'
+                        tag.type === 'dominant' ? 'bg-primary' :
+                        tag.type === 'secondary' ? 'bg-primary' :
+                        'bg-muted'
                       }`}
                       style={{ width: `${tag.strength}%` }}
                     />

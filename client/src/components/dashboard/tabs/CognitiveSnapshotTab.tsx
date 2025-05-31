@@ -377,7 +377,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardContent className="space-y-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-muted-foreground mb-2">The Strategist</div>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-purple-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Premium fee strategy + Protocol diversity
               </Badge>
             </div>
@@ -460,7 +460,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center p-3 bg-primary/5 rounded-lg border border-green-500/20">
+            <div className="text-center p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-sm font-medium text-muted-foreground">Conviction Status</div>
               <div className="text-lg font-bold text-muted-foreground mt-1">Stable</div>
               <div className="text-xs text-muted-foreground mt-1">
@@ -490,7 +490,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               </div>
             </div>
             
-            <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-sm font-medium text-muted-foreground">Last Major Decision</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Dec 15: Increased SOL position by 67% after 3-day analysis period

@@ -108,7 +108,7 @@ export function SettingsTab() {
                     {connected && (
                       <Badge 
                         variant="secondary" 
-                        className={`${isSimulated ? 'bg-yellow-600' : 'bg-green-600'} text-white`}
+                        className={`${isSimulated ? 'bg-primary' : 'bg-primary'} text-white`}
                       >
                         {isSimulated ? 'Simulated' : 'Active'}
                       </Badge>

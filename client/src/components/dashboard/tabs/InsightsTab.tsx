@@ -152,11 +152,11 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             </ChartContainer>
             
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-center p-2 bg-primary/10 rounded border border-green-500/20">
+              <div className="text-center p-2 bg-primary/10 rounded border border-border">
                 <div className="font-medium text-muted-foreground">77%</div>
                 <div className="text-muted-foreground">Optimal exits</div>
               </div>
-              <div className="text-center p-2 bg-primary/10 rounded border border-red-500/20">
+              <div className="text-center p-2 bg-primary/10 rounded border border-border">
                 <div className="font-medium text-muted-foreground">23%</div>
                 <div className="text-muted-foreground">Early exits</div>
               </div>
@@ -284,7 +284,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
                   </div>
                   <div className="w-full bg-background rounded-full h-2">
                     <div 
-                      className="bg-gradient-to-r from-purple-500 to-purple-400 h-2 rounded-full transition-all duration-500"
+                      className="bg-primary h-2 rounded-full transition-all duration-500"
                       style={{ width: `${position.conviction}%` }}
                     />
                   </div>
@@ -427,7 +427,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Entry timing quality</span>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-blue-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Strategic entries
               </Badge>
             </div>
@@ -468,13 +468,13 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
                   <CardDescription>Are you acting confident... or pretending to be?</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Authentic
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-3 bg-primary/5 rounded-lg border border-green-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-sm font-medium text-muted-foreground">Conviction Analysis</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Your actions match your words: premium fees + extended hold times = real conviction
@@ -506,7 +506,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </div>
             </div>
             
-            <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-xs text-muted-foreground">
                 "You don't just talk the talk - your trading patterns show genuine confidence in your decisions"
               </div>
@@ -532,7 +532,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Loss cutting discipline</span>
-              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
                 Disciplined
               </Badge>
             </div>
