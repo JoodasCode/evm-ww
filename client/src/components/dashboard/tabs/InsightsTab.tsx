@@ -520,7 +520,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <Heart className="h-5 w-5 text-orange-400" />
+                  <Heart className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Hope Syndrome Tracker</CardTitle>
@@ -540,7 +540,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>Tokens held in 70%+ drawdown</span>
-                <span className="text-orange-400">12%</span>
+                <span className="text-muted-foreground">12%</span>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '12%' }} />
@@ -587,7 +587,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </div>
             </div>
             <div className="space-y-3">
-              <h4 className="font-medium text-orange-400">Growth Areas</h4>
+              <h4 className="font-medium text-muted-foreground">Growth Areas</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full" />
