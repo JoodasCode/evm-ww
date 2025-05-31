@@ -92,7 +92,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <TrendingDown className="h-5 w-5 text-red-400" />
+                  <TrendingDown className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Regret Index</CardTitle>
@@ -153,11 +153,11 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="text-center p-2 bg-green-500/10 rounded border border-green-500/20">
-                <div className="font-medium text-green-400">77%</div>
+                <div className="font-medium text-muted-foreground">77%</div>
                 <div className="text-muted-foreground">Optimal exits</div>
               </div>
               <div className="text-center p-2 bg-red-500/10 rounded border border-red-500/20">
-                <div className="font-medium text-red-400">23%</div>
+                <div className="font-medium text-muted-foreground">23%</div>
                 <div className="text-muted-foreground">Early exits</div>
               </div>
             </div>
@@ -169,8 +169,8 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
-                  <Eye className="h-5 w-5 text-blue-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Eye className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Gut Instinct Accuracy</CardTitle>
@@ -242,8 +242,8 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
-                  <Clock className="h-5 w-5 text-purple-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Clock className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Conviction Depth</CardTitle>
@@ -300,8 +300,8 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
-                  <RotateCcw className="h-5 w-5 text-green-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <RotateCcw className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Attention Span</CardTitle>
@@ -370,7 +370,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <TrendingDown className="h-5 w-5 text-red-400" />
+                  <TrendingDown className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Regret Pattern Analysis</CardTitle>
@@ -381,7 +381,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-400 mb-1">Low Regret</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-1">Low Regret</div>
               <div className="text-sm text-muted-foreground">
                 Only 23% of exits happened before next price peak
               </div>
@@ -390,21 +390,21 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span>Perfect timing exits</span>
-                <span className="text-green-400">31%</span>
+                <span className="text-muted-foreground">31%</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Good timing exits</span>
-                <span className="text-yellow-400">46%</span>
+                <span className="text-muted-foreground">46%</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Premature exits</span>
-                <span className="text-red-400">23%</span>
+                <span className="text-muted-foreground">23%</span>
               </div>
             </div>
             
             <div className="text-center p-3 bg-green-500/10 rounded-lg">
-              <div className="text-sm font-medium text-green-400">Exit Quality Score</div>
-              <div className="text-2xl font-bold text-green-400 mt-1">77/100</div>
+              <div className="text-sm font-medium text-muted-foreground">Exit Quality Score</div>
+              <div className="text-2xl font-bold text-muted-foreground mt-1">77/100</div>
             </div>
           </CardContent>
         </Card>
@@ -414,8 +414,8 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-yellow-500/10 ring-1 ring-yellow-500/20">
-                  <Clock className="h-5 w-5 text-yellow-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Clock className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Delayed Entry Syndrome</CardTitle>
@@ -427,7 +427,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Entry timing quality</span>
-              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+              <Badge variant="outline" className="bg-blue-500/10 text-muted-foreground border-blue-500/20">
                 Strategic entries
               </Badge>
             </div>
@@ -435,7 +435,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>Entries after token peaks</span>
-                <span className="text-yellow-400">18%</span>
+                <span className="text-muted-foreground">18%</span>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div className="h-full bg-yellow-400 transition-all duration-300" style={{ width: '18%' }} />
@@ -460,22 +460,22 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-yellow-500/10 ring-1 ring-yellow-500/20">
-                  <Target className="h-5 w-5 text-yellow-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Target className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">False Conviction Detector</CardTitle>
                   <CardDescription>Are you acting confident... or pretending to be?</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+              <Badge variant="outline" className="bg-green-500/10 text-muted-foreground border-green-500/20">
                 Authentic
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
-              <div className="text-sm font-medium text-green-400">Conviction Analysis</div>
+              <div className="text-sm font-medium text-muted-foreground">Conviction Analysis</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Your actions match your words: premium fees + extended hold times = real conviction
               </div>
@@ -484,13 +484,13 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 bg-muted/30 rounded-lg">
                 <div className="text-sm font-medium text-foreground">Fee vs Hold</div>
-                <div className="text-lg font-bold text-green-400 mt-1">Aligned</div>
+                <div className="text-lg font-bold text-muted-foreground mt-1">Aligned</div>
                 <div className="text-xs text-muted-foreground">Premium fees + 3.2d avg hold</div>
               </div>
               
               <div className="p-3 bg-muted/30 rounded-lg">
                 <div className="text-sm font-medium text-foreground">Size vs Duration</div>
-                <div className="text-lg font-bold text-green-400 mt-1">Consistent</div>
+                <div className="text-lg font-bold text-muted-foreground mt-1">Consistent</div>
                 <div className="text-xs text-muted-foreground">8.7M lamports *(≈ $1.60)* positions</div>
               </div>
             </div>
@@ -498,11 +498,11 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>False conviction signals</span>
-                <span className="text-green-400">None detected</span>
+                <span className="text-muted-foreground">None detected</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Quick exit after premium fee</span>
-                <span className="text-green-400">2% (very low)</span>
+                <span className="text-muted-foreground">2% (very low)</span>
               </div>
             </div>
             
@@ -519,7 +519,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
                   <Heart className="h-5 w-5 text-orange-400" />
                 </div>
                 <div>
@@ -532,7 +532,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Loss cutting discipline</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+              <Badge variant="outline" className="bg-green-500/10 text-muted-foreground border-green-500/20">
                 Disciplined
               </Badge>
             </div>
@@ -570,7 +570,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
-              <h4 className="font-medium text-green-400">Superpowers</h4>
+              <h4 className="font-medium text-muted-foreground">Superpowers</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full" />
