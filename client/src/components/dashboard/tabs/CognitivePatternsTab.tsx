@@ -797,7 +797,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge variant="outline" className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-help">
+                    <Badge variant="outline" className="bg-muted text-muted-foreground border-border hover:bg-muted/80 transition-colors cursor-help">
                       Size Calibrated
                     </Badge>
                   </TooltipTrigger>
@@ -808,7 +808,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20 transition-colors cursor-help">
+                    <Badge variant="outline" className="bg-muted text-muted-foreground border-border hover:bg-muted/80 transition-colors cursor-help">
                       Focused Executor
                     </Badge>
                   </TooltipTrigger>

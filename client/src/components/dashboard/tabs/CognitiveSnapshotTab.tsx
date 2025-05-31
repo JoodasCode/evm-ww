@@ -157,8 +157,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/20">
-                  <Brain className="h-5 w-5 text-emerald-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Brain className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Cognitive Load</CardTitle>
@@ -232,8 +232,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                  <Target className="h-5 w-5 text-orange-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Target className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Personality Archetype</CardTitle>
@@ -269,7 +269,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               </div>
               <div className="w-full bg-background rounded-full h-2">
                 <div 
-                  className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 rounded-full transition-all duration-500"
+                  className="bg-primary h-2 rounded-full transition-all duration-500"
                   style={{ width: `${cognitiveData.personalityArchetype.confidence}%` }}
                 />
               </div>
@@ -293,8 +293,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
-                  <Shield className="h-5 w-5 text-blue-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Shield className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Trust Circuits</CardTitle>
@@ -330,7 +330,7 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                   </div>
                   <div className="w-full bg-background rounded-full h-2">
                     <div 
-                      className="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full transition-all duration-500"
+                      className="bg-primary h-2 rounded-full transition-all duration-500"
                       style={{ width: `${protocol.usage}%` }}
                     />
                   </div>
