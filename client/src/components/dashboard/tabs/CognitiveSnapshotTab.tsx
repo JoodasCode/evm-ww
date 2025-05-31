@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,122 +12,63 @@ interface CognitiveSnapshotTabProps {
 }
 
 export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProps) {
-  const [cardData, setCardData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStage, setLoadingStage] = useState('Connecting to blockchain...');
-
-  useEffect(() => {
-    const fetchSnapshotCards = async () => {
-      try {
-        // Simulate realistic loading stages
-        const stages = [
-          { message: 'Connecting to blockchain...', progress: 10 },
-          { message: 'Fetching transaction history...', progress: 25 },
-          { message: 'Analyzing trading patterns...', progress: 50 },
-          { message: 'Processing psychological markers...', progress: 75 },
-          { message: 'Generating insights...', progress: 90 }
-        ];
-
-        // Show loading stages for first-time analysis
-        for (const stage of stages) {
-          setLoadingStage(stage.message);
-          setLoadingProgress(stage.progress);
-          await new Promise(resolve => setTimeout(resolve, 800));
-        }
-
-        const response = await fetch(`/api/cards/${walletAddress}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cardTypes: ['archetype-classifier', 'trading-rhythm', 'risk-appetite-meter']
-          })
-        });
-
-        if (!response.ok) {
-          // If no analysis exists, trigger fresh analysis
-          if (response.status === 404) {
-            setLoadingStage('No analysis found - running fresh analysis...');
-            setLoadingProgress(95);
-            
-            // Trigger analysis endpoint
-            const analysisResponse = await fetch(`/api/wallet/${walletAddress}/analyze`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' }
-            });
-            
-            if (analysisResponse.ok) {
-              // Retry cards after analysis
-              const retryResponse = await fetch(`/api/cards/${walletAddress}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  cardTypes: ['archetype-classifier', 'trading-rhythm', 'risk-appetite-meter']
-                })
-              });
-              const data = await retryResponse.json();
-              setCardData(data);
-            }
-          }
-        } else {
-          const data = await response.json();
-          setCardData(data);
-        }
-
-        setLoadingProgress(100);
-      } catch (error) {
-        console.error('Failed to fetch snapshot cards:', error);
-        setLoadingStage('Error loading analysis');
-      } finally {
-        setTimeout(() => setLoading(false), 500);
-      }
-    };
-
-    fetchSnapshotCards();
-  }, [walletAddress]);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Brain className="w-8 h-8 text-primary animate-pulse" />
-          </div>
-          <h3 className="text-lg font-semibold mb-2">Analyzing Cognitive Patterns</h3>
-          <p className="text-muted-foreground mb-6">Processing your trading psychology...</p>
-          <div className="space-y-2 max-w-md mx-auto">
-            <div className="flex justify-between text-sm">
-              <span>{loadingStage}</span>
-              <span className="text-primary">{loadingProgress}%</span>
-            </div>
-            <div className="w-full bg-secondary rounded-full h-2">
-              <div 
-                className="bg-primary h-2 rounded-full transition-all duration-500" 
-                style={{width: `${loadingProgress}%`}}
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  if (!cardData) return <div className="text-center py-8">Failed to load data</div>;
-
+  // Mock data for cognitive snapshot
   const cognitiveData = {
-    archetypeClassifier: cardData.find((c: any) => c.cardType === 'archetype-classifier')?.data || {},
-    tradingRhythm: cardData.find((c: any) => c.cardType === 'trading-rhythm')?.data || {},
-    riskAppetite: cardData.find((c: any) => c.cardType === 'risk-appetite-meter')?.data || {}
+    archetypeClassifier: {
+      primary: "Strategic Accumulator",
+      confidence: 89,
+      traits: ["Patient", "Research-driven", "Long-term focused"]
+    },
+    tradingRhythm: {
+      frequency: "Weekly",
+      weeklyPattern: [
+        { day: "Mon", trades: 3 },
+        { day: "Tue", trades: 1 },
+        { day: "Wed", trades: 2 },
+        { day: "Thu", trades: 5 },
+        { day: "Fri", trades: 2 },
+        { day: "Sat", trades: 0 },
+        { day: "Sun", trades: 1 }
+      ],
+      peakHours: ["10-12 PM", "2-4 PM"],
+      consistency: 76
+    },
+    riskAppetite: {
+      level: "Moderate-High",
+      score: 72,
+      volatilityTolerance: 68,
+      positionSizing: "Calculated"
+    },
+    personalityArchetype: {
+      primary: "Strategic Accumulator",
+      secondary: "Value Hunter",
+      confidence: 89,
+      traits: ["Patient", "Research-driven", "Long-term focused", "Risk-calculated"]
+    },
+    trustCircuits: {
+      primaryDex: "Jupiter",
+      loyalty: 85,
+      exploration: 23,
+      protocolDiversity: 7,
+      explorationTendency: "Conservative",
+      protocolDistribution: [
+        { protocol: "Jupiter", usage: 45 },
+        { protocol: "Raydium", usage: 25 },
+        { protocol: "Orca", usage: 20 },
+        { protocol: "Others", usage: 10 }
+      ]
+    }
   };
 
-  // Use actual data from your wallet analysis
+  // Use mock data for display
   const displayData = {
-    archetype: cognitiveData.archetypeClassifier.primary || 'Unknown',
-    confidence: cognitiveData.archetypeClassifier.confidence || 0,
-    traits: cognitiveData.archetypeClassifier.traits || [],
-    riskLevel: cognitiveData.riskAppetite.level || 'Moderate',
-    riskScore: cognitiveData.riskAppetite.score || 0,
-    frequency: cognitiveData.tradingRhythm.frequency || 'Low',
-    weeklyPattern: cognitiveData.tradingRhythm.weeklyPattern || []
+    archetype: cognitiveData.archetypeClassifier.primary,
+    confidence: cognitiveData.archetypeClassifier.confidence,
+    traits: cognitiveData.archetypeClassifier.traits,
+    riskLevel: cognitiveData.riskAppetite.level,
+    riskScore: cognitiveData.riskAppetite.score,
+    frequency: cognitiveData.tradingRhythm.frequency,
+    weeklyPattern: cognitiveData.tradingRhythm.weeklyPattern
   };
 
   const chartConfig = {
