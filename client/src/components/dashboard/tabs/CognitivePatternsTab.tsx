@@ -101,8 +101,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
-                  <Activity className="h-5 w-5 text-red-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Activity className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Dopamine Loop</CardTitle>
@@ -174,8 +174,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
-                  <DollarSign className="h-5 w-5 text-green-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <DollarSign className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Cost Sensitivity</CardTitle>
@@ -230,7 +230,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 <span>Speed Priority</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-20 bg-background rounded-full h-2">
-                    <div className="bg-green-500 h-2 rounded-full w-[89%]" />
+                    <div className="bg-primary h-2 rounded-full w-[89%]" />
                   </div>
                   <span className="font-medium">High</span>
                 </div>
@@ -239,7 +239,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 <span>MEV Protection</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-20 bg-background rounded-full h-2">
-                    <div className="bg-green-500 h-2 rounded-full w-[95%]" />
+                    <div className="bg-primary h-2 rounded-full w-[95%]" />
                   </div>
                   <span className="font-medium">Very High</span>
                 </div>
@@ -253,29 +253,29 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/20">
-                  <Search className="h-5 w-5 text-emerald-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Search className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Token Discovery Engine</CardTitle>
                   <CardDescription>Finding alpha before the crowd arrives</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-emerald-500/20">
                 78/100
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/20">
-                <div className="text-xl font-bold text-emerald-400">Early Adopter</div>
+              <div className="text-center p-3 bg-muted border-border">
+                <div className="text-xl font-bold text-muted-foreground">Early Adopter</div>
                 <div className="text-xs text-muted-foreground mt-1">
                   Found 3 tokens before 10x
                 </div>
               </div>
-              <div className="text-center p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/20">
-                <div className="text-xl font-bold text-emerald-400">65%</div>
+              <div className="text-center p-3 bg-muted border-border">
+                <div className="text-xl font-bold text-muted-foreground">65%</div>
                 <div className="text-xs text-muted-foreground mt-1">
                   SOL ecosystem early
                 </div>
@@ -285,28 +285,28 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
             <div className="space-y-2">
               <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
                   <span className="text-sm font-medium">BONK discovery</span>
                 </div>
-                <Badge variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-400">
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">
                   +340% timing
                 </Badge>
               </div>
               <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
                   <span className="text-sm font-medium">WIF entry</span>
                 </div>
-                <Badge variant="secondary" className="text-xs bg-yellow-500/10 text-yellow-400">
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">
                   Crowd follower
                 </Badge>
               </div>
               <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
                   <span className="text-sm font-medium">Jupiter usage</span>
                 </div>
-                <Badge variant="secondary" className="text-xs bg-emerald-500/10 text-emerald-400">
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">
                   Month 2 adopter
                 </Badge>
               </div>
@@ -319,8 +319,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-yellow-500/10 ring-1 ring-yellow-500/20">
-                  <Timer className="h-5 w-5 text-yellow-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Timer className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Impulse Threshold</CardTitle>
@@ -382,8 +382,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-cyan-500/10 ring-1 ring-cyan-500/20">
-                  <Copy className="h-5 w-5 text-cyan-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Copy className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Whale Mimicry Detector</CardTitle>
@@ -394,15 +394,15 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-cyan-400 mb-1">Independent</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-1">Independent</div>
               <div className="text-sm text-muted-foreground">
                 Low correlation with known whale wallets
               </div>
             </div>
             
             <div className="space-y-3">
-              <div className="p-3 bg-cyan-500/5 rounded-lg border border-cyan-500/20">
-                <div className="text-sm font-medium text-cyan-400">Whale Overlap</div>
+              <div className="p-3 bg-primary/5 rounded-lg border border-cyan-500/20">
+                <div className="text-sm font-medium text-muted-foreground">Whale Overlap</div>
                 <div className="text-xs text-muted-foreground mt-1">
                   CyaE1VxvB... token overlap: 34% (3 days avg delay)
                 </div>
@@ -410,18 +410,18 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               
               <div className="flex items-center justify-between text-sm">
                 <span>Original strategy score</span>
-                <span className="text-cyan-400">78%</span>
+                <span className="text-muted-foreground">78%</span>
               </div>
               
               <div className="flex items-center justify-between text-sm">
                 <span>Copy-paste risk</span>
-                <span className="text-green-400">Low</span>
+                <span className="text-muted-foreground">Low</span>
               </div>
             </div>
             
-            <div className="text-center p-3 bg-green-500/10 rounded-lg">
-              <div className="text-sm font-medium text-green-400">Independence Score</div>
-              <div className="text-2xl font-bold text-green-400 mt-1">78/100</div>
+            <div className="text-center p-3 bg-primary/10 rounded-lg">
+              <div className="text-sm font-medium text-muted-foreground">Independence Score</div>
+              <div className="text-2xl font-bold text-muted-foreground mt-1">78/100</div>
             </div>
           </CardContent>
         </Card>
@@ -431,31 +431,31 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
-                  <Zap className="h-5 w-5 text-green-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Zap className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Impulse Control Score</CardTitle>
                   <CardDescription>Commitment levels and exit discipline</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
                 92/100
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-3">
-              <div className="text-center p-3 bg-green-500/5 rounded-lg border border-green-500/20">
-                <div className="text-lg font-bold text-green-400">8%</div>
+              <div className="text-center p-3 bg-primary/5 rounded-lg border border-green-500/20">
+                <div className="text-lg font-bold text-muted-foreground">8%</div>
                 <div className="text-xs text-muted-foreground">Quick exits</div>
               </div>
-              <div className="text-center p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
-                <div className="text-lg font-bold text-blue-400">3.2d</div>
+              <div className="text-center p-3 bg-primary/5 rounded-lg border border-blue-500/20">
+                <div className="text-lg font-bold text-muted-foreground">3.2d</div>
                 <div className="text-xs text-muted-foreground">Avg hold</div>
               </div>
-              <div className="text-center p-3 bg-purple-500/5 rounded-lg border border-purple-500/20">
-                <div className="text-lg font-bold text-purple-400">92%</div>
+              <div className="text-center p-3 bg-primary/5 rounded-lg border border-purple-500/20">
+                <div className="text-lg font-bold text-muted-foreground">92%</div>
                 <div className="text-xs text-muted-foreground">Patience</div>
               </div>
             </div>
@@ -469,7 +469,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 <div className="bg-gradient-to-r from-green-500 to-green-400 h-3 rounded-full transition-all duration-500" style={{ width: '92%' }}></div>
               </div>
               <div className="flex items-center justify-center mt-2">
-                <Badge variant="secondary" className="bg-green-500/10 text-green-400">
+                <Badge variant="secondary" className="bg-primary/10 text-muted-foreground">
                   Disciplined Trader
                 </Badge>
               </div>
@@ -482,27 +482,27 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
-                  <Heart className="h-5 w-5 text-blue-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Heart className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Protocol Loyalty</CardTitle>
                   <CardDescription>Platform preferences and exploration patterns</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-blue-500/20">
                 Selective
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
-                <div className="text-xl font-bold text-blue-400">72%</div>
+              <div className="text-center p-3 bg-primary/5 rounded-lg border border-blue-500/20">
+                <div className="text-xl font-bold text-muted-foreground">72%</div>
                 <div className="text-xs text-muted-foreground mt-1">Protocol reuse</div>
               </div>
-              <div className="text-center p-3 bg-yellow-500/5 rounded-lg border border-yellow-500/20">
-                <div className="text-xl font-bold text-yellow-400">28%</div>
+              <div className="text-center p-3 bg-primary/5 rounded-lg border border-yellow-500/20">
+                <div className="text-xl font-bold text-muted-foreground">28%</div>
                 <div className="text-xs text-muted-foreground mt-1">New exploration</div>
               </div>
             </div>
@@ -510,12 +510,12 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
             <div className="space-y-3">
               <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded"></div>
+                  <div className="w-3 h-3 bg-primary rounded"></div>
                   <span className="text-sm font-medium">Jupiter</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="text-sm text-green-400 font-medium">89%</div>
-                  <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-400">
+                  <div className="text-sm text-muted-foreground font-medium">89%</div>
+                  <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">
                     High loyalty
                   </Badge>
                 </div>
@@ -523,12 +523,12 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               
               <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                  <div className="w-3 h-3 bg-primary rounded"></div>
                   <span className="text-sm font-medium">Raydium</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="text-sm text-yellow-400 font-medium">34%</div>
-                  <Badge variant="secondary" className="text-xs bg-yellow-500/10 text-yellow-400">
+                  <div className="text-sm text-muted-foreground font-medium">34%</div>
+                  <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">
                     Moderate
                   </Badge>
                 </div>
@@ -575,12 +575,12 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               
               <div className="flex items-center justify-between text-sm">
                 <span>Meme token sizing</span>
-                <span className="text-yellow-400">2.1M avg</span>
+                <span className="text-muted-foreground">2.1M avg</span>
               </div>
             </div>
             
-            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
-              <div className="text-sm font-medium text-blue-400">Sizing Psychology</div>
+            <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20">
+              <div className="text-sm font-medium text-muted-foreground">Sizing Psychology</div>
               <div className="text-xs text-muted-foreground mt-1">
                 You allocate based on thesis strength: high conviction = big bets, speculation = small bets
               </div>
@@ -594,22 +594,22 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
-                <Activity className="h-5 w-5 text-red-400" />
+              <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                <Activity className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
                 <CardTitle className="text-lg font-semibold">Post-Rug Behavior Tracker</CardTitle>
                 <CardDescription>How do you cope with loss?</CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
+            <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
               Resilient
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
-            <div className="text-sm font-medium text-green-400">Recovery Pattern</div>
+          <div className="p-3 bg-primary/5 rounded-lg border border-green-500/20">
+            <div className="text-sm font-medium text-muted-foreground">Recovery Pattern</div>
             <div className="text-xs text-muted-foreground mt-1">
               No major losses detected in last 60 days. Last recovery: 4.2 hours after -23% loss
             </div>
@@ -618,13 +618,13 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3 bg-muted/30 rounded-lg">
               <div className="text-sm font-medium text-foreground">Recovery Time</div>
-              <div className="text-lg font-bold text-blue-400 mt-1">4.2h</div>
+              <div className="text-lg font-bold text-muted-foreground mt-1">4.2h</div>
               <div className="text-xs text-muted-foreground">Average time to next buy</div>
             </div>
             
             <div className="p-3 bg-muted/30 rounded-lg">
               <div className="text-sm font-medium text-foreground">Revenge Trading</div>
-              <div className="text-lg font-bold text-green-400 mt-1">Low</div>
+              <div className="text-lg font-bold text-muted-foreground mt-1">Low</div>
               <div className="text-xs text-muted-foreground">Thoughtful reentry</div>
             </div>
           </div>
@@ -632,15 +632,15 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span>Similar token rebuy rate</span>
-              <span className="text-green-400">12% (healthy)</span>
+              <span className="text-muted-foreground">12% (healthy)</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span>Post-loss position sizing</span>
-              <span className="text-blue-400">Consistent (-8%)</span>
+              <span className="text-muted-foreground">Consistent (-8%)</span>
             </div>
           </div>
           
-          <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+          <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20">
             <div className="text-xs text-muted-foreground">
               "You process losses maturely and don't let emotions drive your next decisions"
             </div>
@@ -661,33 +661,33 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 <CardDescription>How long do you stay true to a thesis?</CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">
+            <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-blue-500/20">
               Utility Focused
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20 text-center">
-              <div className="text-lg font-bold text-blue-400">67%</div>
+            <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20 text-center">
+              <div className="text-lg font-bold text-muted-foreground">67%</div>
               <div className="text-xs text-muted-foreground">Utility/Infra</div>
-              <Badge variant="secondary" className="mt-1 text-xs bg-blue-500/10 text-blue-400">
+              <Badge variant="secondary" className="mt-1 text-xs bg-primary/10 text-muted-foreground">
                 Primary
               </Badge>
             </div>
             
-            <div className="p-3 bg-orange-500/5 rounded-lg border border-orange-500/20 text-center">
-              <div className="text-lg font-bold text-orange-400">23%</div>
+            <div className="p-3 bg-primary/5 rounded-lg border border-orange-500/20 text-center">
+              <div className="text-lg font-bold text-muted-foreground">23%</div>
               <div className="text-xs text-muted-foreground">Memes</div>
-              <Badge variant="secondary" className="mt-1 text-xs bg-orange-500/10 text-orange-400">
+              <Badge variant="secondary" className="mt-1 text-xs bg-primary/10 text-muted-foreground">
                 Secondary
               </Badge>
             </div>
             
-            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20 text-center">
-              <div className="text-lg font-bold text-green-400">10%</div>
+            <div className="p-3 bg-primary/5 rounded-lg border border-green-500/20 text-center">
+              <div className="text-lg font-bold text-muted-foreground">10%</div>
               <div className="text-xs text-muted-foreground">DeFi</div>
-              <Badge variant="secondary" className="mt-1 text-xs bg-green-500/10 text-green-400">
+              <Badge variant="secondary" className="mt-1 text-xs bg-primary/10 text-muted-foreground">
                 Exploration
               </Badge>
             </div>
@@ -703,16 +703,16 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 <div className="flex items-center justify-between text-sm">
                   <span>Utility tokens (SOL, JUP)</span>
                   <div className="flex items-center space-x-2">
-                    <span className="text-blue-400">8.7M avg</span>
-                    <Badge variant="secondary" className="text-xs bg-blue-500/10 text-blue-400">Strong</Badge>
+                    <span className="text-muted-foreground">8.7M avg</span>
+                    <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">Strong</Badge>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between text-sm">
                   <span>Meme tokens (BONK, WIF)</span>
                   <div className="flex items-center space-x-2">
-                    <span className="text-orange-400">2.1M avg</span>
-                    <Badge variant="secondary" className="text-xs bg-orange-500/10 text-orange-400">Light</Badge>
+                    <span className="text-muted-foreground">2.1M avg</span>
+                    <Badge variant="secondary" className="text-xs bg-primary/10 text-muted-foreground">Light</Badge>
                   </div>
                 </div>
               </div>
@@ -732,8 +732,8 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
       <Card className="border border-border/50 bg-gradient-to-r from-purple-500/5 to-blue-500/5 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-purple-500/10 ring-1 ring-purple-500/20">
-              <Activity className="h-5 w-5 text-purple-400" />
+            <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+              <Activity className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
               <CardTitle className="text-lg font-semibold">Psychological Trading Profile</CardTitle>
@@ -748,7 +748,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               <div className="flex flex-wrap gap-2">
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-help">
+                    <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-blue-500/20 hover:bg-primary/20 transition-colors cursor-help">
                       Premium Strategist
                     </Badge>
                   </TooltipTrigger>
@@ -759,7 +759,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
                 
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20 transition-colors cursor-help">
+                    <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20 hover:bg-primary/20 transition-colors cursor-help">
                       MEV Protected
                     </Badge>
                   </TooltipTrigger>
@@ -786,7 +786,7 @@ export function CognitivePatternsTab({ walletAddress }: CognitivePatternsTabProp
               <div className="flex flex-wrap gap-2">
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-help">
+                    <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-purple-500/20 hover:bg-primary/20 transition-colors cursor-help">
                       Thesis Driven
                     </Badge>
                   </TooltipTrigger>

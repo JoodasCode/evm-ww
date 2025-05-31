@@ -152,11 +152,11 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
             </ChartContainer>
             
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-center p-2 bg-green-500/10 rounded border border-green-500/20">
+              <div className="text-center p-2 bg-primary/10 rounded border border-green-500/20">
                 <div className="font-medium text-muted-foreground">77%</div>
                 <div className="text-muted-foreground">Optimal exits</div>
               </div>
-              <div className="text-center p-2 bg-red-500/10 rounded border border-red-500/20">
+              <div className="text-center p-2 bg-primary/10 rounded border border-red-500/20">
                 <div className="font-medium text-muted-foreground">23%</div>
                 <div className="text-muted-foreground">Early exits</div>
               </div>
@@ -219,7 +219,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
                 <span>Short-term accuracy</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-20 bg-background rounded-full h-2">
-                    <div className="bg-blue-500 h-2 rounded-full w-[85%]" />
+                    <div className="bg-primary h-2 rounded-full w-[85%]" />
                   </div>
                   <span className="font-medium">85%</span>
                 </div>
@@ -228,7 +228,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
                 <span>Long-term accuracy</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-20 bg-background rounded-full h-2">
-                    <div className="bg-blue-500 h-2 rounded-full w-[71%]" />
+                    <div className="bg-primary h-2 rounded-full w-[71%]" />
                   </div>
                   <span className="font-medium">71%</span>
                 </div>
@@ -402,7 +402,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </div>
             </div>
             
-            <div className="text-center p-3 bg-green-500/10 rounded-lg">
+            <div className="text-center p-3 bg-primary/10 rounded-lg">
               <div className="text-sm font-medium text-muted-foreground">Exit Quality Score</div>
               <div className="text-2xl font-bold text-muted-foreground mt-1">77/100</div>
             </div>
@@ -427,7 +427,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Entry timing quality</span>
-              <Badge variant="outline" className="bg-blue-500/10 text-muted-foreground border-blue-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-blue-500/20">
                 Strategic entries
               </Badge>
             </div>
@@ -468,13 +468,13 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
                   <CardDescription>Are you acting confident... or pretending to be?</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-green-500/10 text-muted-foreground border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
                 Authentic
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-green-500/20">
               <div className="text-sm font-medium text-muted-foreground">Conviction Analysis</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Your actions match your words: premium fees + extended hold times = real conviction
@@ -506,7 +506,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               </div>
             </div>
             
-            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+            <div className="p-3 bg-primary/5 rounded-lg border border-blue-500/20">
               <div className="text-xs text-muted-foreground">
                 "You don't just talk the talk - your trading patterns show genuine confidence in your decisions"
               </div>
@@ -532,7 +532,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Loss cutting discipline</span>
-              <Badge variant="outline" className="bg-green-500/10 text-muted-foreground border-green-500/20">
+              <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-green-500/20">
                 Disciplined
               </Badge>
             </div>
@@ -573,15 +573,15 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               <h4 className="font-medium text-muted-foreground">Superpowers</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                   <span>Strong short-term signal detection (85% accuracy)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                   <span>Deep conviction in major positions (87% thesis trust)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                   <span>Low regret rate (23% vs 45% average)</span>
                 </div>
               </div>
@@ -590,15 +590,15 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
               <h4 className="font-medium text-muted-foreground">Growth Areas</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                   <span>Long-term accuracy could improve (71% vs 85% short-term)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                   <span>Consider extending hold periods for better gains</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                   <span>Monitor March rotation spike pattern</span>
                 </div>
               </div>
