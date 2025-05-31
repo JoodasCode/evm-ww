@@ -91,7 +91,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
                   <TrendingDown className="h-5 w-5 text-red-400" />
                 </div>
                 <div>
@@ -369,7 +369,7 @@ export function InsightsTab({ walletAddress }: InsightsTabProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
                   <TrendingDown className="h-5 w-5 text-red-400" />
                 </div>
                 <div>
