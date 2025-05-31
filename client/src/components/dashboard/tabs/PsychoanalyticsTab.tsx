@@ -117,7 +117,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
                 key={badge.title}
                 className={`text-center p-4 rounded-lg border transition-all duration-200 ${
                   badge.unlocked 
-                    ? 'bg-card/80 border-emerald-500/30 shadow-md hover:shadow-lg' 
+                    ? 'bg-card/80 border-border shadow-md hover:shadow-lg' 
                     : 'bg-muted/30 border-border/50 opacity-60'
                 }`}
               >
