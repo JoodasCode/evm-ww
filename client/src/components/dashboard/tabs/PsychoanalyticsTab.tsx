@@ -297,7 +297,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Transfer activity</span>
-                <span className="text-yellow-400">22%</span>
+                <span className="text-muted-foreground">22%</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Risk comfort level</span>
@@ -312,8 +312,8 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                  <RotateCcw className="h-5 w-5 text-orange-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <RotateCcw className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Pain Repetition Cycle</CardTitle>
@@ -333,7 +333,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>Rebuying previous losers</span>
-                <span className="text-orange-400">15%</span>
+                <span className="text-muted-foreground">15%</span>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div className="h-full bg-orange-400 transition-all duration-300" style={{ width: '15%' }} />
@@ -358,22 +358,22 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                  <Fuel className="h-5 w-5 text-orange-400" />
+                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                  <Fuel className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold">Speed Psychology</CardTitle>
                   <CardDescription>Your relationship with time and urgency</CardDescription>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">
+              <Badge variant="outline" className="bg-orange-500/10 text-muted-foreground border-orange-500/20">
                 Speed Obsessed
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-3 bg-orange-500/5 rounded-lg border border-orange-500/20">
-              <div className="text-sm font-medium text-orange-400">Fee Analysis</div>
+              <div className="text-sm font-medium text-muted-foreground">Fee Analysis</div>
               <div className="text-xs text-muted-foreground mt-1">
                 You pay 8.7M lamports *(≈ 0.0087 SOL / $1.60)* — 3x median fee
               </div>
@@ -382,7 +382,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-2 bg-muted/30 rounded">
                 <span className="text-sm font-medium">Speed priority</span>
-                <Badge variant="secondary" className="text-xs bg-orange-500/10 text-orange-400">
+                <Badge variant="secondary" className="text-xs bg-orange-500/10 text-muted-foreground">
                   87% faster execution
                 </Badge>
               </div>
@@ -433,7 +433,7 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Timing correlation</span>
-                <span className="text-yellow-400">Low</span>
+                <span className="text-muted-foreground">Low</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span>Strategy independence</span>
@@ -452,8 +452,8 @@ export function PsychoanalyticsTab({ walletAddress }: PsychoanalyticsTabProps) {
         <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                <Brain className="h-5 w-5 text-orange-400" />
+              <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
+                <Brain className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
                 <CardTitle className="text-lg font-semibold">Behavioral Tags</CardTitle>
