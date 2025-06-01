@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Brain, Zap, TrendingUp, Users, Wallet } from "lucide-react";
+import { Brain, Zap, TrendingUp, Users, Wallet, Layers } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 
 interface SidebarProps {
@@ -20,6 +20,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     { id: 'cognitive-patterns', label: 'Cognitive Patterns', icon: Zap },
     { id: 'insights', label: 'Insights', icon: TrendingUp },
     { id: 'psychoanalytics', label: 'Psychoanalytics', icon: Users },
+    { id: 'evm', label: 'EVM', icon: Layers },
   ];
 
   return (

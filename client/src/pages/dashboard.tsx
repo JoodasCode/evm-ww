@@ -8,6 +8,7 @@ import { CognitiveSnapshotTab } from "@/components/dashboard/tabs/CognitiveSnaps
 import { CognitivePatternsTab } from "@/components/dashboard/tabs/CognitivePatternsTab";
 import { InsightsTab } from "@/components/dashboard/tabs/InsightsTab";
 import { PsychoanalyticsTab } from "@/components/dashboard/tabs/PsychoanalyticsTab";
+import { EVMCardsTab } from "@/components/dashboard/tabs/EVMCardsTab";
 import { useWallet } from "@/hooks/use-wallet";
 
 export default function Dashboard() {
@@ -30,6 +31,8 @@ export default function Dashboard() {
         return { title: "Self-Sabotage & Superpowers", subtitle: "Pattern recognition to surface unconscious trading behavior" };
       case "psychoanalytics":
         return { title: "Wallet Personality Layer", subtitle: "Full psychological analysis of your trading psyche" };
+      case "evm":
+        return { title: "EVM Psychoanalytics", subtitle: "Ethereum-focused behavioral analysis and trading patterns" };
       default:
         return { title: "Cognitive Snapshot", subtitle: "Your wallet's mental profile at a glance" };
     }
@@ -71,6 +74,8 @@ export default function Dashboard() {
         return <InsightsTab walletAddress={currentWallet} />;
       case "psychoanalytics":
         return <PsychoanalyticsTab walletAddress={currentWallet} />;
+      case "evm":
+        return <EVMCardsTab walletAddress={currentWallet} />;
       default:
         return <CognitiveSnapshotTab walletAddress={currentWallet} />;
     }
