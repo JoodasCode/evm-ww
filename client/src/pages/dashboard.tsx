@@ -9,10 +9,16 @@ import { CognitivePatternsTab } from "@/components/dashboard/tabs/CognitivePatte
 import { InsightsTab } from "@/components/dashboard/tabs/InsightsTab";
 import { PsychoanalyticsTab } from "@/components/dashboard/tabs/PsychoanalyticsTab";
 import { EVMCardsTab } from "@/components/dashboard/tabs/EVMCardsTab";
+import { PsychWardTab } from "@/components/dashboard/tabs/PsychWardTab";
+import { DetailedCognitiveSnapshotTab } from "@/components/dashboard/tabs/DetailedCognitiveSnapshotTab";
+import { DetailedCognitivePatternsTab } from "@/components/dashboard/tabs/DetailedCognitivePatternsTab";
+import { DetailedInsightsTab } from "@/components/dashboard/tabs/DetailedInsightsTab";
+import { DetailedPsychoanalyticsTab } from "@/components/dashboard/tabs/DetailedPsychoanalyticsTab";
 import { useWallet } from "@/hooks/use-wallet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState("cognitive-snapshot");
+  const [activeTab, setActiveTab] = useState("psych-ward");
   const { wallet, isSimulated } = useWallet();
   
   const refreshAll = () => {
@@ -31,6 +37,8 @@ export default function Dashboard() {
         return { title: "Self-Sabotage & Superpowers", subtitle: "Pattern recognition to surface unconscious trading behavior" };
       case "psychoanalytics":
         return { title: "Wallet Personality Layer", subtitle: "Full psychological analysis of your trading psyche" };
+      case "psych-ward":
+        return { title: "Psych Ward", subtitle: "Your wallet's mental health at a glance" };
       case "evm":
         return { title: "EVM Psychoanalytics", subtitle: "Ethereum-focused behavioral analysis and trading patterns" };
       default:
@@ -67,17 +75,19 @@ export default function Dashboard() {
   const renderTabContent = () => {
     switch (activeTab) {
       case "cognitive-snapshot":
-        return <CognitiveSnapshotTab walletAddress={currentWallet} />;
+        return <DetailedCognitiveSnapshotTab walletAddress={currentWallet} />;
       case "cognitive-patterns":
-        return <CognitivePatternsTab walletAddress={currentWallet} />;
+        return <DetailedCognitivePatternsTab walletAddress={currentWallet} />;
       case "insights":
-        return <InsightsTab walletAddress={currentWallet} />;
+        return <DetailedInsightsTab walletAddress={currentWallet} />;
       case "psychoanalytics":
-        return <PsychoanalyticsTab walletAddress={currentWallet} />;
+        return <DetailedPsychoanalyticsTab walletAddress={currentWallet} />;
+      case "psych-ward":
+        return <PsychWardTab walletAddress={currentWallet} />;
       case "evm":
         return <EVMCardsTab walletAddress={currentWallet} />;
       default:
-        return <CognitiveSnapshotTab walletAddress={currentWallet} />;
+        return <PsychWardTab walletAddress={currentWallet} />;
     }
   };
 

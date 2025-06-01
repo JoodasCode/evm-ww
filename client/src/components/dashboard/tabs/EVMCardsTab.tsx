@@ -321,7 +321,7 @@ export function EVMCardsTab({ walletAddress }: EVMCardsTabProps) {
           <TabsTrigger value="overview">Key Insights</TabsTrigger>
           <TabsTrigger value="charts">Charts & Metrics</TabsTrigger>
           <TabsTrigger value="tables">Tables & Tags</TabsTrigger>
-          <TabsTrigger value="all">All Cards</TabsTrigger>
+          <TabsTrigger value="all">Psych Ward</TabsTrigger>
         </TabsList>
 
         {/* Key Insights Tab */}
