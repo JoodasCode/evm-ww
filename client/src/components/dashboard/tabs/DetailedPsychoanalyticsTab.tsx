@@ -1,8 +1,7 @@
 import { Brain, PieChart as PieChartIcon, Clock, Activity, Diamond, Scale, Zap, LineChart as LineChartIcon, BarChart3, Flame, Target, Lightbulb, Gauge, Radar, Heart, Timer, TrendingUp, AlertTriangle, BrainCircuit } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { CardLayout, CardItem } from "@/components/ui/card-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useWalletPsychoCard } from "@/hooks/useWalletPsychoCard";
+import { DetailedTabLayout } from "../layout/DetailedTabLayout";
+import { DetailedCard } from "../cards/DetailedCard";
 import { TradingFrequencyChart } from "../charts/AreaChart";
 import { CostSensitivityChart } from "../charts/LineChart";
 import { GaugeChart, PsychoScoreGauge } from "../charts/GaugeChart";
@@ -36,27 +35,13 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Wallet Personality Layer</h2>
-          <p className="text-muted-foreground">Full psychological analysis of your trading psyche</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="px-3 py-1">
-            Last 30 days
-          </Badge>
-          <Badge variant="outline" className="px-3 py-1">
-            {walletAddress.slice(0, 8)}...{walletAddress.slice(-4)}
-          </Badge>
-        </div>
-      </div>
-
-      {/* 2x2 grid layout with CardLayout */}
-      <CardLayout>
+    <DetailedTabLayout
+      title="Wallet Personality Layer"
+      description="Full psychological analysis of your trading psyche"
+      walletAddress={walletAddress}
+    >
         {/* Card 31: Trader Archetype */}
-        <CardItem
+        <DetailedCard
           icon={Brain}
           title="Trader Archetype"
           description="Your dominant trading personality"
@@ -86,28 +71,42 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </div>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 32: Hoarder vs Operator */}
-        <CardItem
+        <DetailedCard
           icon={PieChartIcon}
           title="Hoarder vs Operator"
           description="How you utilize your assets"
           loading={false}
         >
           <div className="space-y-4">
-            <div className="flex justify-center">
-              <GaugeChart value={72} size={150} thickness={15} />
+            {/* Replaced gauge with horizontal progress bars for better visualization */}
+            <div className="space-y-3 pt-2">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium">Operator</span>
+                  <span className="text-sm font-medium text-primary">72%</span>
+                </div>
+                <Progress value={72} className="h-3 bg-muted/30" />
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium">Hoarder</span>
+                  <span className="text-sm font-medium">28%</span>
+                </div>
+                <Progress value={28} className="h-3 bg-muted/30" />
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="p-2 bg-muted/20 rounded-lg">
-                <p className="text-xs text-muted-foreground">Hoarder</p>
-                <p className="font-medium">28%</p>
+                <p className="text-xs text-muted-foreground">Holding Period</p>
+                <p className="font-medium">14.2 days</p>
               </div>
               <div className="p-2 bg-primary/10 rounded-lg">
-                <p className="text-xs text-muted-foreground">Operator</p>
-                <p className="font-medium text-primary">72%</p>
+                <p className="text-xs text-muted-foreground">Trade Frequency</p>
+                <p className="font-medium text-primary">High</p>
               </div>
             </div>
             
@@ -119,10 +118,10 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 33: Trading Time Psychology */}
-        <CardItem
+        <DetailedCard
           icon={Clock}
           title="Trading Time Psychology"
           description="When you trade and what it reveals"
@@ -142,10 +141,10 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 34: Emotional Trading Patterns */}
-        <CardItem
+        <DetailedCard
           icon={Activity}
           title="Emotional Trading Patterns"
           description="How emotions influence your decisions"
@@ -165,10 +164,10 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 35: Risk Tolerance Profile */}
-        <CardItem
+        <DetailedCard
           icon={Target}
           title="Risk Tolerance Profile"
           description="Your approach to risk and volatility"
@@ -192,10 +191,10 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 36: Dopamine Loop Detection */}
-        <CardItem
+        <DetailedCard
           icon={Flame}
           title="Dopamine Loop Detection"
           description="Addictive trading patterns"
@@ -240,10 +239,10 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 37: Trading Flow State */}
-        <CardItem
+        <DetailedCard
           icon={Gauge}
           title="Trading Flow State"
           description="When you enter the zone"
@@ -283,19 +282,30 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
-        {/* Card 38: Trading Wisdom Score */}
-        <CardItem
-          icon={Lightbulb}
-          title="Trading Wisdom Score"
-          description="Learning from mistakes and adapting"
+        {/* Card 38: Learning Curve */}
+        <DetailedCard
+          icon={BrainCircuit}
+          title="Learning Curve"
+          description="How quickly you adapt to market changes"
           loading={false}
         >
           <div className="space-y-4">
-            <div className="flex justify-center">
-              <GaugeChart value={63} size={150} thickness={15} />
-            </div>
+            {/* Replaced gauge with trading frequency chart */}
+            <TradingFrequencyChart 
+              data={[
+                { name: "Week 1", value: 30 },
+                { name: "Week 2", value: 45 },
+                { name: "Week 3", value: 55 },
+                { name: "Week 4", value: 63 },
+                { name: "Week 5", value: 70 },
+                { name: "Week 6", value: 75 }
+              ]}
+              peakDay="Week 6"
+              restDays="+150%"
+              consistency="Improving"
+            />
             
             <div className="grid grid-cols-2 gap-2 text-center">
               <div>
@@ -316,19 +326,31 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 39: Overconfidence Score */}
-        <CardItem
+        <DetailedCard
           icon={Target}
           title="Overconfidence Score"
           description="High stakes + declining accuracy"
           loading={false}
         >
           <div className="space-y-4">
-            <div className="flex justify-center">
-              <GaugeChart value={78} size={150} thickness={15} />
-            </div>
+            {/* Replaced gauge with line chart showing confidence vs accuracy trend */}
+            <CostSensitivityChart
+              data={[
+                { name: "Jan", value: 50 },
+                { name: "Feb", value: 55 },
+                { name: "Mar", value: 60 },
+                { name: "Apr", value: 68 },
+                { name: "May", value: 75 },
+                { name: "Jun", value: 78 }
+              ]}
+              className=""
+              speedPriority="High"
+              mevProtection="Medium"
+              premiumTolerance="78%"
+            />
             
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="p-2 bg-muted/20 rounded-lg">
@@ -357,10 +379,10 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 40: Confidence Volatility */}
-        <CardItem
+        <DetailedCard
           icon={Activity}
           title="Confidence Volatility"
           description="Variation in trade sizing after wins/losses"
@@ -401,8 +423,7 @@ export function DetailedPsychoanalyticsTab({ walletAddress }: DetailedPsychoanal
               </p>
             </div>
           </div>
-        </CardItem>
-      </CardLayout>
-    </div>
+        </DetailedCard>
+    </DetailedTabLayout>
   );
 }

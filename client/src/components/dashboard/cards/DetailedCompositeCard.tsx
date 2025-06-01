@@ -1,8 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import { useWalletPsychoCard } from "@/hooks/useWalletPsychoCard";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
+import { CostSensitivityChart } from "../charts/LineChart";
+import { TradingFrequencyChart } from "../charts/AreaChart";
+import { cn } from "@/lib/utils";
 
 interface DetailedCompositeCardProps {
   walletAddress: string;
@@ -19,21 +23,35 @@ export const DetailedCompositeCard = ({
 }: DetailedCompositeCardProps) => {
   const { data, loading } = useWalletPsychoCard(walletAddress, "compositeData");
   
-  // Mock data for the line chart
-  const mockChartData = [
-    { date: "Jan", pnl: 5, benchmark: 3 },
-    { date: "Feb", pnl: 8, benchmark: 5 },
-    { date: "Mar", pnl: 3, benchmark: 6 },
-    { date: "Apr", pnl: 12, benchmark: 8 },
-    { date: "May", pnl: 18, benchmark: 10 },
-    { date: "Jun", pnl: 15, benchmark: 12 },
+  // Mock data for psychological weaknesses
+  const weaknessData = [
+    { name: "FOMO", value: 85, color: "bg-red-500" },
+    { name: "Impatience", value: 72, color: "bg-red-500" },
+    { name: "Loss Aversion", value: 65, color: "bg-amber-500" },
+    { name: "Overconfidence", value: 58, color: "bg-amber-500" },
+    { name: "Anchoring", value: 45, color: "bg-blue-500" },
   ];
   
-  // Mock insights
-  const insights = [
-    { title: "Risk Tolerance", value: "High", badge: "Above Average", badgeColor: "bg-amber-100 text-amber-800" },
-    { title: "Trading Style", value: "Momentum", badge: "Aggressive", badgeColor: "bg-red-100 text-red-800" },
-    { title: "Conviction", value: "Medium", badge: "Improving", badgeColor: "bg-green-100 text-green-800" },
+  // Pie chart data for psychological weakness distribution
+  const pieData = [
+    { name: "FOMO", value: 35 },
+    { name: "Impatience", value: 25 },
+    { name: "Loss Aversion", value: 20 },
+    { name: "Overconfidence", value: 15 },
+    { name: "Anchoring", value: 5 },
+  ];
+  
+  // Colors for pie chart
+  const COLORS = ['#FF8042', '#FFBB28', '#00C49F', '#0088FE', '#8884d8'];
+
+  // Trend data for primary weakness
+  const trendData = [
+    { name: "Jan", value: 65 },
+    { name: "Feb", value: 70 },
+    { name: "Mar", value: 75 },
+    { name: "Apr", value: 80 },
+    { name: "May", value: 85 },
+    { name: "Jun", value: 82 },
   ];
 
   return (
@@ -44,7 +62,7 @@ export const DetailedCompositeCard = ({
             <Icon className="h-5 w-5 text-muted-foreground" />
           </div>
           <div>
-            <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+            <h3 className="text-base font-medium">{title}</h3>
             <CardDescription>{description}</CardDescription>
           </div>
         </div>
@@ -56,80 +74,75 @@ export const DetailedCompositeCard = ({
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {insights.map((insight, index) => (
-                <div key={index} className="bg-muted/20 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-muted-foreground">{insight.title}</h3>
-                  <p className="text-2xl font-bold mt-1">{insight.value}</p>
-                  <Badge className={`mt-2 ${insight.badgeColor}`}>{insight.badge}</Badge>
+            {/* Top weaknesses with progress bars */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium">Primary Psychological Weaknesses</h3>
+              {weaknessData.slice(0, 3).map((weakness) => (
+                <div key={weakness.name}>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm font-medium">{weakness.name}</span>
+                    <span className="text-sm font-medium">{weakness.value}%</span>
+                  </div>
+                  <Progress value={weakness.value} className={cn("h-2", weakness.color)} />
                 </div>
               ))}
             </div>
             
             <Separator />
             
+            {/* Pie chart for weakness distribution */}
             <div>
-              <h3 className="text-sm font-medium mb-4">Performance vs. Market Benchmark</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={mockChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="pnl" stroke="#8884d8" strokeWidth={2} name="Your PnL" />
-                  <Line type="monotone" dataKey="benchmark" stroke="#82ca9d" strokeWidth={2} name="Market Avg" />
-                </LineChart>
-              </ResponsiveContainer>
+              <h3 className="text-sm font-medium mb-3">Weakness Distribution</h3>
+              <div className="flex items-center justify-center">
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
             
             <Separator />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Strengths</h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <div className="mr-2 mt-0.5 h-4 w-4 rounded-full bg-green-500"></div>
-                    <p className="text-sm">Strong conviction on winning trades</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-2 mt-0.5 h-4 w-4 rounded-full bg-green-500"></div>
-                    <p className="text-sm">Excellent market timing on entries</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-2 mt-0.5 h-4 w-4 rounded-full bg-green-500"></div>
-                    <p className="text-sm">Disciplined trading schedule</p>
-                  </li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="text-sm font-medium mb-2">Areas for Improvement</h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <div className="mr-2 mt-0.5 h-4 w-4 rounded-full bg-red-500"></div>
-                    <p className="text-sm">Tendency to exit winning positions too early</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-2 mt-0.5 h-4 w-4 rounded-full bg-red-500"></div>
-                    <p className="text-sm">Overexposure to high-volatility tokens</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-2 mt-0.5 h-4 w-4 rounded-full bg-red-500"></div>
-                    <p className="text-sm">Inconsistent position sizing</p>
-                  </li>
-                </ul>
+            {/* Trend chart for primary weakness */}
+            <div>
+              <h3 className="text-sm font-medium mb-2">FOMO Trend (6 Months)</h3>
+              <CostSensitivityChart 
+                data={trendData}
+                speedPriority="High"
+                mevProtection="Low"
+                premiumTolerance="85%"
+              />
+              <div className="mt-3 p-3 bg-muted/20 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Risk Factor</span>
+                  <Badge className="bg-red-100 text-red-800">High</Badge>
+                </div>
               </div>
             </div>
             
             <div className="mt-4">
-              <h4 className="text-sm font-semibold mb-2">Summary Analysis</h4>
+              <h4 className="text-sm font-semibold mb-2">Analysis</h4>
               <p className="text-sm text-muted-foreground">
-                Your trading profile shows a high-risk, momentum-based approach that has outperformed market benchmarks
-                by 25% over the last 6 months. Your strongest trait is your ability to identify and enter promising positions
-                early, but you tend to exit too quickly, limiting your potential gains. Your trading psychology indicates a
-                growing conviction in your strategy, which is a positive development from your previous more erratic approach.
-                To improve results further, consider implementing more consistent position sizing and holding winning trades longer.
+                Your trading psychology shows a significant FOMO pattern (85%), which has been increasing over the past 6 months. 
+                This leads to buying near local tops and chasing pumps. Your second major weakness is impatience (72%), 
+                causing premature exits from potentially profitable positions. These two weaknesses account for 60% of your 
+                trading losses. Focusing on reducing FOMO through more disciplined entry strategies could significantly 
+                improve your overall performance.
               </p>
             </div>
           </div>

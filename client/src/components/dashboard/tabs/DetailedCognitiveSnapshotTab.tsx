@@ -1,32 +1,20 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { CardLayout, CardItem } from "@/components/ui/card-layout";
-import { SpacerCard } from "@/components/ui/spacer-card";
 import { Brain, Zap, Activity, Clock } from "lucide-react";
 import { useWalletPsychoCard } from "@/hooks/useWalletPsychoCard";
-import { 
-  ChartContainer, 
-  ChartTooltip, 
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent 
-} from "@/components/ui/chart";
+import { DetailedTabLayout } from "../layout/DetailedTabLayout";
+import { DetailedCard } from "../cards/DetailedCard";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import {
   Bar,
-  BarChart as RechartsBarChart,
-  CartesianGrid,
-  Cell,
-  Line,
-  LineChart as RechartsLineChart,
-  Pie,
-  PieChart as RechartsPieChart,
+  BarChart,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
-  YAxis
+  YAxis,
+  Tooltip
 } from "recharts";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 
 interface DetailedCognitiveSnapshotTabProps {
   walletAddress: string;
@@ -50,14 +38,14 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
   ];
 
   return (
-    <CardLayout 
+    <DetailedTabLayout
       title="Cognitive Snapshot"
       description="Your wallet's mental profile at a glance"
-      fixedHeight
+      walletAddress={walletAddress}
     >
-      <CardItem
+      <DetailedCard
         title="Trader Archetype Analysis"
-        description="Comprehensive breakdown of your trading personality and behavior patterns"
+        description="Comprehensive breakdown of your trading personality"
         icon={Brain}
         loading={archetypeLoading}
       >
@@ -90,68 +78,72 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
             </p>
           </div>
         </div>
-      </CardItem>
+      </DetailedCard>
       
-      <CardItem
+      <DetailedCard
         title="Impulse Control Score"
-        description="Measuring your trading discipline and emotional control"
+        description="Measuring your trading discipline"
         icon={Zap}
         loading={impulseLoading}
       >
         <div className="flex flex-col items-center justify-center h-full space-y-4">
           <div className="relative h-40 w-40">
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-3xl font-bold">71</div>
+              <div className="text-center">
+                <span className="text-4xl font-bold">76</span>
+                <p className="text-xs text-muted-foreground">Impulse Score</p>
+              </div>
             </div>
             <svg className="h-full w-full" viewBox="0 0 100 100">
               <circle
+                className="text-muted stroke-current"
+                strokeWidth="10"
+                strokeLinecap="round"
+                fill="transparent"
+                r="40"
                 cx="50"
                 cy="50"
-                r="45"
-                fill="none"
-                stroke="#e2e8f0"
-                strokeWidth="10"
               />
               <circle
+                className="text-blue-500 stroke-current"
+                strokeWidth="10"
+                strokeLinecap="round"
+                fill="transparent"
+                r="40"
                 cx="50"
                 cy="50"
-                r="45"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="10"
-                strokeDasharray="283"
-                strokeDashoffset="82"
+                strokeDasharray="251.2"
+                strokeDashoffset="60.3"
                 transform="rotate(-90 50 50)"
               />
             </svg>
           </div>
-          <div className="text-center space-y-1">
-            <h4 className="font-medium">Strong Impulse Control</h4>
-            <p className="text-sm text-muted-foreground">
-              You rarely make emotional trading decisions and generally stick to your strategy
+          
+          <div className="space-y-2 w-full">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Impulsivity</span>
+              <span className="text-sm font-medium">Low</span>
+            </div>
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-blue-500 w-1/4 rounded-full"></div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              You show good impulse control, rarely making rash trading decisions.
             </p>
           </div>
         </div>
-      </CardItem>
+      </DetailedCard>
       
-      <CardItem
-        title="Trading Activity Patterns"
-        description="Analysis of your trading frequency and timing"
+      <DetailedCard
+        title="Activity Patterns"
+        description="Your trading frequency and volume"
         icon={Activity}
         loading={activityLoading}
       >
         <div className="space-y-4">
           <div className="h-40 w-full">
-            <ChartContainer
-              config={{
-                activity: {
-                  label: "Activity",
-                  color: "#3b82f6"
-                }
-              }}
-            >
-              <RechartsBarChart data={barChartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barChartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
@@ -159,8 +151,8 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
                   tick={{ fontSize: 12 }}
                 />
                 <YAxis hide />
-                <ChartTooltip
-                  content={({ active, payload }) => {
+                <Tooltip 
+                  content={({ active, payload }: { active?: boolean, payload?: any[] }) => {
                     if (active && payload && payload.length) {
                       return (
                         <div className="rounded-lg border bg-background p-2 shadow-md">
@@ -175,18 +167,18 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
                             </div>
                           </div>
                         </div>
-                      )
+                      );
                     }
-                    return null
+                    return null;
                   }}
                 />
                 <Bar 
                   dataKey="value" 
-                  fill="var(--color-activity)" 
+                  fill="var(--primary)" 
                   radius={[4, 4, 0, 0]}
                 />
-              </RechartsBarChart>
-            </ChartContainer>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           
           <div className="space-y-2">
@@ -200,9 +192,9 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
             <p className="text-xs text-muted-foreground">You trade more frequently than 80% of similar wallets</p>
           </div>
         </div>
-      </CardItem>
+      </DetailedCard>
       
-      <CardItem
+      <DetailedCard
         title="Trading Time Heatmap"
         description="When you're most active in the market"
         icon={Clock}
@@ -228,7 +220,7 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
                     {[0, 1, 2, 3, 4, 5].map((colIndex) => {
                       // Generate random intensity for demo
                       const intensity = Math.floor(Math.random() * 5);
-                      const getColor = (i: number) => {
+                      const getColor = (i: number): string => {
                         const colors = [
                           "bg-muted/30",           // 0 - very low
                           "bg-blue-100",           // 1 - low
@@ -278,7 +270,7 @@ export function DetailedCognitiveSnapshotTab({ walletAddress }: DetailedCognitiv
             </div>
           </div>
         </div>
-      </CardItem>
-    </CardLayout>
+      </DetailedCard>
+    </DetailedTabLayout>
   );
 }

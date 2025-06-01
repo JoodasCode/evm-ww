@@ -1,8 +1,7 @@
 import { Brain, Diamond, TrendingDown, Scale, Clock, BarChart3, PieChart, Shuffle, Target, Calculator } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { CardLayout, CardItem } from "@/components/ui/card-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useWalletPsychoCard } from "@/hooks/useWalletPsychoCard";
+import { DetailedTabLayout } from "../layout/DetailedTabLayout";
+import { DetailedCard } from "../cards/DetailedCard";
 import { TradingFrequencyChart } from "../charts/AreaChart";
 import { CostSensitivityChart } from "../charts/LineChart";
 import { GaugeChart } from "../charts/GaugeChart";
@@ -37,27 +36,13 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Cognitive Patterns</h2>
-          <p className="text-muted-foreground">Decoding habits, compulsions, and trading biases</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="px-3 py-1">
-            Last 30 days
-          </Badge>
-          <Badge variant="outline" className="px-3 py-1">
-            {walletAddress.slice(0, 8)}...{walletAddress.slice(-4)}
-          </Badge>
-        </div>
-      </div>
-
-      {/* 2x2 grid layout with fixed height */}
-      <CardLayout>
+    <DetailedTabLayout
+      title="Cognitive Patterns"
+      description="Decoding habits, compulsions, and trading biases"
+      walletAddress={walletAddress}
+    >
         {/* Card 11: Position Sizing Psychology */}
-        <CardItem
+        <DetailedCard
           icon={Scale}
           title="Position Sizing Psychology"
           description="Variation in position sizes"
@@ -87,10 +72,10 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 12: Profit Discipline */}
-        <CardItem
+        <DetailedCard
           icon={Target}
           title="Profit Discipline"
           description="Consistency in profitable exits"
@@ -116,13 +101,13 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 13: Entry/Exit Timing */}
-        <CardItem
+        <DetailedCard
           icon={Clock}
           title="Entry/Exit Timing"
-          description="Early vs. late exits based on average ROI curves"
+          description="When you buy and sell"
           loading={false}
         >
           <div className="space-y-4">
@@ -139,13 +124,13 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 14: Trade Burst Pattern */}
-        <CardItem
-          icon={BarChart3}
+        <DetailedCard
+          icon={TrendingDown}
           title="Trade Burst Pattern"
-          description="Do you trade in sessions or evenly across time"
+          description="Clustering of trades"
           loading={false}
         >
           <div className="space-y-4">
@@ -162,13 +147,13 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 15: Favorite Time to Trade */}
-        <CardItem
+        <DetailedCard
           icon={Clock}
           title="Favorite Time to Trade"
-          description="Time-of-day trading pattern"
+          description="Your most active hours"
           loading={false}
         >
           <div className="space-y-4">
@@ -203,13 +188,13 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 16: Token Rotation Score */}
-        <CardItem
+        <DetailedCard
           icon={Shuffle}
           title="Token Rotation Score"
-          description="How often you switch tokens"
+          description="How often you change focus"
           loading={false}
         >
           <div className="space-y-4">
@@ -229,13 +214,13 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 17: Concentration Index (HHI) */}
-        <CardItem
+        <DetailedCard
           icon={PieChart}
           title="Concentration Index (HHI)"
-          description="Portfolio diversification using Herfindahl-Hirschman Index"
+          description="Portfolio concentration"
           loading={false}
         >
           <div className="space-y-4">
@@ -255,10 +240,10 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 18: Portfolio Entropy */}
-        <CardItem
+        <DetailedCard
           icon={Calculator}
           title="Portfolio Entropy"
           description="Uncertainty in portfolio distribution"
@@ -280,10 +265,10 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 19: Active Token Count */}
-        <CardItem
+        <DetailedCard
           icon={BarChart3}
           title="Active Token Count"
           description="Unique tokens touched in time range"
@@ -314,10 +299,10 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
+        </DetailedCard>
 
         {/* Card 20: Flip Speed by Token */}
-        <CardItem
+        <DetailedCard
           icon={Clock}
           title="Flip Speed by Token"
           description="Hold time per token"
@@ -359,8 +344,7 @@ export function DetailedCognitivePatternsTab({ walletAddress }: DetailedCognitiv
               </p>
             </div>
           </div>
-        </CardItem>
-      </CardLayout>
-    </div>
+        </DetailedCard>
+    </DetailedTabLayout>
   );
 }

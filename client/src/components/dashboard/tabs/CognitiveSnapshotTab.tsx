@@ -1,11 +1,12 @@
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { InfoIcon, Brain, Zap, Target, Shield, User, TrendingUp, Star, TrendingDown } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { DetailedTabLayout } from "../layout/DetailedTabLayout";
+import { DetailedCard } from "../cards/DetailedCard";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 interface CognitiveSnapshotTabProps {
   walletAddress: string;
@@ -91,47 +92,20 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Cognitive Snapshot</h2>
-          <p className="text-muted-foreground">Your wallet's mental profile at a glance</p>
-        </div>
-        <Badge variant="outline" className="px-3 py-1">
-          {walletAddress.slice(0, 8)}...{walletAddress.slice(-4)}
-        </Badge>
-      </div>
-
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <DetailedTabLayout
+      title="Cognitive Snapshot"
+      description="Your wallet's mental profile at a glance"
+      walletAddress={walletAddress}
+    >
         
         {/* Impulse Control */}
-        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <Zap className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Impulse Control</CardTitle>
-                  <CardDescription>Trading frequency and discipline patterns</CardDescription>
-                </div>
-              </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <InfoIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Are you a trigger-happy degen or a disciplined sniper?</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={Zap}
+          title="Impulse Control"
+          description="How you handle market volatility"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center">
               <div className="text-xl font-bold text-foreground">{displayData.riskLevel}</div>
               <div className="text-sm text-muted-foreground">
@@ -161,35 +135,17 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 <div className="text-muted-foreground">Decision time</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DetailedCard>
 
         {/* Cognitive Load */}
-        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <Brain className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Cognitive Load</CardTitle>
-                  <CardDescription>Portfolio complexity and mental bandwidth</CardDescription>
-                </div>
-              </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <InfoIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>How many narratives are you juggling at once?</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={Brain}
+          title="Cognitive Load"
+          description="Portfolio complexity and mental bandwidth"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center">
               <div className="text-xl font-bold text-foreground">{displayData.archetype}</div>
               <div className="text-sm text-muted-foreground">
@@ -236,35 +192,17 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DetailedCard>
 
         {/* Personality Archetype */}
-        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <Target className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Personality Archetype</CardTitle>
-                  <CardDescription>Your trading psyche classification</CardDescription>
-                </div>
-              </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <InfoIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Your trading psyche: the Strategist? the Spray-and-Pray?</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={Target}
+          title="Personality Archetype"
+          description="Your trading psyche classification"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center space-y-2">
               <div className="text-xl font-bold text-foreground">
                 {cognitiveData.personalityArchetype.primary}
@@ -297,35 +235,17 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DetailedCard>
 
         {/* Trust Circuits */}
-        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <Shield className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Trust Circuits</CardTitle>
-                  <CardDescription>Protocol loyalty and exploration patterns</CardDescription>
-                </div>
-              </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <InfoIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Which DEXs do you gravitate toward? Do you stay loyal?</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={Shield}
+          title="Trust Circuits"
+          description="Protocol loyalty and exploration patterns"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center">
               <div className="text-xl font-bold text-foreground">{cognitiveData.trustCircuits.primaryDex}</div>
               <div className="text-sm text-muted-foreground">
@@ -356,25 +276,17 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 {cognitiveData.trustCircuits.explorationTendency}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DetailedCard>
 
         {/* Behavioral Archetype */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <User className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Behavioral Archetype</CardTitle>
-                  <CardDescription>Who you are at a glance</CardDescription>
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={User}
+          title="Behavioral Archetype"
+          description="Who you are at a glance"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-muted-foreground mb-2">The Strategist</div>
               <Badge variant="outline" className="bg-primary/10 text-muted-foreground border-border">
@@ -396,25 +308,17 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 <div className="text-muted-foreground">Execution</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DetailedCard>
 
         {/* Protocol Alpha Score */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <Star className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Protocol Alpha Score</CardTitle>
-                  <CardDescription>Using DEXs before they become mainstream</CardDescription>
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={TrendingUp}
+          title="Protocol Alpha Score"
+          description="Your early adoption patterns"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-muted-foreground mb-1">Early Adopter</div>
               <div className="text-sm text-muted-foreground">
@@ -441,25 +345,17 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
               <div className="text-sm font-medium text-muted-foreground">Alpha Score</div>
               <div className="text-2xl font-bold text-muted-foreground mt-1">85/100</div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DetailedCard>
 
         {/* Conviction Collapse Detector */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-muted ring-1 ring-border">
-                  <TrendingDown className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold">Conviction Collapse Detector</CardTitle>
-                  <CardDescription>When did you lose trust in yourself?</CardDescription>
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DetailedCard
+          icon={TrendingDown}
+          title="Conviction Collapse Detector"
+          description="When did you lose trust in yourself?"
+          loading={false}
+        >
+          <div className="space-y-4">
             <div className="text-center p-3 bg-primary/5 rounded-lg border border-border">
               <div className="text-sm font-medium text-muted-foreground">Conviction Status</div>
               <div className="text-lg font-bold text-muted-foreground mt-1">Stable</div>
@@ -496,9 +392,8 @@ export function CognitiveSnapshotTab({ walletAddress }: CognitiveSnapshotTabProp
                 Dec 15: Increased SOL position by 67% after 3-day analysis period
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+        </DetailedCard>
+    </DetailedTabLayout>
   );
 }
