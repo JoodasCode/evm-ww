@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Console</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #333;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .error {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Debug Console</h1>
+  <button id="clearBtn">Clear Console</button>
+  <button id="testSupabase">Test Supabase Mock</button>
+  <button id="testAuth">Test Auth Hook</button>
+  <pre id="console"></pre>
+
+  <script>
+    // Override console methods to display in our custom console
+    const consoleOutput = document.getElementById('console');
+    const originalConsole = {
+      log: console.log,
+      error: console.error,
+      warn: console.warn,
+      info: console.info
+    };
+
+    function appendToConsole(type, args) {
+      const line = document.createElement('div');
+      line.className = type;
+      line.textContent = `[${type}] ${args.map(arg => {
+        if (typeof arg === 'object') {
+          try {
+            return JSON.stringify(arg, null, 2);
+          } catch (e) {
+            return String(arg);
+          }
+        }
+        return String(arg);
+      }).join(' ')}`;
+      consoleOutput.appendChild(line);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+
+    console.log = function(...args) {
+      originalConsole.log(...args);
+      appendToConsole('log', args);
+    };
+
+    console.error = function(...args) {
+      originalConsole.error(...args);
+      appendToConsole('error', args);
+    };
+
+    console.warn = function(...args) {
+      originalConsole.warn(...args);
+      appendToConsole('warn', args);
+    };
+
+    console.info = function(...args) {
+      originalConsole.info(...args);
+      appendToConsole('info', args);
+    };
+
+    // Clear console button
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      consoleOutput.innerHTML = '';
+    });
+
+    // Test Supabase mock
+    document.getElementById('testSupabase').addEventListener('click', async () => {
+      try {
+        console.log('Importing Supabase...');
+        const supabaseModule = await import('./lib/supabase.js');
+        console.log('Supabase module imported:', supabaseModule);
+        
+        const supabase = supabaseModule.default;
+        console.log('Supabase client:', supabase);
+        
+        // Test auth methods
+        console.log('Testing auth.getSession()...');
+        const session = await supabase.auth.getSession();
+        console.log('Session result:', session);
+        
+        console.log('Testing auth.signInWithOAuth()...');
+        const signInResult = await supabase.auth.signInWithOAuth({ provider: 'google' });
+        console.log('Sign in result:', signInResult);
+      } catch (error) {
+        console.error('Error testing Supabase:', error);
+      }
+    });
+
+    // Test Auth Hook
+    document.getElementById('testAuth').addEventListener('click', async () => {
+      try {
+        console.log('Importing useAuth...');
+        const authModule = await import('./hooks/useAuth.js');
+        console.log('Auth module imported:', authModule);
+        
+        console.log('Note: React hooks can only be used within React components.');
+        console.log('This is just to check if the module can be imported without errors.');
+      } catch (error) {
+        console.error('Error importing Auth hook:', error);
+      }
+    });
+
+    // Log initial info
+    console.log('Debug console initialized');
+    console.log('Current URL:', window.location.href);
+    
+    // Check for any existing errors
+    if (window.errors && window.errors.length) {
+      console.error('Existing errors:', window.errors);
+    }
+  </script>
+</body>
+</html>

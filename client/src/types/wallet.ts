@@ -1,10 +1,14 @@
 export interface WalletContextType {
   wallet: string | null;
+  publicKey?: string | null; // For backward compatibility
   isConnected: boolean;
+  connected?: boolean; // For backward compatibility
+  connecting?: boolean; // For backward compatibility
   isSimulated: boolean;
   isAnalyzing: boolean;
-  connect: () => Promise<void>;
-  disconnect: () => void;
+  error?: string | null;
+  connect: () => Promise<string | void>;
+  disconnect: () => Promise<void>;
   simulateWallet: (address: string) => Promise<void>;
 }
 

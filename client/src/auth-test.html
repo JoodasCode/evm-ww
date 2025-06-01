@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet Whisperer Auth Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #f9fafb;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .wallet-address {
+      font-family: monospace;
+      background-color: #f3f4f6;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+    }
+    .console {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .console-entry {
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }
+    .error {
+      color: #ef4444;
+    }
+    .success {
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-3xl font-bold mb-6">Wallet Whisperer Auth Test</h1>
+    
+    <div class="card">
+      <h2 class="text-xl font-semibold mb-4">EVM Wallet Connection</h2>
+      <p class="mb-4">Connect your MetaMask wallet to test the authentication flow.</p>
+      <button id="connectWalletBtn" class="btn mb-4">Connect MetaMask</button>
+      <div id="walletInfo" class="hidden">
+        <p class="mb-2">Connected Wallet: <span id="walletAddress" class="wallet-address"></span></p>
+        <button id="signMessageBtn" class="btn btn-outline mr-2">Sign Message</button>
+        <button id="disconnectWalletBtn" class="btn btn-outline">Disconnect</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2 class="text-xl font-semibold mb-4">Console Output</h2>
+      <div id="console" class="console"></div>
+    </div>
+  </div>
+
+  <script>
+    // Console logging
+    const consoleEl = document.getElementById('console');
+    function logToConsole(message, type = 'info') {
+      const entry = document.createElement('div');
+      entry.className = `console-entry ${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      consoleEl.appendChild(entry);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    // Wallet connection
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const disconnectWalletBtn = document.getElementById('disconnectWalletBtn');
+    const signMessageBtn = document.getElementById('signMessageBtn');
+    const walletInfo = document.getElementById('walletInfo');
+    const walletAddressEl = document.getElementById('walletAddress');
+    
+    let currentWalletAddress = null;
+
+    // Check if MetaMask is installed
+    const isMetaMaskInstalled = () => {
+      return window.ethereum && window.ethereum.isMetaMask;
+    };
+
+    // Format wallet address for display
+    const formatWalletAddress = (address) => {
+      if (!address) return '';
+      return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    };
+
+    // Connect wallet
+    async function connectWallet() {
+      try {
+        if (!isMetaMaskInstalled()) {
+          logToConsole('MetaMask is not installed', 'error');
+          return;
+        }
+
+        logToConsole('Requesting wallet connection...');
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        currentWalletAddress = accounts[0].toLowerCase();
+        
+        walletAddressEl.textContent = formatWalletAddress(currentWalletAddress);
+        walletInfo.classList.remove('hidden');
+        connectWalletBtn.classList.add('hidden');
+        
+        logToConsole(`Connected to wallet: ${currentWalletAddress}`, 'success');
+        
+        // Listen for account changes
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+      } catch (error) {
+        logToConsole(`Error connecting wallet: ${error.message}`, 'error');
+      }
+    }
+
+    // Handle account changes
+    function handleAccountsChanged(accounts) {
+      if (accounts.length === 0) {
+        // Disconnected
+        disconnectWallet();
+      } else if (accounts[0].toLowerCase() !== currentWalletAddress) {
+        // Account changed
+        currentWalletAddress = accounts[0].toLowerCase();
+        walletAddressEl.textContent = formatWalletAddress(currentWalletAddress);
+        logToConsole(`Wallet changed: ${currentWalletAddress}`);
+      }
+    }
+
+    // Disconnect wallet
+    function disconnectWallet() {
+      currentWalletAddress = null;
+      walletInfo.classList.add('hidden');
+      connectWalletBtn.classList.remove('hidden');
+      logToConsole('Wallet disconnected');
+    }
+
+    // Sign message
+    async function signMessage() {
+      try {
+        if (!currentWalletAddress) {
+          logToConsole('No wallet connected', 'error');
+          return;
+        }
+
+        // Generate a message with timestamp to prevent replay attacks
+        const timestamp = new Date().toISOString();
+        const message = `Sign this message to authenticate with Wallet Whisperer.\n\nWallet: ${currentWalletAddress}\nTimestamp: ${timestamp}`;
+        
+        logToConsole('Requesting signature...');
+        
+        // Get provider and signer
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        
+        // Sign the message
+        const signature = await signer.signMessage(message);
+        
+        logToConsole(`Message signed successfully!`, 'success');
+        logToConsole(`Signature: ${signature}`);
+        
+        // Verify the signature
+        const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+        
+        if (recoveredAddress.toLowerCase() === currentWalletAddress.toLowerCase()) {
+          logToConsole(`Signature verified! Address matches: ${recoveredAddress}`, 'success');
+        } else {
+          logToConsole(`Signature verification failed! Addresses don't match`, 'error');
+        }
+      } catch (error) {
+        logToConsole(`Error signing message: ${error.message}`, 'error');
+      }
+    }
+
+    // Event listeners
+    connectWalletBtn.addEventListener('click', connectWallet);
+    disconnectWalletBtn.addEventListener('click', disconnectWallet);
+    signMessageBtn.addEventListener('click', signMessage);
+
+    // Initial setup
+    function initialize() {
+      logToConsole('Auth test page initialized');
+      if (isMetaMaskInstalled()) {
+        logToConsole('MetaMask detected');
+      } else {
+        logToConsole('MetaMask not detected', 'error');
+        connectWalletBtn.disabled = true;
+        connectWalletBtn.textContent = 'MetaMask Not Installed';
+      }
+    }
+
+    initialize();
+  </script>
+</body>
+</html>

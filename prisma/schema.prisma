@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User profile from Supabase Auth
+model User {
+  id         String          @id
+  email      String?         @unique
+  isPremium  Boolean         @default(false)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  wallets    WalletProfile[]
+}
+
+// Wallet profile - primary identity for analytics
+model WalletProfile {
+  id            String       @id @default(uuid())
+  walletAddress String       @unique
+  blockchainType String       @default("evm") // 'evm' or 'solana'
+  userId        String?      // Nullable - can exist without a user
+  user          User?        @relation(fields: [userId], references: [id])
+  firstSeen     DateTime     @default(now())
+  lastUpdated   DateTime     @updatedAt
+  cards         PsychoCard[]
+
+  @@index([userId])
+}
+
+// Card data - stores calculation results
+model PsychoCard {
+  id            String        @id @default(uuid())
+  walletId      String
+  wallet        WalletProfile @relation(fields: [walletId], references: [id])
+  cardType      String        // e.g., "fomo_score", "revenge_trading"
+  value         Json          // Flexible JSON structure for card data
+  calculatedAt  DateTime      @default(now())
+
+  @@unique([walletId, cardType])
+  @@index([walletId, cardType])
+}

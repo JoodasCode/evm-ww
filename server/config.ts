@@ -3,22 +3,22 @@
  */
 
 const config = {
-  // Helius API configuration
-  helius: {
-    apiKey: process.env.HELIUS_API_KEY || '',
-    apiUrl: 'https://mainnet.helius-rpc.com'
-  },
-  
-  // Moralis API configuration
-  moralis: {
-    apiKey: process.env.MORALIS_API_KEY || '',
-    apiUrl: 'https://solana-gateway.moralis.io'
+  // Dune Analytics configuration
+  dune: {
+    apiKey: process.env.DUNE_API_KEY || '',
+    apiUrl: 'https://api.dune.com/api/v1',
+    workerProxyUrl: process.env.DUNE_WORKER_PROXY || ''
   },
   
   // Supabase configuration
   supabase: {
     url: process.env.SUPABASE_URL || '',
     anonKey: process.env.SUPABASE_ANON_KEY || ''
+  },
+  
+  // Database configuration for Prisma
+  database: {
+    url: process.env.DATABASE_URL || ''
   },
   
   // Redis configuration
@@ -33,10 +33,10 @@ const config = {
     
     // Prefix for cache keys
     prefix: {
-      tokenBalance: 'token_balance:',
-      whispererScore: 'whisperer_score:',
-      tradingActivity: 'trading_activity:',
-      psychometric: 'psychometric:'
+      psychoCard: 'psycho_card:',
+      duneQuery: 'dune_query:',
+      authToken: 'auth_token:',
+      userSession: 'user_session:'
     }
   }
 };

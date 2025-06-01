@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Auth Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #f9fafb;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .console {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .console-entry {
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }
+    .error {
+      color: #ef4444;
+    }
+    .success {
+      color: #10b981;
+    }
+    .user-card {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+    }
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 1rem;
+    }
+    .user-info {
+      flex: 1;
+    }
+    .badge {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-3xl font-bold mb-6">Google Auth Test</h1>
+    
+    <div class="card">
+      <h2 class="text-xl font-semibold mb-4">Google OAuth</h2>
+      <p class="mb-4">Test the Google OAuth flow with our mock Supabase client.</p>
+      <button id="signInBtn" class="btn mb-4">
+        <div class="flex items-center">
+          <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              fill="#fff"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              fill="#fff"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#fff"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            />
+            <path
+              fill="#fff"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            />
+          </svg>
+          Sign in with Google
+        </div>
+      </button>
+      <button id="signOutBtn" class="btn btn-outline hidden">Sign Out</button>
+      
+      <div id="userProfile" class="hidden user-card">
+        <img id="userAvatar" src="" alt="User avatar" class="avatar">
+        <div class="user-info">
+          <h3 id="userName" class="font-medium"></h3>
+          <p id="userEmail" class="text-sm text-gray-500"></p>
+        </div>
+        <span class="badge">Mock User</span>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2 class="text-xl font-semibold mb-4">Console Output</h2>
+      <div id="console" class="console"></div>
+    </div>
+  </div>
+
+  <script>
+    // Console logging
+    const consoleEl = document.getElementById('console');
+    function logToConsole(message, type = 'info') {
+      const entry = document.createElement('div');
+      entry.className = `console-entry ${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      consoleEl.appendChild(entry);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    // Mock Supabase client
+    class MockSupabaseClient {
+      constructor() {
+        this.user = null;
+        this.authChangeCallbacks = [];
+        logToConsole('Mock Supabase client initialized');
+      }
+
+      auth = {
+        getUser: async () => {
+          logToConsole(`getUser() called, returning: ${this.user ? 'User found' : 'No user'}`);
+          return { data: { user: this.user }, error: null };
+        },
+        
+        getSession: async () => {
+          logToConsole(`getSession() called, returning: ${this.user ? 'Session found' : 'No session'}`);
+          return { 
+            data: { 
+              session: this.user ? {
+                access_token: 'mock-access-token',
+                refresh_token: 'mock-refresh-token',
+                user: this.user,
+                expires_at: Date.now() + 3600
+              } : null 
+            }, 
+            error: null 
+          };
+        },
+        
+        signInWithOAuth: async ({ provider }) => {
+          logToConsole(`Signing in with ${provider}...`);
+          
+          // Simulate OAuth popup
+          logToConsole('Opening OAuth popup window...');
+          
+          // Simulate successful sign-in after a short delay
+          setTimeout(() => {
+            this.user = {
+              id: 'mock-user-id-123',
+              app_metadata: {},
+              user_metadata: {
+                full_name: 'Mock User',
+                avatar_url: 'https://ui-avatars.com/api/?name=Mock+User&background=3b82f6&color=fff'
+              },
+              aud: 'authenticated',
+              created_at: new Date().toISOString(),
+              email: 'mock@example.com',
+              role: 'authenticated',
+              updated_at: new Date().toISOString()
+            };
+            
+            logToConsole('OAuth sign-in successful!', 'success');
+            
+            // Notify callbacks
+            this.authChangeCallbacks.forEach(callback => {
+              callback('SIGNED_IN', { user: this.user });
+            });
+            
+            // Update UI
+            updateUI();
+          }, 1500);
+          
+          return { data: { provider, url: '#' }, error: null };
+        },
+        
+        signOut: async () => {
+          logToConsole('Signing out...');
+          
+          // Simulate sign-out after a short delay
+          setTimeout(() => {
+            this.user = null;
+            
+            // Notify callbacks
+            this.authChangeCallbacks.forEach(callback => {
+              callback('SIGNED_OUT', null);
+            });
+            
+            // Update UI
+            updateUI();
+            
+            logToConsole('Sign-out successful', 'success');
+          }, 500);
+          
+          return { error: null };
+        },
+        
+        onAuthStateChange: (callback) => {
+          logToConsole('Auth state change listener registered');
+          this.authChangeCallbacks.push(callback);
+          return {
+            data: { subscription: { unsubscribe: () => {
+              this.authChangeCallbacks = this.authChangeCallbacks.filter(cb => cb !== callback);
+              logToConsole('Auth state change listener unsubscribed');
+            }}}
+          };
+        }
+      };
+    }
+
+    // Create mock Supabase client
+    const supabase = new MockSupabaseClient();
+
+    // UI elements
+    const signInBtn = document.getElementById('signInBtn');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const userProfile = document.getElementById('userProfile');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+
+    // Update UI based on auth state
+    function updateUI() {
+      if (supabase.user) {
+        // User is signed in
+        signInBtn.classList.add('hidden');
+        signOutBtn.classList.remove('hidden');
+        userProfile.classList.remove('hidden');
+        
+        // Update user profile
+        userAvatar.src = supabase.user.user_metadata.avatar_url;
+        userName.textContent = supabase.user.user_metadata.full_name;
+        userEmail.textContent = supabase.user.email;
+      } else {
+        // User is signed out
+        signInBtn.classList.remove('hidden');
+        signOutBtn.classList.add('hidden');
+        userProfile.classList.add('hidden');
+      }
+    }
+
+    // Event listeners
+    signInBtn.addEventListener('click', async () => {
+      try {
+        await supabase.auth.signInWithOAuth({ provider: 'google' });
+      } catch (error) {
+        logToConsole(`Error signing in: ${error.message}`, 'error');
+      }
+    });
+
+    signOutBtn.addEventListener('click', async () => {
+      try {
+        await supabase.auth.signOut();
+      } catch (error) {
+        logToConsole(`Error signing out: ${error.message}`, 'error');
+      }
+    });
+
+    // Initialize
+    function initialize() {
+      logToConsole('Google Auth test page initialized');
+      
+      // Check if user is already signed in
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          supabase.user = data.user;
+          updateUI();
+        }
+      });
+    }
+
+    initialize();
+  </script>
+</body>
+</html>

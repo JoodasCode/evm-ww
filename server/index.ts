@@ -2,6 +2,14 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Import our environment variables loader
+import env from "./lib/env";
+
+// Log environment variables (already logged by env module)
+log('Server environment:');
+log(`NODE_ENV: ${process.env.NODE_ENV}`);
+
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
