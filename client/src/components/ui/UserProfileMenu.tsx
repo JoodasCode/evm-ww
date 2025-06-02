@@ -1,5 +1,6 @@
-import React from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import React, { useState, useEffect } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useWagmiAuth } from '@/hooks/useWagmiAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -10,8 +11,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { WalletConnect } from '@/components/WalletConnect';
+import Web3WalletConnect from '@/components/Web3WalletConnect';
 import { Badge } from '@/components/ui/badge';
+import { useLocation } from 'wouter';
 import { 
   User, 
   LogOut, 
@@ -22,14 +24,15 @@ import {
 } from 'lucide-react';
 
 export function UserProfileMenu() {
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const [, setLocation] = useLocation();
   const { 
-    user, 
-    isAuthenticated, 
-    isPremium, 
-    linkedWallets, 
-    signOut, 
-    upgradeToPremium 
-  } = useAuth();
+    walletProfile, 
+    isPremium,
+    upgradeToPremium,
+    removeWallet
+  } = useWagmiAuth();
 
   // Get initials for avatar fallback
   const getInitials = (name?: string) => {
@@ -48,7 +51,7 @@ export function UserProfileMenu() {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  if (!isAuthenticated) {
+  if (!isConnected || !address) {
     return null;
   }
 
@@ -57,15 +60,12 @@ export function UserProfileMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 px-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.user_metadata?.avatar_url} />
-            <AvatarFallback>{getInitials(user?.user_metadata?.full_name)}</AvatarFallback>
+            <AvatarFallback>{address ? address.substring(2, 4).toUpperCase() : 'WW'}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start text-sm">
-            <span className="font-medium">{user?.user_metadata?.full_name || 'User'}</span>
+            <span className="font-medium">Wallet User</span>
             <span className="text-xs text-muted-foreground">
-              {linkedWallets && linkedWallets.length > 0 
-                ? formatWalletAddress(linkedWallets[0].address) 
-                : user?.email || 'No wallet linked'}
+              {formatWalletAddress(address)}
             </span>
           </div>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -77,6 +77,9 @@ export function UserProfileMenu() {
             <span>My Account</span>
             {isPremium && (
               <Badge variant="secondary" className="mt-1 w-fit">Premium</Badge>
+            )}
+            {walletProfile?.is_verified && (
+              <Badge variant="outline" className="mt-1 w-fit">Verified</Badge>
             )}
           </div>
         </DropdownMenuLabel>
@@ -94,24 +97,15 @@ export function UserProfileMenu() {
         
         <DropdownMenuSeparator />
         
-        {linkedWallets && linkedWallets.length > 0 ? (
-          <>
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Linked Wallets
-            </DropdownMenuLabel>
-            {linkedWallets.map((wallet, index) => (
-              <DropdownMenuItem key={index} className="flex items-center">
-                <Wallet className="mr-2 h-4 w-4" />
-                <span>{formatWalletAddress(wallet.address)}</span>
-              </DropdownMenuItem>
-            ))}
-          </>
-        ) : (
-          <DropdownMenuItem className="flex flex-col items-start p-2">
-            <span className="mb-2 text-sm">Link your wallet</span>
-            <WalletConnect variant="outline" className="w-full" />
+        <>
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            Connected Wallet
+          </DropdownMenuLabel>
+          <DropdownMenuItem className="flex items-center">
+            <Wallet className="mr-2 h-4 w-4" />
+            <span>{formatWalletAddress(address)}</span>
           </DropdownMenuItem>
-        )}
+        </>
         
         <DropdownMenuSeparator />
         
@@ -127,10 +121,15 @@ export function UserProfileMenu() {
         
         <DropdownMenuItem 
           className="flex items-center text-destructive" 
-          onClick={() => signOut()}
+          onClick={async () => {
+            // Use removeWallet from useWagmiAuth which handles the complete logout flow
+            await removeWallet();
+            // Redirect to auth page after disconnection
+            setLocation('/auth');
+          }}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>Disconnect</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

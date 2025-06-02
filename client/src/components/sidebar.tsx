@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Brain, Zap, TrendingUp, Users, Wallet, Layers, Activity } from "lucide-react";
-import { useWallet } from "@/hooks/use-wallet";
+import { useAccount, useDisconnect, useConnect } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 interface SidebarProps {
   activeTab: string;
@@ -9,7 +10,9 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
-  const { wallet, isConnected, isSimulated, connect, disconnect } = useWallet();
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { openConnectModal } = useConnectModal();
 
   const formatWalletAddress = (address: string) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -66,18 +69,13 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             <div className="min-w-0 flex-1">
               <p className="text-xs font-medium text-foreground">Wallet Status</p>
               <p className="text-xs text-muted-foreground truncate">
-                {isConnected && wallet ? formatWalletAddress(wallet) : "Not Connected"}
+                {isConnected && address ? formatWalletAddress(address) : "Not Connected"}
               </p>
-              {isSimulated && (
-                <p className="text-xs text-accent-foreground bg-accent px-1.5 py-0.5 rounded mt-1 inline-block">
-                  Simulated
-                </p>
-              )}
             </div>
             <Button
               size="sm"
               variant={isConnected ? "outline" : "default"}
-              onClick={isConnected ? disconnect : connect}
+              onClick={isConnected ? () => disconnect() : () => openConnectModal?.()}
               className="ml-2 h-7 text-xs"
             >
               <Wallet className="w-3 h-3 mr-1" />

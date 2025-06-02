@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { useAuth } from '@/hooks/useAuth';
-import { ActivityType, logAuthActivity } from '@/services/ActivityLogService';
+import { useAccount } from 'wagmi';
+import activityLogService, { ActivityType } from '@/services/ActivityLogService';
 
 interface PageViewTrackerProps {
   children: React.ReactNode;
@@ -13,20 +13,20 @@ interface PageViewTrackerProps {
  */
 export function PageViewTracker({ children }: PageViewTrackerProps) {
   const [location] = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { address, isConnected } = useAccount();
   
   useEffect(() => {
     // Log page view when location changes
-    logAuthActivity(
+    activityLogService.log(
       ActivityType.PAGE_VIEW,
-      user?.id || undefined,
-      undefined,
+      null, // We don't have user ID directly from wagmi, this would come from Supabase
+      address ? address : null, // Use wallet address if available
       {
         path: location,
-        isAuthenticated
+        isAuthenticated: isConnected
       }
     );
-  }, [location, user?.id, isAuthenticated]);
+  }, [location, address, isConnected]);
   
   return <>{children}</>;
 }

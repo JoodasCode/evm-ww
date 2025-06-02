@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import WalletConnectionButton from '@/components/wallet/WalletConnectionButton';
-import { useWallet } from '@/components/wallet/WalletProvider';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import Web3WalletConnect from '../components/Web3WalletConnect';
+import { useWallet } from '../components/wallet/WalletProvider';
+import { useWagmiAuth } from '../hooks/useWagmiAuth';
+import { useAccount, useSignMessage } from 'wagmi';
+import axios from 'axios';
 
 export default function TestAuth() {
   const [loading, setLoading] = useState(false);
@@ -13,7 +16,11 @@ export default function TestAuth() {
   const [user, setUser] = useState<any>(null);
   const [serverMessage, setServerMessage] = useState('');
   const [clientMessage, setClientMessage] = useState('');
-  const { address, isConnected } = useWallet();
+  const [authDebugInfo, setAuthDebugInfo] = useState<string>('');
+  const [sessionInfo, setSessionInfo] = useState<string>('');
+  const wallet = useWallet();
+  const { address, isConnected } = useAccount();
+  const { walletProfile, linkWallet, getAuthMessage, isPremium } = useWagmiAuth();
 
   // Check server-side Supabase connection
   useEffect(() => {
@@ -104,6 +111,92 @@ export default function TestAuth() {
     }
   };
 
+  // Function to check detailed auth state
+  const checkAuthState = async () => {
+    try {
+      // Get current session from Supabase
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      
+      // Get wallet auth state
+      const wagmiConnected = isConnected ? 'Connected' : 'Not connected';
+      const wagmiAddress = address || 'No wallet address';
+      const wagmiProfile = walletProfile ? JSON.stringify(walletProfile, null, 2) : 'No wallet profile';
+      const premiumStatus = isPremium ? 'Premium' : 'Not Premium';
+      const verifiedStatus = walletProfile?.is_verified ? 'Verified' : 'Not Verified';
+      
+      // Get wallet state from context
+      const walletState = wallet.isConnected ? 'Connected' : 'Not connected';
+      const walletAddress = wallet.wallet || 'No wallet address';
+      const walletIsSimulated = wallet.isSimulated ? 'Yes' : 'No';
+      
+      // Format debug info
+      const debugInfo = `
+=== Supabase Session ===
+${sessionData.session ? JSON.stringify(sessionData.session, null, 2) : 'No session'}
+
+=== Wagmi Auth State ===
+Connected: ${wagmiConnected}
+Address: ${wagmiAddress}
+Wallet Profile: ${wagmiProfile}
+Premium: ${premiumStatus}
+Verified: ${verifiedStatus}
+
+=== Wallet Context State ===
+Connected: ${walletState}
+Address: ${walletAddress}
+Simulated: ${walletIsSimulated}
+`;
+      
+      setAuthDebugInfo(debugInfo);
+      
+      // Format session info
+      if (sessionData.session) {
+        setSessionInfo(`Logged in as ${sessionData.session.user.email || 'Unknown user'}`);
+      } else if (isConnected && address) {
+        setSessionInfo(`Connected with wallet: ${address}`);
+      } else {
+        setSessionInfo('No active session');
+      }
+    } catch (error) {
+      console.error('Error checking auth state:', error);
+      setAuthDebugInfo(`Error checking auth state: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+
+  // Add effect to check auth state periodically
+  useEffect(() => {
+    checkAuthState();
+    const interval = setInterval(checkAuthState, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Function to test wallet linking
+  const testWalletLinking = async () => {
+    if (!address || !isConnected) {
+      alert('Please connect a wallet first');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Use the linkWallet function from useWagmiAuth
+      const success = await linkWallet();
+      
+      if (success) {
+        alert('Wallet linked successfully!');
+        checkAuthState();
+      } else {
+        alert('Failed to link wallet');
+      }
+    } catch (error) {
+      console.error('Wallet linking error:', error);
+      alert(`Wallet linking error: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <h1 className="text-3xl font-bold mb-6">Authentication Test Page</h1>
@@ -148,6 +241,7 @@ export default function TestAuth() {
               }</span>
             </div>
             <p className="mt-2 text-sm">{clientMessage}</p>
+            <p className="mt-2 text-sm">{sessionInfo}</p>
           </CardContent>
         </Card>
       </div>
@@ -181,13 +275,21 @@ export default function TestAuth() {
           
           <div>
             <h3 className="text-lg font-medium mb-2">Wallet Connection</h3>
-            <WalletConnectionButton />
+            <Web3WalletConnect showDisconnect={true} />
+            <Button 
+              onClick={testWalletLinking}
+              className="ml-2"
+              variant="outline"
+              disabled={!isConnected || !address}
+            >
+              Link Wallet to User
+            </Button>
           </div>
         </CardContent>
       </Card>
       
       {/* Current User */}
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
           <CardTitle>Current User</CardTitle>
           <CardDescription>Information about the currently authenticated user</CardDescription>
@@ -203,11 +305,37 @@ export default function TestAuth() {
             <p>No user is currently signed in</p>
           )}
           
-          {isConnected && (
+          {isConnected && address && (
             <div className="mt-4">
               <p><strong>Connected Wallet:</strong> {address}</p>
+              {walletProfile && (
+                <>
+                  <p><strong>Premium:</strong> {isPremium ? 'Yes' : 'No'}</p>
+                  <p><strong>Verified:</strong> {walletProfile.is_verified ? 'Yes' : 'No'}</p>
+                </>
+              )}
             </div>
           )}
+        </CardContent>
+      </Card>
+      
+      {/* Auth Debug Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Auth Debug Information</CardTitle>
+          <CardDescription>Detailed authentication state information</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96 text-xs">
+            {authDebugInfo}
+          </pre>
+          <Button 
+            onClick={checkAuthState}
+            className="mt-2"
+            size="sm"
+          >
+            Refresh Auth Info
+          </Button>
         </CardContent>
       </Card>
     </div>

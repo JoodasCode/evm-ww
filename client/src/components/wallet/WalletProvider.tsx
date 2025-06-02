@@ -1,23 +1,30 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { WalletContextType } from "@/types/wallet";
-import { useAuth } from "@/hooks/useAuth";
-import { ethers } from "ethers";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { useWagmiAuth } from "@/hooks/useWagmiAuth";
+import { ActivityLogService, ActivityType } from "@/services/ActivityLogService";
 
 const WalletContext = createContext<WalletContextType | null>(null);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const { linkWallet, getAuthMessage, wallets, removeWallet } = useAuth();
+  const { address, isConnected: wagmiConnected } = useAccount();
+  const { disconnect: disconnectWallet } = useDisconnect();
+  const { signMessageAsync } = useSignMessage();
+  const { linkWallet, getAuthMessage, walletProfile } = useWagmiAuth();
+  
   const [wallet, setWallet] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isSimulated, setIsSimulated] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const activityLogger = ActivityLogService.getInstance();
 
-  // Update wallet state when auth wallets change
+  // Update wallet state when wagmi connection changes
   useEffect(() => {
-    if (wallets && wallets.length > 0) {
-      // Use the first wallet in the list
-      setWallet(wallets[0].walletAddress);
+    if (wagmiConnected && address) {
+      // Use the connected wallet address
+      setWallet(address);
       setIsConnected(true);
       setIsSimulated(false);
     } else {
@@ -35,40 +42,23 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setIsConnected(false);
       }
     }
-  }, [wallets]);
+  }, [wagmiConnected, address]);
 
   const connect = async () => {
     try {
       setError(null);
       
-      // Check if MetaMask is installed
-      if (!window.ethereum) {
-        throw new Error('MetaMask is not installed. Please install MetaMask to connect your wallet.');
+      if (!address) {
+        throw new Error('No wallet address connected. Please connect your wallet first.');
       }
-
-      // Request account access
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const walletAddress = accounts[0];
-
-      if (!walletAddress) {
-        throw new Error('No wallet address found. Please try again.');
-      }
-
-      // Get authentication message from the server
-      const message = await getAuthMessage(walletAddress);
-
-      // Request signature from the user
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const signature = await signer.signMessage(message);
-
-      // Link wallet to the user account
-      await linkWallet(walletAddress, signature, message, 'evm');
+      
+      // Link wallet using the useWagmiAuth hook
+      await linkWallet();
       
       // Trigger automated analysis
-      await triggerAutomatedAnalysis(walletAddress);
+      await triggerAutomatedAnalysis(address);
       
-      return walletAddress;
+      return address;
     } catch (error: any) {
       console.error("Failed to connect wallet:", error);
       setError(error.message || 'Failed to connect wallet');
@@ -78,20 +68,30 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnect = async () => {
     try {
-      if (wallet && !isSimulated) {
-        await removeWallet(wallet);
-      }
-      
-      setWallet(null);
-      setIsConnected(false);
-      setIsSimulated(false);
-      
-      // Clear URL params if in simulation mode
       if (isSimulated) {
+        // Just clear simulation state
+        setWallet(null);
+        setIsConnected(false);
+        setIsSimulated(false);
+        
+        // Clear URL params
         const url = new URL(window.location.href);
         url.searchParams.delete('wallet');
         url.searchParams.delete('simulate');
         window.history.replaceState({}, '', url.toString());
+      } else {
+        // Use wagmi disconnect
+        disconnectWallet();
+        
+        // Log activity
+        if (wallet) {
+          activityLogger.log(
+            ActivityType.WALLET_DISCONNECT,
+            null,
+            wallet,
+            { blockchainType: 'evm', success: true }
+          );
+        }
       }
     } catch (error: any) {
       console.error("Failed to disconnect wallet:", error);

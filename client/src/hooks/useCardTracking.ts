@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAccount } from 'wagmi';
 import { ActivityType, logCardActivity } from '@/services/ActivityLogService';
 
 /**
  * Hook for tracking card-related activities
  */
 export function useCardTracking() {
-  const { user, wallets } = useAuth();
-  const primaryWalletAddress = wallets?.[0]?.walletAddress;
+  const { address } = useAccount();
+  const primaryWalletAddress = address?.toLowerCase();
   
   /**
    * Track when a user views a card
@@ -16,11 +16,11 @@ export function useCardTracking() {
     logCardActivity(
       ActivityType.CARD_VIEW,
       cardId,
-      user?.id,
+      null, // No user ID in wallet-only auth flow
       primaryWalletAddress,
       details
     );
-  }, [user?.id, primaryWalletAddress]);
+  }, [primaryWalletAddress]);
   
   /**
    * Track when a card calculation is performed
@@ -29,11 +29,11 @@ export function useCardTracking() {
     logCardActivity(
       ActivityType.CARD_CALCULATION,
       cardId,
-      user?.id,
+      null, // No user ID in wallet-only auth flow
       primaryWalletAddress,
       details
     );
-  }, [user?.id, primaryWalletAddress]);
+  }, [primaryWalletAddress]);
   
   /**
    * Track when a card is refreshed
@@ -42,11 +42,11 @@ export function useCardTracking() {
     logCardActivity(
       ActivityType.CARD_REFRESH,
       cardId,
-      user?.id,
+      null, // No user ID in wallet-only auth flow
       primaryWalletAddress,
       details
     );
-  }, [user?.id, primaryWalletAddress]);
+  }, [primaryWalletAddress]);
   
   return {
     trackCardView,

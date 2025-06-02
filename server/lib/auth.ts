@@ -4,7 +4,9 @@ import { ethers } from 'ethers';
 import env from './env';
 
 // Use type inference from the prisma instance instead of direct imports
-type User = Awaited<ReturnType<typeof prisma.user.findUnique>>;
+type User = Awaited<ReturnType<typeof prisma.user.findUnique>> & {
+  wallets?: WalletProfile[];
+};
 type WalletProfile = Awaited<ReturnType<typeof prisma.walletProfile.findUnique>>;
 
 // Initialize Supabase client with fallback
@@ -183,8 +185,44 @@ export class AuthService {
       return null;
     }
   }
+
+  /**
+   * Get user by wallet address
    * @param walletAddress The wallet address to look up
    * @returns The user associated with the wallet address, or null if not found
+   */
+  async getUserByWalletAddress(walletAddress: string): Promise<User | null> {
+    try {
+      const normalizedAddress = walletAddress.toLowerCase();
+      
+      // Find the wallet profile
+      const walletProfile = await prisma.walletProfile.findUnique({
+        where: { walletAddress: normalizedAddress },
+        include: { user: true }
+      });
+      
+      if (!walletProfile) return null;
+      
+      // Get the associated user with wallets
+      const user = walletProfile.user;
+      if (!user) return null;
+      
+      // Get all wallets for this user
+      const wallets = await prisma.walletProfile.findMany({
+        where: { userId: user.id }
+      });
+      
+      return {
+        ...user,
+        wallets
+      };
+    } catch (error) {
+      console.error(`Error getting user by wallet address ${walletAddress}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Check if a user has premium access
    * @param userId The user ID to check
    * @returns True if the user has premium access, false otherwise
@@ -239,15 +277,26 @@ export class AuthService {
       // Normalize the wallet address to lowercase for comparison
       const normalizedWalletAddress = walletAddress.toLowerCase();
       
+      // Log the inputs for debugging
+      console.log('Verifying EVM signature with:', {
+        message,
+        signature,
+        walletAddress: normalizedWalletAddress
+      });
+      
       // Use ethers.js to recover the address from the signature
       const recoveredAddress = ethers.verifyMessage(message, signature);
       const normalizedRecoveredAddress = recoveredAddress.toLowerCase();
+      
+      console.log('Recovered address:', normalizedRecoveredAddress);
       
       // Compare the recovered address with the provided wallet address
       const isValid = normalizedRecoveredAddress === normalizedWalletAddress;
       
       if (!isValid) {
         console.warn(`Signature verification failed: recovered address ${normalizedRecoveredAddress} does not match provided address ${normalizedWalletAddress}`);
+      } else {
+        console.log('Signature verification successful!');
       }
       
       return isValid;
@@ -299,25 +348,6 @@ export class AuthService {
     // Support for other blockchain types will be added later
     console.warn(`Signature verification for ${blockchainType} not implemented yet`);
     return false;
-  }
-
-  /**
-   * Get a user by their wallet address
-   * @param walletAddress The wallet address to look up
-   * @returns The user associated with the wallet address, or null if not found
-   */
-  async getUserByWalletAddress(walletAddress: string): Promise<User | null> {
-    try {
-      const walletProfile = await prisma.walletProfile.findUnique({
-        where: { walletAddress: walletAddress.toLowerCase() },
-        include: { user: true }
-      });
-      
-      return walletProfile?.user || null;
-    } catch (error) {
-      console.error(`Error getting user by wallet address ${walletAddress}:`, error);
-      return null;
-    }
   }
 
   /**

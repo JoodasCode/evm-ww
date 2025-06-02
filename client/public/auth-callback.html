@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Callback</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      text-align: center;
+    }
+    h1 {
+      color: #3b82f6;
+      margin-bottom: 16px;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #3b82f6;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .status {
+      margin: 16px 0;
+      font-size: 16px;
+    }
+    .error {
+      color: #ef4444;
+    }
+    .success {
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Authentication</h1>
+    <div class="spinner" id="spinner"></div>
+    <div class="status" id="status">Processing your authentication...</div>
+  </div>
+
+  <script>
+    // Get the status element
+    const statusEl = document.getElementById('status');
+    const spinnerEl = document.getElementById('spinner');
+    let redirectTimer = null;
+    
+    // Function to update status
+    function updateStatus(message, type = 'info') {
+      console.log(`Status update: ${message} (${type})`);
+      statusEl.textContent = message;
+      statusEl.className = `status ${type}`;
+      
+      if (type === 'success' || type === 'error') {
+        spinnerEl.style.display = 'none';
+      }
+    }
+    
+    // Helper function to get a cookie value by name
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    // Function to handle the auth callback
+    async function handleAuthCallback() {
+      try {
+        console.log('Starting auth callback processing');
+        console.log('Current URL:', window.location.href);
+        
+        // Get URL parameters
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        console.log('URL parameters:', Object.fromEntries(params.entries()));
+        
+        if (!code) {
+          console.error('No authorization code found in URL');
+          updateStatus('No authorization code found in URL', 'error');
+          redirectToHome(3000);
+          return;
+        }
+        
+        console.log('Found code, initializing Supabase');
+        
+        // Get Supabase configuration from environment variables or fallback to defaults
+        // These will be replaced at build time with the actual environment variables
+        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || window.SUPABASE_URL;
+        const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY;
+        
+        console.log('Using Supabase URL:', SUPABASE_URL ? 'Found' : 'Not found');
+        
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+          console.error('Missing Supabase configuration');
+          updateStatus('Missing Supabase configuration. Please check your environment setup.', 'error');
+          redirectToHome(3000);
+          return;
+        }
+        
+        // Create the Supabase client
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            autoRefreshToken: true,
+            persistSession: true,
+            storageKey: 'supabase.auth.token',
+            storage: window.localStorage
+          }
+        });
+        
+        // Check local storage for code verifier
+        const codeVerifier = localStorage.getItem('supabase.auth.code_verifier');
+        console.log('Code verifier from storage:', codeVerifier ? 'Found' : 'Not found');
+        
+        if (!codeVerifier) {
+          console.warn('No code verifier found in storage, attempting to proceed anyway');
+          updateStatus('Authentication token missing. Will attempt to proceed, but may fail.', 'warning');
+        }
+        
+        // Check for existing session
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        console.log('Current session before exchange:', sessionData?.session ? 'Exists' : 'None');
+        
+        // Attempt to exchange the code for a session
+        updateStatus('Exchanging authorization code...');
+        
+        try {
+          console.log('Attempting session exchange with code:', code);
+          
+          // Use a direct approach to handle the OAuth callback
+          // This should work even if the code verifier is missing from storage
+          const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
+          
+          if (error) {
+            console.error('Error exchanging code for session:', error);
+            
+            // Special handling for code verifier errors
+            if (error.message.includes('code verifier') || error.message.includes('auth code')) {
+              console.log('Code verifier error detected, redirecting to sign in again');
+              updateStatus('Authentication session expired. Redirecting to sign in...', 'error');
+              
+              // Clear any existing auth state
+              await supabaseClient.auth.signOut();
+              localStorage.removeItem('supabase.auth.code_verifier');
+              
+              // Redirect to auth page after a delay
+              setTimeout(() => {
+                window.location.href = '/auth';
+              }, 2000);
+              return;
+            }
+            
+            updateStatus(`Authentication error: ${error.message}`, 'error');
+            redirectToHome(3000);
+            return;
+          }
+          
+          // Check if we got a valid session
+          if (data?.session) {
+            console.log('Authentication successful!');
+            console.log('User:', data.session.user.email);
+            console.log('Session expires:', new Date(data.session.expires_at * 1000).toISOString());
+            
+            // Verify the session was stored correctly
+            const { data: verifyData } = await supabaseClient.auth.getSession();
+            if (verifyData?.session) {
+              console.log('Session verified and stored successfully');
+            } else {
+              console.warn('Session verification failed - no session found after exchange');
+            }
+            
+            // Clean up the code verifier as it's no longer needed
+            localStorage.removeItem('supabase.auth.code_verifier');
+            
+            updateStatus('Authentication successful! Redirecting...', 'success');
+            redirectToHome(1500);
+          } else {
+            console.warn('No session in response data');
+            updateStatus('Authentication completed but no session was created', 'error');
+            redirectToHome(3000);
+          }
+        } catch (exchangeError) {
+          console.error('Exception during session exchange:', exchangeError);
+          updateStatus(`Session exchange error: ${exchangeError.message || 'Unknown error'}`, 'error');
+          redirectToHome(3000);
+        }
+      } catch (err) {
+        console.error('Unexpected error during auth callback:', err);
+        updateStatus(`Unexpected error: ${err.message || 'Unknown error'}`, 'error');
+        redirectToHome(3000);
+      }
+    }
+    
+    // Function to redirect to home page
+    function redirectToHome(delay) {
+      console.log(`Setting up redirect to home in ${delay}ms`);
+      // Clear any existing redirect timer
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
+      
+      // Set new redirect timer
+      redirectTimer = setTimeout(() => {
+        console.log('Executing redirect to home page');
+        window.location.href = '/';
+      }, delay);
+    }
+    
+    // Set a timeout to redirect regardless of outcome
+    const safetyTimer = setTimeout(() => {
+      console.log('Safety timeout (10s) reached, forcing redirect to home page');
+      window.location.href = '/';
+    }, 10000);
+    
+    // Process the callback
+    handleAuthCallback();
+  </script>
+</body>
+</html>

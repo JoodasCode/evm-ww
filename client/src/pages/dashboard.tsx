@@ -14,18 +14,19 @@ import { DetailedCognitiveSnapshotTab } from "@/components/dashboard/tabs/Detail
 import { DetailedCognitivePatternsTab } from "@/components/dashboard/tabs/DetailedCognitivePatternsTab";
 import { DetailedInsightsTab } from "@/components/dashboard/tabs/DetailedInsightsTab";
 import { DetailedPsychoanalyticsTab } from "@/components/dashboard/tabs/DetailedPsychoanalyticsTab";
-import { useWallet } from "@/hooks/use-wallet";
+import { useAccount } from "wagmi";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("psych-ward");
-  const { wallet, isSimulated } = useWallet();
+  const { address, isConnected } = useAccount();
   
   const refreshAll = () => {
     console.log('Refreshing wallet analytics...');
   };
   
-  const currentWallet = wallet || "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o";
+  // Use connected wallet address or fallback to a demo address
+  const currentWallet = address || "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
 
   const getTabTitle = () => {
     switch (activeTab) {
@@ -106,9 +107,14 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground mt-0.5">{tabInfo.subtitle}</p>
             </div>
             <div className="flex items-center space-x-3">
-              {isSimulated && (
+              {!isConnected && (
                 <Badge variant="secondary" className="bg-accent text-accent-foreground text-xs">
-                  Simulated Wallet
+                  Demo Wallet
+                </Badge>
+              )}
+              {isConnected && (
+                <Badge variant="outline" className="text-xs">
+                  Connected: {address?.substring(0, 6)}...{address?.substring(address.length - 4)}
                 </Badge>
               )}
               <ThemeToggle />

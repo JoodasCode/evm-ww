@@ -44,7 +44,7 @@
   <h1>Debug Console</h1>
   <button id="clearBtn">Clear Console</button>
   <button id="testSupabase">Test Supabase Mock</button>
-  <button id="testAuth">Test Auth Hook</button>
+  <button id="testWagmi">Test Wagmi Auth</button>
   <pre id="console"></pre>
 
   <script>
@@ -122,17 +122,17 @@
       }
     });
 
-    // Test Auth Hook
-    document.getElementById('testAuth').addEventListener('click', async () => {
+    // Test Wagmi Auth
+    document.getElementById('testWagmi').addEventListener('click', async () => {
       try {
-        console.log('Importing useAuth...');
-        const authModule = await import('./hooks/useAuth.js');
-        console.log('Auth module imported:', authModule);
+        console.log('Importing wagmi config...');
+        const wagmiModule = await import('./lib/wagmi.js');
+        console.log('Wagmi config imported:', wagmiModule);
         
         console.log('Note: React hooks can only be used within React components.');
         console.log('This is just to check if the module can be imported without errors.');
       } catch (error) {
-        console.error('Error importing Auth hook:', error);
+        console.error('Error importing Wagmi config:', error);
       }
     });
 

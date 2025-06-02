@@ -1,13 +1,17 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export enum ActivityType {
   // Auth related activities
   LOGIN = 'login',
   LOGOUT = 'logout',
+  LOGIN_ATTEMPT = 'login_attempt',
+  SESSION_REFRESH = 'session_refresh',
   WALLET_CONNECT = 'wallet_connect',
   WALLET_DISCONNECT = 'wallet_disconnect',
   WALLET_LINK = 'wallet_link',
   WALLET_UNLINK = 'wallet_unlink',
+  WALLET_SIGN = 'wallet_sign',
+  WALLET_REMOVE = 'wallet_remove',
   PREMIUM_UPGRADE = 'premium_upgrade',
   
   // Card related activities
@@ -29,7 +33,7 @@ export interface ActivityLogData {
   timestamp?: string;
 }
 
-class ActivityLogService {
+export class ActivityLogService {
   private isEnabled = true;
   private queue: ActivityLogData[] = [];
   private isProcessing = false;
@@ -74,7 +78,25 @@ class ActivityLogService {
   /**
    * Log an activity
    */
-  async log(data: ActivityLogData): Promise<void> {
+  async log(
+    activityType: ActivityType,
+    userId: string | null,
+    walletAddress: string | null,
+    details?: Record<string, any>
+  ): Promise<void> {
+    const data: ActivityLogData = {
+      activityType,
+      userId: userId || undefined,
+      walletAddress: walletAddress || undefined,
+      details
+    };
+    return this.logData(data);
+  }
+  
+  /**
+   * Log activity data directly
+   */
+  private async logData(data: ActivityLogData): Promise<void> {
     if (!this.isEnabled) return;
     
     // Add timestamp if not provided
@@ -101,46 +123,49 @@ class ActivityLogService {
    * Flush the queue to the server
    */
   private async flushLogs(): Promise<void> {
-    if (!this.isEnabled || this.queue.length === 0) {
-      return;
-    }
-
+    if (this.isProcessing || this.queue.length === 0) return;
+    
     try {
+      this.isProcessing = true;
+      
+      // Clone and clear the queue
       const logsToSend = [...this.queue];
       this.queue = [];
       
+      // Add session ID to each log
+      const sessionId = this.getSessionId();
+      const logsWithSession = logsToSend.map(log => ({
+        ...log,
+        sessionId
+      }));
+      
+      // In a real app, we would send these to the server
+      // For now, just log to console in development
       if (import.meta.env.DEV) {
-        console.log('[ActivityLogService] Flushing logs:', logsToSend);
-      }
-
-      // Process logs in batches to avoid overwhelming Supabase
-      for (const log of logsToSend) {
-        const { error } = await supabase
-          .from('user_activity')
-          .insert({
-            user_id: log.userId || null,
-            wallet_address: log.walletAddress || null,
-            activity_type: log.activityType,
-            details: log.details || {},
-            timestamp: new Date().toISOString(),
-            session_id: this.getSessionId(),
-            ip_address: null, // Will be captured by RLS on the server
-            user_agent: navigator.userAgent
-          });
-          
-        if (error && import.meta.env.DEV) {
-          console.error('[ActivityLogService] Error inserting log:', error);
-        }
+        console.log(`[Activity Log] Flushing ${logsToSend.length} logs`, logsWithSession);
       }
       
-      if (import.meta.env.DEV) {
-        console.log('[ActivityLogService] Logs flushed successfully');
+      // In production, we would send to the server
+      if (import.meta.env.PROD) {
+        try {
+          // Example: Send to Supabase
+          const { error } = await supabase
+            .from('activity_logs')
+            .insert(logsWithSession);
+          
+          if (error) {
+            console.error('Error sending activity logs:', error);
+            // Put logs back in queue
+            this.queue = [...logsToSend, ...this.queue];
+          }
+        } catch (error) {
+          console.error('Error sending activity logs:', error);
+          // Put logs back in queue
+          this.queue = [...logsToSend, ...this.queue];
+        }
       }
-    } catch (error) {
-      // If flush fails, put logs back in queue
-      console.error('[ActivityLogService] Error flushing logs:', error);
-      // Only keep the last 1000 logs to prevent memory issues
-      this.queue = [...this.queue, ...this.queue.slice(0, 1000)];
+    } finally {
+      this.isProcessing = false;
     }
   }
   
@@ -188,12 +213,12 @@ export const logAuthActivity = (
   walletAddress?: string | null,
   details?: Record<string, any>
 ): void => {
-  activityLogService.log({
+  activityLogService.log(
     activityType,
-    userId: userId || undefined,
-    walletAddress: walletAddress || undefined,
+    userId || null,
+    walletAddress || null,
     details
-  });
+  );
 };
 
 export const logCardActivity = (
@@ -203,15 +228,15 @@ export const logCardActivity = (
   walletAddress?: string | null,
   details?: Record<string, any>
 ): void => {
-  activityLogService.log({
+  activityLogService.log(
     activityType,
-    userId: userId || undefined,
-    walletAddress: walletAddress || undefined,
-    details: {
+    userId || null,
+    walletAddress || null,
+    {
       cardId,
       ...(details || {})
     }
-  });
+  );
 };
 
 // Default export for the service
