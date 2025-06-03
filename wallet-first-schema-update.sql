@@ -38,18 +38,18 @@ ADD COLUMN IF NOT EXISTS blockchain_type TEXT DEFAULT 'evm';
 -- ===============================================
 
 -- Allow wallet-only authentication to view profiles by wallet address
-CREATE OR REPLACE POLICY "Wallet addresses can view their own profiles"
-  ON wallet_profiles FOR SELECT
+CREATE POLICY "Wallet addresses can view their own profiles"
+  ON public.wallet_profiles FOR SELECT
   USING (wallet_address = current_setting('request.jwt.claims')::json->>'wallet_address');
 
 -- Allow wallet-only authentication to update their own profiles
-CREATE OR REPLACE POLICY "Wallet addresses can update their own profiles"
-  ON wallet_profiles FOR UPDATE
+CREATE POLICY "Wallet addresses can update their own profiles"
+  ON public.wallet_profiles FOR UPDATE
   USING (wallet_address = current_setting('request.jwt.claims')::json->>'wallet_address');
 
 -- Allow wallet-only authentication to view their activity
-CREATE OR REPLACE POLICY "Wallet addresses can view their own activity"
-  ON user_activity FOR SELECT
+CREATE POLICY "Wallet addresses can view their own activity"
+  ON public.user_activity FOR SELECT
   USING (wallet_address = current_setting('request.jwt.claims')::json->>'wallet_address');
 
 -- ===============================================
@@ -66,16 +66,18 @@ DECLARE
   v_profile_id UUID;
   v_display_name TEXT;
 BEGIN
+  -- Set search_path to prevent SQL injection
+  SET search_path TO public;
   -- Generate a simple display name from the wallet address
   v_display_name := 'Wallet ' || SUBSTRING(p_wallet_address FROM 1 FOR 4) || '...' || SUBSTRING(p_wallet_address FROM LENGTH(p_wallet_address)-3);
   
   -- Check if wallet profile exists
-  SELECT id INTO v_profile_id FROM wallet_profiles 
+  SELECT id INTO v_profile_id FROM public.wallet_profiles 
   WHERE wallet_address = LOWER(p_wallet_address) AND blockchain_type = p_blockchain_type;
   
   IF v_profile_id IS NULL THEN
     -- Create new wallet profile
-    INSERT INTO wallet_profiles (
+    INSERT INTO public.wallet_profiles (
       wallet_address, 
       blockchain_type, 
       is_primary,
@@ -95,7 +97,7 @@ BEGIN
     RETURNING id INTO v_profile_id;
     
     -- Log first wallet connection
-    INSERT INTO user_activity (
+    INSERT INTO public.user_activity (
       wallet_address,
       blockchain_type,
       activity_type,
@@ -108,7 +110,7 @@ BEGIN
     );
   ELSE
     -- Update existing wallet profile
-    UPDATE wallet_profiles
+    UPDATE public.wallet_profiles
     SET last_updated = NOW()
     WHERE id = v_profile_id;
   END IF;
@@ -128,12 +130,14 @@ DECLARE
   v_is_premium BOOLEAN;
   v_user_id UUID;
 BEGIN
+  -- Set search_path to prevent SQL injection
+  SET search_path TO public;
   -- First check if wallet is linked to a premium user
-  SELECT user_id INTO v_user_id FROM wallet_profiles
+  SELECT user_id INTO v_user_id FROM public.wallet_profiles
   WHERE wallet_address = LOWER(p_wallet_address);
   
   IF v_user_id IS NOT NULL THEN
-    SELECT is_premium INTO v_is_premium FROM user_profiles
+    SELECT is_premium INTO v_is_premium FROM public.user_profiles
     WHERE id = v_user_id;
     
     IF v_is_premium THEN
@@ -143,7 +147,7 @@ BEGIN
   
   -- Then check if the wallet itself has premium status in preferences
   SELECT (preferences->>'is_premium')::BOOLEAN INTO v_is_premium
-  FROM wallet_profiles
+  FROM public.wallet_profiles
   WHERE wallet_address = LOWER(p_wallet_address);
   
   RETURN COALESCE(v_is_premium, FALSE);
@@ -151,7 +155,32 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ===============================================
--- 6. CLEANUP EXISTING DATA (OPTIONAL)
+-- 6. CREATE FUNCTION TO HANDLE NEW USER CREATION
+-- ===============================================
+
+-- Function to handle new user creation
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Set search_path to prevent SQL injection
+  SET search_path TO public;
+  
+  -- Create a user profile for the new auth user
+  INSERT INTO public.user_profiles (id, is_premium)
+  VALUES (NEW.id, FALSE);
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create trigger to automatically create user profile when new auth user is created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ===============================================
+-- 7. CLEANUP EXISTING DATA (OPTIONAL)
 -- ===============================================
 
 -- Update existing wallet profiles to be standalone

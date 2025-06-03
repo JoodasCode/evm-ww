@@ -8,8 +8,12 @@ import Dashboard from "./pages/dashboard";
 import NotFound from "./pages/not-found";
 import AuthDemo from "./pages/AuthDemo";
 import { AuthPage } from "./pages/AuthPage";
+import WalletAuthTest from "./pages/WalletAuthTest";
+import WalletDebugPage from "./pages/WalletDebugPage";
 import { PageViewTracker } from "./components/analytics/PageViewTracker";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { WalletAuthProvider } from "./hooks/useWalletAuth";
+import WalletAutoConnect from "./components/WalletAutoConnect";
 
 // Application router with protected routes
 function AppRouter() {
@@ -17,6 +21,8 @@ function AppRouter() {
     <Switch>
       <Route path="/auth-demo" component={AuthDemo} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/wallet-auth-test" component={WalletAuthTest} />
+      <Route path="/wallet-debug" component={WalletDebugPage} />
       <Route path="/dashboard">
         {() => (
           <ProtectedRoute>
@@ -38,9 +44,13 @@ function App() {
       <TooltipProvider>
         <ThemeProvider>
           <Toaster />
-          <PageViewTracker>
-            <AppRouter />
-          </PageViewTracker>
+          <WalletAuthProvider>
+            {/* Add WalletAutoConnect component to ensure wallet authentication happens automatically */}
+            <WalletAutoConnect />
+            <PageViewTracker>
+              <AppRouter />
+            </PageViewTracker>
+          </WalletAuthProvider>
         </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>

@@ -41,8 +41,44 @@ export function useWagmiAuth() {
   // Fetch wallet profile whenever the address changes
   useEffect(() => {
     if (isConnected && address) {
-      fetchWalletProfile(address);
+      console.log('🔵 Wallet connected:', address);
+      
+      const handleWalletConnection = async () => {
+        try {
+          // First try to fetch the existing profile
+          const normalizedAddress = address.toLowerCase();
+          console.log('🔵 Looking for wallet profile with address:', normalizedAddress);
+          
+          const { data, error } = await supabase
+            .from('wallet_profiles')
+            .select('*')
+            .eq('wallet_address', normalizedAddress)
+            .single();
+
+          console.log('🔵 Supabase query result:', { data, error });
+
+          if (error || !data) {
+            // No profile exists, so link the wallet
+            console.log('🔴 No wallet profile found, creating one for address:', normalizedAddress);
+            try {
+              const result = await linkWallet();
+              console.log('🟢 Wallet linking result:', result);
+            } catch (linkError) {
+              console.error('🔴 Error linking wallet:', linkError);
+            }
+          } else {
+            // Profile exists, just set it
+            console.log('🟢 Existing wallet profile found:', data);
+            setWalletProfile(data);
+          }
+        } catch (err) {
+          console.error('🔴 Error handling wallet connection:', err);
+        }
+      };
+      
+      handleWalletConnection();
     } else {
+      console.log('🔵 No wallet connected or disconnected');
       setWalletProfile(null);
     }
   }, [isConnected, address]);
@@ -93,44 +129,105 @@ export function useWagmiAuth() {
       throw new Error('No wallet address available');
     }
 
+    console.log('🔵 Starting wallet linking process for address:', address);
     setIsLoading(true);
     try {
       // Get authentication message
-      const message = await getAuthMessage(address);
+      console.log('🔵 Getting auth message...');
+      let message;
+      try {
+        message = await getAuthMessage(address);
+        console.log('🟢 Auth message received:', message);
+      } catch (msgError) {
+        console.error('🔴 Failed to get auth message:', msgError);
+        throw msgError;
+      }
       
       // Request signature from wallet
-      const signature = await signMessageAsync({ message });
+      console.log('🔵 Requesting signature from wallet...');
+      let signature;
+      try {
+        signature = await signMessageAsync({ message });
+        console.log('🟢 Signature received:', signature);
+      } catch (signError) {
+        console.error('🔴 User rejected signature request:', signError);
+        throw signError;
+      }
       
-      // Send signature to backend for verification
-      const { data } = await axios.post('/api/auth/wallet-auth', {
+      // Verify signature and create wallet profile on server
+      console.log('🔵 Sending signature to server for verification...');
+      console.log('🔵 Payload:', {
         walletAddress: address.toLowerCase(),
-        signature,
-        message,
-        blockchainType: 'evm',
-        // Include display name based on address for wallet-first flow
-        displayName: `Wallet ${address.substring(0, 4)}...${address.substring(address.length - 4)}`
+        signature: signature.substring(0, 20) + '...',
+        messageLength: message.length
       });
       
-      // Log wallet linking activity
-      activityLogger.log(ActivityType.WALLET_CONNECT, null, address, { 
-        blockchainType: 'evm', 
-        success: true,
-        standalone: true
-      });
+      let response;
+      try {
+        // Create a display name from the wallet address
+        const displayName = `Wallet ${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
+        
+        // Create the complete payload with all required fields
+        const payload = {
+          walletAddress: address.toLowerCase(),
+          signature,
+          message,
+          blockchainType: 'evm',
+          displayName
+        };
+        
+        console.log('🟢 Sending complete payload:', {
+          ...payload,
+          signature: payload.signature.substring(0, 10) + '...',
+          message: payload.message.substring(0, 20) + '...'
+        });
+        
+        response = await axios.post('/api/auth/wallet-auth', payload);
+        console.log('🟢 Server response:', response.data);
+      } catch (serverError: any) { // Type assertion to fix the lint error
+        console.error('🔴 Server error during wallet auth:', serverError);
+        console.error('🔴 Response:', serverError.response?.data);
+        throw serverError;
+      }
       
-      // Refresh wallet profile
-      await fetchWalletProfile(address);
+      // Log successful wallet connection
+      console.log('🔵 Logging wallet connection activity...');
+      try {
+        await activityLogger.log(ActivityType.WALLET_CONNECT, null, address, { 
+          blockchainType: 'evm', 
+          success: true,
+          standalone: true
+        });
+        console.log('🟢 Activity logged successfully');
+      } catch (logError) {
+        console.warn('🔴 Failed to log activity:', logError);
+        // Non-critical error, continue
+      }
       
-      return data.data;
+      // Fetch updated wallet profile
+      console.log('🔵 Fetching updated wallet profile...');
+      try {
+        await fetchWalletProfile(address);
+        console.log('🟢 Wallet profile fetched successfully');
+      } catch (fetchError) {
+        console.error('🔴 Failed to fetch wallet profile:', fetchError);
+        // Non-critical error, continue
+      }
+      
+      return response.data.data;
     } catch (error) {
-      console.error('Error linking wallet:', error);
+      console.error('🔴 Error linking wallet:', error);
       
       // Log failed attempt
-      activityLogger.log(ActivityType.WALLET_CONNECT, null, address, { 
-        blockchainType: 'evm', 
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
+      try {
+        await activityLogger.log(ActivityType.WALLET_CONNECT, null, address, { 
+          blockchainType: 'evm', 
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      } catch (logError) {
+        console.warn('🔴 Failed to log failed activity:', logError);
+      }
       
       throw error;
     } finally {

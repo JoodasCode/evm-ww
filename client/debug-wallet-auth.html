@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet Authentication Debug</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #111;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .result {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 15px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      margin-top: 20px;
+      font-family: monospace;
+    }
+    .step {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .step.success {
+      background-color: #dcfce7;
+      border: 1px solid #86efac;
+    }
+    .step.failed {
+      background-color: #fee2e2;
+      border: 1px solid #fca5a5;
+    }
+    .step.running {
+      background-color: #dbeafe;
+      border: 1px solid #93c5fd;
+    }
+    .step.warning {
+      background-color: #fef9c3;
+      border: 1px solid #fde047;
+    }
+    .step.info {
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wallet Authentication Debug Tool</h1>
+  
+  <div class="card">
+    <h2>Connect Wallet</h2>
+    <button id="connectWalletBtn">Connect Metamask</button>
+    <div id="walletInfo"></div>
+  </div>
+  
+  <div class="card">
+    <h2>Sign Message</h2>
+    <div>
+      <label for="messageInput">Message to Sign:</label>
+      <textarea id="messageInput" rows="3" placeholder="Enter message to sign"></textarea>
+    </div>
+    <button id="getMessageBtn">Get Auth Message</button>
+    <button id="signMessageBtn" disabled>Sign Message</button>
+    <div id="signatureInfo"></div>
+  </div>
+  
+  <div class="card">
+    <h2>Test Authentication</h2>
+    <div>
+      <label for="displayNameInput">Display Name (optional):</label>
+      <input type="text" id="displayNameInput" placeholder="Enter display name">
+    </div>
+    <button id="testAuthBtn" disabled>Test Authentication</button>
+    <div id="authResult" class="result"></div>
+    <div id="stepResults"></div>
+  </div>
+  
+  <div class="card">
+    <h2>Direct Supabase Check</h2>
+    <button id="checkWalletBtn" disabled>Check Wallet Profile</button>
+    <div id="checkResult" class="result"></div>
+  </div>
+  
+  <script>
+    // State variables
+    let currentWalletAddress = null;
+    let currentSignature = null;
+    let currentMessage = null;
+    let provider = null;
+    let signer = null;
+    
+    // DOM Elements
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const walletInfo = document.getElementById('walletInfo');
+    const messageInput = document.getElementById('messageInput');
+    const getMessageBtn = document.getElementById('getMessageBtn');
+    const signMessageBtn = document.getElementById('signMessageBtn');
+    const signatureInfo = document.getElementById('signatureInfo');
+    const displayNameInput = document.getElementById('displayNameInput');
+    const testAuthBtn = document.getElementById('testAuthBtn');
+    const authResult = document.getElementById('authResult');
+    const stepResults = document.getElementById('stepResults');
+    const checkWalletBtn = document.getElementById('checkWalletBtn');
+    const checkResult = document.getElementById('checkResult');
+    
+    // Connect wallet function
+    async function connectWallet() {
+      try {
+        if (!window.ethereum) {
+          walletInfo.innerHTML = '<p style="color: red;">MetaMask not detected. Please install MetaMask.</p>';
+          return;
+        }
+        
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = provider.getSigner();
+        currentWalletAddress = await signer.getAddress();
+        
+        walletInfo.innerHTML = `
+          <p><strong>Connected Address:</strong> ${currentWalletAddress}</p>
+          <p><strong>Normalized Address:</strong> ${currentWalletAddress.toLowerCase()}</p>
+        `;
+        
+        // Enable buttons
+        signMessageBtn.disabled = messageInput.value.trim() === '';
+        checkWalletBtn.disabled = false;
+        
+        // Auto-populate message input if empty
+        if (messageInput.value.trim() === '') {
+          messageInput.value = `Wallet Whisperer authentication request for ${currentWalletAddress.toLowerCase()}.\nTimestamp: ${new Date().toISOString()}`;
+        }
+      } catch (error) {
+        console.error('Error connecting wallet:', error);
+        walletInfo.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+    
+    // Get authentication message from backend
+    async function getAuthMessage() {
+      try {
+        if (!currentWalletAddress) {
+          alert('Please connect your wallet first');
+          return;
+        }
+        
+        const normalizedAddress = currentWalletAddress.toLowerCase();
+        const response = await axios.get(`/api/auth/message/${normalizedAddress}`);
+        
+        if (response.data.success) {
+          messageInput.value = response.data.data.message;
+          signMessageBtn.disabled = false;
+        } else {
+          signatureInfo.innerHTML = `<p style="color: red;">Error: ${response.data.error}</p>`;
+        }
+      } catch (error) {
+        console.error('Error getting auth message:', error);
+        signatureInfo.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+    
+    // Sign message function
+    async function signMessage() {
+      try {
+        if (!currentWalletAddress || !signer) {
+          alert('Please connect your wallet first');
+          return;
+        }
+        
+        const message = messageInput.value.trim();
+        if (!message) {
+          alert('Please enter a message to sign');
+          return;
+        }
+        
+        currentMessage = message;
+        currentSignature = await signer.signMessage(message);
+        
+        signatureInfo.innerHTML = `
+          <p><strong>Message:</strong> ${currentMessage}</p>
+          <p><strong>Signature:</strong> ${currentSignature.substring(0, 20)}...${currentSignature.substring(currentSignature.length - 20)}</p>
+        `;
+        
+        // Enable test auth button
+        testAuthBtn.disabled = false;
+      } catch (error) {
+        console.error('Error signing message:', error);
+        signatureInfo.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+    
+    // Test authentication function
+    async function testAuthentication() {
+      try {
+        if (!currentWalletAddress || !currentSignature || !currentMessage) {
+          alert('Please connect wallet and sign message first');
+          return;
+        }
+        
+        const displayName = displayNameInput.value.trim() || undefined;
+        
+        // Clear previous results
+        authResult.textContent = 'Testing authentication...';
+        stepResults.innerHTML = '';
+        
+        const response = await axios.post('/api/debug/test-wallet-auth', {
+          walletAddress: currentWalletAddress.toLowerCase(),
+          signature: currentSignature,
+          message: currentMessage,
+          blockchainType: 'evm',
+          displayName
+        });
+        
+        // Display raw result
+        authResult.textContent = JSON.stringify(response.data, null, 2);
+        
+        // Display step results in a more readable format
+        if (response.data.results && response.data.results.steps) {
+          const stepsHtml = response.data.results.steps.map(step => {
+            return `
+              <div class="step ${step.status}">
+                <h3>Step ${step.step}: ${step.name}</h3>
+                <p><strong>Status:</strong> ${step.status}</p>
+                ${step.error ? `<p><strong>Error:</strong> ${step.error}</p>` : ''}
+                ${step.data ? `<pre>${JSON.stringify(step.data, null, 2)}</pre>` : ''}
+              </div>
+            `;
+          }).join('');
+          
+          stepResults.innerHTML = stepsHtml;
+        }
+      } catch (error) {
+        console.error('Error testing authentication:', error);
+        authResult.textContent = `Error: ${error.message}\n\n${error.response ? JSON.stringify(error.response.data, null, 2) : ''}`;
+      }
+    }
+    
+    // Check wallet profile function
+    async function checkWalletProfile() {
+      try {
+        if (!currentWalletAddress) {
+          alert('Please connect your wallet first');
+          return;
+        }
+        
+        const normalizedAddress = currentWalletAddress.toLowerCase();
+        checkResult.textContent = 'Checking wallet profile...';
+        
+        const response = await axios.get(`/api/debug/check-wallet/${normalizedAddress}`);
+        checkResult.textContent = JSON.stringify(response.data, null, 2);
+      } catch (error) {
+        console.error('Error checking wallet profile:', error);
+        checkResult.textContent = `Error: ${error.message}\n\n${error.response ? JSON.stringify(error.response.data, null, 2) : ''}`;
+      }
+    }
+    
+    // Event listeners
+    connectWalletBtn.addEventListener('click', connectWallet);
+    getMessageBtn.addEventListener('click', getAuthMessage);
+    signMessageBtn.addEventListener('click', signMessage);
+    testAuthBtn.addEventListener('click', testAuthentication);
+    checkWalletBtn.addEventListener('click', checkWalletProfile);
+    
+    // Enable/disable sign button based on message input
+    messageInput.addEventListener('input', () => {
+      signMessageBtn.disabled = !currentWalletAddress || messageInput.value.trim() === '';
+    });
+  </script>
+</body>
+</html>

@@ -13,21 +13,14 @@ import config from './config';
 // Import API routes
 import cardsRoutes from './api/cards';
 import authRoutes from './api/auth';
+import healthRoutes from './api/health';
+import debugRoutes from './api/debug';
 
 const router = express.Router();
 
-// Health check endpoint
-router.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    services: {
-      supabase: !!config.supabase.url,
-      redis: !!process.env.UPSTASH_REDIS_URL,
-      dune: !!process.env.DUNE_API_KEY
-    }
-  });
-});
+// Register API routes
+router.use('/api/health', healthRoutes);
+router.use('/api/debug', debugRoutes);
 
 // Register API routes
 router.use('/api/cards', cardsRoutes);

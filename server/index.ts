@@ -1,6 +1,32 @@
+import dotenv from 'dotenv';
+// Load environment variables from .env.local at the very top
+dotenv.config({ path: '.env.local' });
+
+// Import environment validator
+import { validateEnv, getEnvValidationReport } from './lib/env-validator';
+
+// Validate environment variables
+try {
+  validateEnv();
+  console.log('✅ Environment validation passed');
+} catch (error) {
+  console.warn('⚠️ Environment validation failed, but server will continue with defaults');
+  // We don't exit here to allow development with mock clients
+}
+
+// Log environment status
+const envReport = getEnvValidationReport();
+console.log(`[ENV STATUS] Valid: ${envReport.valid ? '✅' : '❌'}`);
+console.log(`[ENV STATUS] Supabase URL: ${envReport.env.SUPABASE_URL || 'Not set'}`);
+if (envReport.issues.length > 0) {
+  console.log('[ENV ISSUES]');
+  envReport.issues.forEach(issue => console.log(`- ${issue}`));
+}
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cors from "cors";
 
 // Import our environment variables loader
 import env from "./lib/env";
@@ -11,6 +37,13 @@ log(`NODE_ENV: ${process.env.NODE_ENV}`);
 
 
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -28,6 +28,7 @@ export enum ActivityType {
 export interface ActivityLogData {
   userId?: string;
   walletAddress?: string;
+  walletProfileId?: string;
   activityType: ActivityType;
   details?: Record<string, any>;
   timestamp?: string;
@@ -77,17 +78,24 @@ export class ActivityLogService {
   
   /**
    * Log an activity
+   * @param activityType The type of activity
+   * @param userId Optional user ID
+   * @param walletAddress Optional wallet address
+   * @param details Optional details object
+   * @param walletProfileId Optional wallet profile ID
    */
   async log(
     activityType: ActivityType,
     userId: string | null,
     walletAddress: string | null,
-    details?: Record<string, any>
+    details?: Record<string, any>,
+    walletProfileId?: string | null
   ): Promise<void> {
     const data: ActivityLogData = {
       activityType,
       userId: userId || undefined,
       walletAddress: walletAddress || undefined,
+      walletProfileId: walletProfileId || undefined,
       details
     };
     return this.logData(data);
@@ -148,10 +156,28 @@ export class ActivityLogService {
       // In production, we would send to the server
       if (import.meta.env.PROD) {
         try {
-          // Example: Send to Supabase
+          // Send to Supabase activity_logs table with correct field mappings
+          const logsToInsert = logsWithSession.map(log => ({
+            activity_type: log.activityType,
+            wallet_address: log.walletAddress ? log.walletAddress.toLowerCase() : null,
+            wallet_profile_id: log.walletProfileId || null,
+            details: {
+              ...log.details,
+              user_id: log.userId || null,
+              client_timestamp: log.timestamp,
+              session_id: log.sessionId,
+              client_info: {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                screenSize: `${window.screen.width}x${window.screen.height}`
+              }
+            },
+            timestamp: new Date().toISOString()
+          }));
+          
           const { error } = await supabase
             .from('activity_logs')
-            .insert(logsWithSession);
+            .insert(logsToInsert);
           
           if (error) {
             console.error('Error sending activity logs:', error);

@@ -39,6 +39,11 @@ export function Header() {
                 Analytics
               </a>
             </Link>
+            <Link href="/wallet-auth-test">
+              <a className="text-sm font-medium text-amber-500 hover:text-amber-600">
+                Wallet Auth Test
+              </a>
+            </Link>
           </nav>
         </div>
 

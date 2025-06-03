@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useDisconnect, useConfig } from 'wagmi';
-import { supabase } from '@/lib/supabase';
-import { ActivityType } from '@/services/ActivityLogService';
-import activityLogService from '@/services/ActivityLogService';
+import { useAccount } from 'wagmi';
+import { useWalletAuth } from '@/hooks/useWalletAuth';
+import { ActivityLogService, ActivityType } from '@/services/ActivityLogService';
 
 // Define wallet types
 export type WalletType = 'metamask' | 'coinbase' | 'walletconnect' | 'okx';
@@ -21,112 +20,59 @@ const Web3WalletConnect: React.FC<Web3WalletConnectProps> = ({
   showDisconnect = true,
 }) => {
   // In wagmi v2, useAccount returns the first address if multiple are connected
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isConnected, address } = useAccount();
+  const { walletProfile, isLoading, connectWallet, disconnectWallet } = useWalletAuth();
 
-  // Get or create user profile in Supabase when wallet connects
+  // Effect to handle wallet connection
   useEffect(() => {
     const handleWalletConnection = async () => {
-      if (isConnected && address) {
+      if (isConnected && address && !walletProfile && !isLoading) {
+        console.log('🔵 Wallet connected, triggering authentication flow');
         try {
-          setIsLoading(true);
+          // Generate a display name from the address
+          const displayName = `Wallet ${address.substring(0, 6)}`;
           
-          // Check if wallet exists in database
-          const { data: existingWallet, error: walletError } = await supabase
-            .from('wallet_profiles')
-            .select('user_id, address')
-            .eq('address', address.toLowerCase())
-            .single();
-            
-          if (walletError && walletError.code !== 'PGRST116') {
-            console.error('Error checking wallet:', walletError);
-            return;
-          }
+          // Call our connectWallet function to authenticate
+          const result = await connectWallet(displayName);
           
-          if (existingWallet) {
-            // Wallet exists, use the associated user
-            setUserId(existingWallet.user_id);
-            activityLogService.log(
+          if (result) {
+            console.log('🟢 Wallet authenticated successfully:', result.id);
+            // Log activity
+            ActivityLogService.getInstance().log(
               ActivityType.WALLET_CONNECT,
-              existingWallet.user_id,
-              address,
-              { blockchainType: 'evm', walletType: getWalletType(), success: true }
+              null,
+              address.toLowerCase(),
+              {
+                blockchainType: 'evm',
+                success: true,
+                source: 'Web3WalletConnect'
+              }
             );
           } else {
-            // Create new user profile if wallet doesn't exist
-            const { data: newUser, error: userError } = await supabase
-              .from('user_profiles')
-              .insert([{ is_premium: false }])
-              .select('id')
-              .single();
-              
-            if (userError) {
-              console.error('Error creating user profile:', userError);
-              throw userError;
-            }
-            
-            // Link wallet to user profile
-            const { error: linkError } = await supabase
-              .from('wallet_profiles')
-              .insert([{ user_id: newUser.id, address: address.toLowerCase(), is_verified: true }]);
-              
-            if (linkError) {
-              console.error('Error linking wallet to profile:', linkError);
-              throw linkError;
-            }
-            
-            setUserId(newUser.id);
-            activityLogService.log(
-              ActivityType.WALLET_CONNECT,
-              newUser.id,
-              address,
-              { blockchainType: 'evm', walletType: getWalletType(), success: true }
-            );
+            console.error('🔴 Wallet authentication failed');
           }
-        } catch (err) {
-          console.error('Error handling wallet connection:', err);
-          activityLogService.log(
-            ActivityType.WALLET_CONNECT,
-            null,
-            address,
-            { blockchainType: 'evm', error: (err as Error).message, success: false }
-          );
-        } finally {
-          setIsLoading(false);
+        } catch (error) {
+          console.error('🔴 Error authenticating wallet:', error);
         }
       }
     };
+    
     handleWalletConnection();
-  }, [isConnected, address]);
-
-  // Handle wallet disconnection
-  const handleDisconnect = () => {
-    if (userId) {
-      activityLogService.log(
-        ActivityType.WALLET_DISCONNECT,
-        userId,
-        address as string,
-        { blockchainType: 'evm', walletType: getWalletType() }
-      );
-    }
-    disconnect();
-    setUserId(null);
+  }, [isConnected, address, walletProfile, isLoading, connectWallet]);
+  
+  // Handle wallet connection when button is clicked
+  const handleConnect = async () => {
+    // The actual connection will be handled by RainbowKit
+    // Our useWalletAuth hook will handle the authentication in the background via the useEffect
   };
 
-  // Helper function to determine wallet type
-  const getWalletType = (): WalletType => {
-    // In wagmi v2, we can't directly access the provider properties
-    // This is a simplified detection that works with most common wallets
-    if (typeof window !== 'undefined' && window.ethereum) {
-      // Need to use any type since ethereum providers have non-standard properties
-      const ethereum = window.ethereum as any;
-      if (ethereum.isMetaMask) return 'metamask';
-      if (ethereum.isCoinbaseWallet) return 'coinbase';
-      if (ethereum.isOKXWallet) return 'okx';
+  // Handle wallet disconnection
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWallet();
+    } catch (error) {
+      console.error('🔴 Error disconnecting wallet:', error);
     }
-    return 'walletconnect';
   };
 
   return (
@@ -188,8 +134,9 @@ const Web3WalletConnect: React.FC<Web3WalletConnectProps> = ({
                         onClick={handleDisconnect}
                         type="button"
                         className="inline-flex items-center justify-center rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground shadow hover:bg-destructive/90"
+                        disabled={isLoading}
                       >
-                        Disconnect
+                        {isLoading ? 'Disconnecting...' : 'Disconnect'}
                       </button>
                     )}
                     <button
